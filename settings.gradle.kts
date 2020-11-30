@@ -1,2 +1,2 @@
-rootProject.name = "global-hooks-kt"
+rootProject.name = "hooks-kt"
 
