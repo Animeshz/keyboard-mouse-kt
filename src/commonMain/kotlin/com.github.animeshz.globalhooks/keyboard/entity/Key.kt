@@ -4,7 +4,7 @@ import com.github.animeshz.globalhooks.ExperimentalKeyIO
 
 @Suppress("unused")
 @ExperimentalKeyIO
-enum class Key(val keyCode: Int) {
+public enum class Key(public val keyCode: Int) {
     // TODO("Add keys")
     ;
 

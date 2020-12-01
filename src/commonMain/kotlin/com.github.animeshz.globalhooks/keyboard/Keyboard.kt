@@ -21,12 +21,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import mu.KotlinLogging
 
-typealias Cancellable = () -> Unit
+public typealias Cancellable = () -> Unit
 
-val logger = KotlinLogging.logger {}
+private val logger = KotlinLogging.logger {}
 
 @ExperimentalKeyIO
-class Keyboard(context: CoroutineContext = Dispatchers.Default) {
+public class Keyboard(context: CoroutineContext = Dispatchers.Default) {
     private val scope = CoroutineScope(context + Job())
     private var job: Job? = null
 
@@ -40,7 +40,7 @@ class Keyboard(context: CoroutineContext = Dispatchers.Default) {
      *
      * @return Returns a [Cancellable], which when invoked the handler is removed.
      */
-    fun on(
+    public fun on(
             keySet: KeySet,
             trigger: KeyEventType = KeyEventType.KeyDown,
             handler: suspend () -> Unit
@@ -60,21 +60,21 @@ class Keyboard(context: CoroutineContext = Dispatchers.Default) {
      * Tries to press the [keys] on the host machine.
      * If successful returns true.
      */
-    suspend fun press(keys: KeySet): Boolean {
+    public suspend fun press(keys: KeySet): Boolean {
         TODO()
     }
 
     /**
      * Tries to write the following [string] on the host machine.
      */
-    suspend fun write(string: String) {
+    public suspend fun write(string: String) {
         TODO()
     }
 
     /**
      * Suspends till the [keySet] are pressed.
      */
-    suspend fun awaitTill(
+    public suspend fun awaitTill(
             keySet: KeySet,
             trigger: KeyEventType = KeyEventType.KeyDown
     ): Unit = suspendCancellableCoroutine { cont ->
@@ -98,7 +98,7 @@ class Keyboard(context: CoroutineContext = Dispatchers.Default) {
      * Records and returns a [Flow] of all the keypress till a [keySet] is/are pressed.
      */
     @ExperimentalTime
-    suspend fun recordKeyPressesTill(
+    public suspend fun recordKeyPressesTill(
             keySet: KeySet,
             trigger: KeyEventType = KeyEventType.KeyDown
     ): List<Pair<Duration, Key>> = suspendCancellableCoroutine { cont ->
@@ -118,14 +118,25 @@ class Keyboard(context: CoroutineContext = Dispatchers.Default) {
             stopIfNeeded()
             cont.resume(record)
         }
+
+        startIfNeeded()
+
+        cont.invokeOnCancellation {
+            handlers.remove(keySet)
+            recJob.cancel()
+            stopIfNeeded()
+        }
     }
 
     @ExperimentalTime
-    suspend fun play(orderedPresses: List<Pair<Duration, Key>>, speedFactor: Float = 1.0f) {
+    public suspend fun play(orderedPresses: List<Pair<Duration, Key>>, speedFactor: Float = 1.0f) {
         TODO()
     }
 
-    fun cancel(cause: CancellationException? = null) {
+    /**
+     * Cancels all the [Job]s running under this Keyboard instance.
+     */
+    public fun cancel(cause: CancellationException? = null) {
         scope.cancel(cause)
     }
 

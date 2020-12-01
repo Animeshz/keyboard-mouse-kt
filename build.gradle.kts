@@ -49,4 +49,6 @@ kotlin {
             languageSettings.useExperimentalAnnotation("kotlin.RequiresOptIn")
         }
     }
+
+    explicitApi()
 }

@@ -15,4 +15,4 @@ package com.github.animeshz.globalhooks
         AnnotationTarget.PROPERTY_SETTER,
         AnnotationTarget.TYPEALIAS
 )
-annotation class ExperimentalKeyIO
+public annotation class ExperimentalKeyIO

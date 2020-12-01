@@ -10,16 +10,16 @@ import com.github.animeshz.globalhooks.keyboard.entity.Key
  * @param type The type of the event (see [KeyEventType]).
  */
 @ExperimentalKeyIO
-class KeyEvent(
-        val key: Key,
-        val type: KeyEventType
+public class KeyEvent(
+        public val key: Key,
+        public val type: KeyEventType
 )
 
 /**
  * The type of Key Event.
  */
 @ExperimentalKeyIO
-enum class KeyEventType {
+public enum class KeyEventType {
     /**
      * Type of KeyEvent sent when the user lifts their finger off a key on the keyboard.
      */

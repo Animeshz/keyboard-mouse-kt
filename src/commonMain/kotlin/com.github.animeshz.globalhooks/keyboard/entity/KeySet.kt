@@ -3,13 +3,13 @@ package com.github.animeshz.globalhooks.keyboard.entity
 import com.github.animeshz.globalhooks.ExperimentalKeyIO
 
 @ExperimentalKeyIO
-class KeySet(
-        val keys: Set<Key>
+public class KeySet(
+        public val keys: Set<Key>
 ) {
-    operator fun plus(other: KeySet): KeySet =
+    public operator fun plus(other: KeySet): KeySet =
             KeySet(this.keys + other.keys)
 
-    operator fun plus(other: Key): KeySet =
+    public operator fun plus(other: Key): KeySet =
             KeySet(this.keys + other)
 
     override fun hashCode(): Int = keys.hashCode()
@@ -22,5 +22,5 @@ class KeySet(
 }
 
 @ExperimentalKeyIO
-operator fun Key.plus(other: Key): KeySet =
+public operator fun Key.plus(other: Key): KeySet =
         KeySet(setOf(this, other))
