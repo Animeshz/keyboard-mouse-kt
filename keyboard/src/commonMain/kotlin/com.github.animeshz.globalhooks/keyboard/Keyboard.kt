@@ -4,43 +4,59 @@ import com.github.animeshz.globalhooks.ExperimentalKeyIO
 import com.github.animeshz.globalhooks.keyboard.entity.Key
 import com.github.animeshz.globalhooks.keyboard.entity.KeySet
 import com.github.animeshz.globalhooks.keyboard.events.KeyEventType
-import com.github.animeshz.globalhooks.keyboard.internal.KBEventEmitter
+import com.github.animeshz.globalhooks.keyboard.internal.NativeKeyboardHandler
+import com.github.animeshz.globalhooks.keyboard.internal.nativeKbHandlerForPlatform
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
-import mu.KotlinLogging
 
 public typealias Cancellable = () -> Unit
 
-private val logger = KotlinLogging.logger {}
-
+/**
+ * The central class for receiving and interacting with the Keyboard Events.
+ *
+ * The handlers are always invoked in a new coroutine, to let the [handler] emit the events quickly without any delay.
+ * The [Exception] should be handled with the help of [CoroutineExceptionHandler] in the [CoroutineContext] provided.
+ *
+ * @param context The [CoroutineContext] used for processing of data.
+ */
 @ExperimentalKeyIO
-public class Keyboard(context: CoroutineContext = Dispatchers.Default) {
-    private val scope = CoroutineScope(context + Job())
+public class Keyboard(
+        context: CoroutineContext = Dispatchers.Default
+) {
+    private val scope = CoroutineScope(context + SupervisorJob())
     private var job: Job? = null
 
-    private val emitter = KBEventEmitter(scope)
     private val pressedKeys = mutableSetOf<Key>()
     private val keyDownHandlers = mutableMapOf<KeySet, suspend () -> Unit>()
     private val keyUpHandlers = mutableMapOf<KeySet, suspend () -> Unit>()
+
+    /**
+     * The backing [NativeKeyboardHandler].
+     */
+    public val handler: NativeKeyboardHandler = nativeKbHandlerForPlatform(scope)
 
     /**
      * Adds the [handler] to be invoked at [trigger] of the [keySet].
      *
      * @return Returns a [Cancellable], which when invoked the handler is removed.
      */
-    public fun on(
+    public fun addShortcut(
             keySet: KeySet,
             trigger: KeyEventType = KeyEventType.KeyDown,
             handler: suspend () -> Unit
@@ -108,7 +124,7 @@ public class Keyboard(context: CoroutineContext = Dispatchers.Default) {
         val handlers = if (trigger == KeyEventType.KeyDown) keyDownHandlers else keyUpHandlers
 
         val recJob = scope.launch {
-            emitter.events.collect {
+            handler.events.buffer(Channel.UNLIMITED).collect {
                 record.add(mark.elapsedNow() to it.key)
             }
         }
@@ -142,9 +158,10 @@ public class Keyboard(context: CoroutineContext = Dispatchers.Default) {
 
     private fun startIfNeeded() {
         if (job != null) return
+        if (job!!.isActive) return
 
         job = scope.launch {
-            emitter.events.collect {
+            handler.events.buffer(Channel.UNLIMITED).collect {
                 when (it.type) {
                     KeyEventType.KeyDown -> {
                         pressedKeys.add(it.key)
@@ -168,26 +185,21 @@ public class Keyboard(context: CoroutineContext = Dispatchers.Default) {
         job = null
     }
 
-    private suspend fun handleKeyDown() {
-        for ((key, value) in keyDownHandlers) {
-            if (handle(key, value)) return
+    private fun handleKeyDown() {
+        for ((keySet, handler) in keyDownHandlers) {
+            if (pressedKeys.containsAll(keySet.keys)) {
+                scope.launch { handler() }
+                return
+            }
         }
     }
 
-    private suspend fun handleKeyUp() {
-        for ((key, value) in keyUpHandlers) {
-            if (handle(key, value)) return
+    private fun handleKeyUp() {
+        for ((keySet, handler) in keyUpHandlers) {
+            if (pressedKeys.containsAll(keySet.keys)) {
+                scope.launch { handler() }
+                return
+            }
         }
-    }
-
-    private suspend inline fun handle(keySet: KeySet, noinline handler: suspend () -> Unit): Boolean {
-        if (!pressedKeys.containsAll(keySet.keys)) return false
-
-        try {
-            handler()
-        } catch (e: Exception) {
-            logger.error(e) { e.message }
-        }
-        return true
     }
 }
