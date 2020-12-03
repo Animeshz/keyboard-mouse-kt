@@ -1,4 +1,4 @@
-HooksKt
+KeyboardMouse.kt
 =======
 
-A multiplatform binding for listening to global keyboard and mouse events.
+A multiplatform library for listening to global keyboard and mouse events.

@@ -1,5 +1,4 @@
-rootProject.name = "hooks-kt"
+rootProject.name = "keyboard-mouse-kt"
 
-include("common")
 include("keyboard")
 include("mouse")

@@ -7,12 +7,10 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(project(":common"))
             }
         }
         val commonTest by getting {
             dependencies {
-                api(project(":common"))
             }
         }
 

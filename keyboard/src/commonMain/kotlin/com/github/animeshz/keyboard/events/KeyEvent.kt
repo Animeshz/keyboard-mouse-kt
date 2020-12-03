@@ -1,7 +1,7 @@
-package com.github.animeshz.globalhooks.keyboard.events
+package com.github.animeshz.keyboard.events
 
-import com.github.animeshz.globalhooks.ExperimentalKeyIO
-import com.github.animeshz.globalhooks.keyboard.entity.Key
+import com.github.animeshz.keyboard.ExperimentalKeyIO
+import com.github.animeshz.keyboard.entity.Key
 
 /**
  * When a user presses a key on a hardware keyboard, a [KeyEvent] is sent.
@@ -13,7 +13,9 @@ import com.github.animeshz.globalhooks.keyboard.entity.Key
 public class KeyEvent(
         public val key: Key,
         public val type: KeyEventType
-)
+) {
+    override fun toString(): String = "KeyEvent(key=$key, type=$type)"
+}
 
 /**
  * The type of Key Event.
