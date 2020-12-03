@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import platform.windows.CallNextHookEx
 import platform.windows.DispatchMessageA
@@ -50,7 +51,7 @@ import platform.windows.tagKBDLLHOOKSTRUCT
 
 @ExperimentalKeyIO
 @ExperimentalUnsignedTypes
-public object WindowsKeyboardHandler : NativeKeyboardHandler {
+object WindowsKeyboardHandler : NativeKeyboardHandler {
     private val worker = Worker.start(errorReporting = true, name = "WindowsKeyboardHandler")
     private val hook: AtomicNativePtr = AtomicNativePtr(NativePtr.NULL)
     private val ignoreNextRightAlt: AtomicBoolean = atomic(false)
@@ -64,8 +65,9 @@ public object WindowsKeyboardHandler : NativeKeyboardHandler {
     init {
         // When subscriptionCount increments from 0 to 1, setup the native hook.
         eventsInternal.subscriptionCount
-                .filter { it > 0 }
+                .map { it > 0 }
                 .distinctUntilChanged()
+                .filter { it }
                 .onEach {
                     worker.execute(mode = TransferMode.SAFE, { this }) { handler ->
                         handler.prepare()
@@ -95,7 +97,7 @@ public object WindowsKeyboardHandler : NativeKeyboardHandler {
     }
 
     // ==================================== Internals ====================================
-    public const val FAKE_ALT: Int = LLKHF_INJECTED or 0x20
+    const val FAKE_ALT: Int = LLKHF_INJECTED or 0x20
     private const val INPUT_KEYBOARD = 1U
 
     /**
@@ -117,10 +119,10 @@ public object WindowsKeyboardHandler : NativeKeyboardHandler {
     private fun startMessagePumping() {
         memScoped {
             val msg = alloc<MSG>().ptr
-            while (GetMessageW(msg, null, 0, 0) != 0) {
+            while (eventsInternal.subscriptionCount.value == 0) {
+                if (GetMessageW(msg, null, 0, 0) == 0) break
                 TranslateMessage(msg)
                 DispatchMessageA(msg)
-                if (eventsInternal.subscriptionCount.value == 0) break
             }
         }
     }
@@ -182,6 +184,6 @@ internal fun lowLevelKeyboardProc(nCode: Int, wParam: WPARAM, lParam: LPARAM): L
  */
 @ExperimentalUnsignedTypes
 @ExperimentalKeyIO
-public actual fun nativeKbHandlerForPlatform(): NativeKeyboardHandler {
+actual fun nativeKbHandlerForPlatform(): NativeKeyboardHandler {
     return WindowsKeyboardHandler
 }
