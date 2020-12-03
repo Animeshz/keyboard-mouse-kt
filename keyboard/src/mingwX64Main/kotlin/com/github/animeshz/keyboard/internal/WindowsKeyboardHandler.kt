@@ -53,27 +53,32 @@ import platform.windows.tagKBDLLHOOKSTRUCT
 public object WindowsKeyboardHandler : NativeKeyboardHandler {
     private val worker = Worker.start(errorReporting = true, name = "WindowsKeyboardHandler")
     private val hook: AtomicNativePtr = AtomicNativePtr(NativePtr.NULL)
-
     private val ignoreNextRightAlt: AtomicBoolean = atomic(false)
-
     private val eventsInternal = MutableSharedFlow<KeyEvent>(extraBufferCapacity = 8)
+
+    /**
+     * A [SharedFlow] of [KeyEvent] for receiving Key events from the target platform.
+     */
     override val events: SharedFlow<KeyEvent> = eventsInternal.asSharedFlow()
 
     init {
-        // When subscriptionCount increments from 0 to 1, start the native hook.
+        // When subscriptionCount increments from 0 to 1, setup the native hook.
         eventsInternal.subscriptionCount
                 .filter { it > 0 }
                 .distinctUntilChanged()
                 .onEach {
                     worker.execute(mode = TransferMode.SAFE, { this }) { handler ->
-                        prepare()
-                        startMessagePumping()
-                        cleanup()
+                        handler.prepare()
+                        handler.startMessagePumping()
+                        handler.cleanup()
                     }
                 }
                 .launchIn(CoroutineScope(Dispatchers.Unconfined))
     }
 
+    /**
+     * Sends the [keyEvent] to the platform.
+     */
     // TODO("Add support for extended key sending")
     override fun sendEvent(keyEvent: KeyEvent) {
         return memScoped {
