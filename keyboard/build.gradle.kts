@@ -1,7 +1,11 @@
 @file:Suppress("UNUSED_VARIABLE")
 
 kotlin {
-    linuxX64()
+    linuxX64 {
+        compilations.getByName("main").cinterops.create("struct") {
+            defFile("src/linuxX64Main/cinterop/struct.def")
+        }
+    }
     mingwX64()
 
     sourceSets {
