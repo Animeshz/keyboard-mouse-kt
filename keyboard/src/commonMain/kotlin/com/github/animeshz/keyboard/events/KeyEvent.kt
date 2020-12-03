@@ -1,7 +1,7 @@
-package com.github.animeshz.globalhooks.keyboard.events
+package com.github.animeshz.keyboard.events
 
-import com.github.animeshz.globalhooks.keyboard.ExperimentalKeyIO
-import com.github.animeshz.globalhooks.keyboard.entity.Key
+import com.github.animeshz.keyboard.ExperimentalKeyIO
+import com.github.animeshz.keyboard.entity.Key
 
 /**
  * When a user presses a key on a hardware keyboard, a [KeyEvent] is sent.

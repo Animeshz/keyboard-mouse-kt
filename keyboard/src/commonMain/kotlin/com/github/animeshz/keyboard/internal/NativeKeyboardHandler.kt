@@ -1,7 +1,7 @@
-package com.github.animeshz.globalhooks.keyboard.internal
+package com.github.animeshz.keyboard.internal
 
-import com.github.animeshz.globalhooks.keyboard.ExperimentalKeyIO
-import com.github.animeshz.globalhooks.keyboard.events.KeyEvent
+import com.github.animeshz.keyboard.ExperimentalKeyIO
+import com.github.animeshz.keyboard.events.KeyEvent
 import kotlinx.coroutines.flow.SharedFlow
 
 /**

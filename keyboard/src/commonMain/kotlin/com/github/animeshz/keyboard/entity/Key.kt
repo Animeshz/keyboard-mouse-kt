@@ -1,6 +1,6 @@
-package com.github.animeshz.globalhooks.keyboard.entity
+package com.github.animeshz.keyboard.entity
 
-import com.github.animeshz.globalhooks.keyboard.ExperimentalKeyIO
+import com.github.animeshz.keyboard.ExperimentalKeyIO
 
 @Suppress("unused")
 @ExperimentalKeyIO

@@ -1,9 +1,9 @@
-package com.github.animeshz.globalhooks.keyboard.internal
+package com.github.animeshz.keyboard.internal
 
-import com.github.animeshz.globalhooks.keyboard.ExperimentalKeyIO
-import com.github.animeshz.globalhooks.keyboard.entity.Key
-import com.github.animeshz.globalhooks.keyboard.events.KeyEvent
-import com.github.animeshz.globalhooks.keyboard.events.KeyEventType
+import com.github.animeshz.keyboard.ExperimentalKeyIO
+import com.github.animeshz.keyboard.entity.Key
+import com.github.animeshz.keyboard.events.KeyEvent
+import com.github.animeshz.keyboard.events.KeyEventType
 import kotlin.native.concurrent.AtomicNativePtr
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
@@ -66,9 +66,9 @@ public object WindowsKeyboardHandler : NativeKeyboardHandler {
                 .distinctUntilChanged()
                 .onEach {
                     worker.execute(mode = TransferMode.SAFE, { this }) { handler ->
-                        handler.prepare()
-                        handler.startMessagePumping()
-                        handler.cleanup()
+                        prepare()
+                        startMessagePumping()
+                        cleanup()
                     }
                 }
                 .launchIn(CoroutineScope(Dispatchers.Unconfined))
