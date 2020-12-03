@@ -1,4 +1,4 @@
-package com.github.animeshz.globalhooks
+package com.github.animeshz.globalhooks.keyboard
 
 @MustBeDocumented
 @Retention(AnnotationRetention.BINARY)

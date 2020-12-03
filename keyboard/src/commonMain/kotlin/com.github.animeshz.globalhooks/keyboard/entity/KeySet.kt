@@ -1,6 +1,6 @@
 package com.github.animeshz.globalhooks.keyboard.entity
 
-import com.github.animeshz.globalhooks.ExperimentalKeyIO
+import com.github.animeshz.globalhooks.keyboard.ExperimentalKeyIO
 
 @ExperimentalKeyIO
 public class KeySet(

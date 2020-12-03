@@ -1,6 +1,6 @@
 package com.github.animeshz.globalhooks.keyboard.events
 
-import com.github.animeshz.globalhooks.ExperimentalKeyIO
+import com.github.animeshz.globalhooks.keyboard.ExperimentalKeyIO
 import com.github.animeshz.globalhooks.keyboard.entity.Key
 
 /**
@@ -13,7 +13,9 @@ import com.github.animeshz.globalhooks.keyboard.entity.Key
 public class KeyEvent(
         public val key: Key,
         public val type: KeyEventType
-)
+) {
+    override fun toString(): String = "KeyEvent(key=$key, type=$type)"
+}
 
 /**
  * The type of Key Event.

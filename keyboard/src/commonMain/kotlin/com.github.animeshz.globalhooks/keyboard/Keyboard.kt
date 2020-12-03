@@ -1,6 +1,5 @@
 package com.github.animeshz.globalhooks.keyboard
 
-import com.github.animeshz.globalhooks.ExperimentalKeyIO
 import com.github.animeshz.globalhooks.keyboard.entity.Key
 import com.github.animeshz.globalhooks.keyboard.entity.KeySet
 import com.github.animeshz.globalhooks.keyboard.events.KeyEventType
@@ -29,6 +28,7 @@ public typealias Cancellable = () -> Unit
 
 /**
  * The central class for receiving and interacting with the Keyboard Events.
+ * This is wrapper around [NativeKeyboardHandler] providing high-level access to the Keyboard.
  *
  * The handlers are always invoked in a new coroutine, to let the [handler] emit the events quickly without any delay.
  * The [Exception] should be handled with the help of [CoroutineExceptionHandler] in the [CoroutineContext] provided.
@@ -49,7 +49,7 @@ public class Keyboard(
     /**
      * The backing [NativeKeyboardHandler].
      */
-    public val handler: NativeKeyboardHandler = nativeKbHandlerForPlatform(scope)
+    public val handler: NativeKeyboardHandler = nativeKbHandlerForPlatform()
 
     /**
      * Adds the [handler] to be invoked at [trigger] of the [keySet].

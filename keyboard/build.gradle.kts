@@ -7,12 +7,16 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                api(project(":common"))
+                api(kotlin("stdlib-common"))
+                api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2-native-mt")
             }
         }
         val commonTest by getting {
             dependencies {
-                api(project(":common"))
+                api(kotlin("test-common"))
+                api(kotlin("test-annotations-common"))
+                api("io.mockk:mockk-common:1.10.3")
+                api("io.kotest:kotest-assertions-core:4.3.1")
             }
         }
 
@@ -30,6 +34,10 @@ kotlin {
         val mingwX64Test by getting {
             dependsOn(mingwX64Main)
             dependsOn(commonTest)
+        }
+
+        all {
+            languageSettings.useExperimentalAnnotation("kotlin.RequiresOptIn")
         }
     }
 

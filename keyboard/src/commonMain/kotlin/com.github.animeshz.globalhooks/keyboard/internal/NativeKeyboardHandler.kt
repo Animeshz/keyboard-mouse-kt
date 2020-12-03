@@ -1,18 +1,27 @@
 package com.github.animeshz.globalhooks.keyboard.internal
 
-import com.github.animeshz.globalhooks.ExperimentalKeyIO
+import com.github.animeshz.globalhooks.keyboard.ExperimentalKeyIO
 import com.github.animeshz.globalhooks.keyboard.events.KeyEvent
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.SharedFlow
 
 /**
- * A low-level implementation for handling key events (sending and receiving).
+ * A low-level implementation for handling [KeyEvent]s (sending and receiving).
  */
 @ExperimentalKeyIO
 public interface NativeKeyboardHandler {
+    /**
+     * A [SharedFlow] of [KeyEvent] for receiving Key events from the target platform.
+     */
     public val events: SharedFlow<KeyEvent>
+
+    /**
+     * Sends the [keyEvent] to the platform.
+     */
     public fun sendEvent(keyEvent: KeyEvent)
 }
 
+/**
+ * Gets the [NativeKeyboardHandler] for the particular platform.
+ */
 @ExperimentalKeyIO
-public expect fun nativeKbHandlerForPlatform(scope: CoroutineScope): NativeKeyboardHandler
+public expect fun nativeKbHandlerForPlatform(): NativeKeyboardHandler
