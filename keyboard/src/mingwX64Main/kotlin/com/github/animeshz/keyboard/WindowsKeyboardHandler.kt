@@ -1,6 +1,5 @@
-package com.github.animeshz.keyboard.internal
+package com.github.animeshz.keyboard
 
-import com.github.animeshz.keyboard.ExperimentalKeyIO
 import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyEventType
@@ -51,7 +50,7 @@ import platform.windows.tagKBDLLHOOKSTRUCT
 
 @ExperimentalKeyIO
 @ExperimentalUnsignedTypes
-object WindowsKeyboardHandler : NativeKeyboardHandler {
+internal object WindowsKeyboardHandler : NativeKeyboardHandler {
     private val worker = Worker.start(errorReporting = true, name = "WindowsKeyboardHandler")
     private val hook: AtomicNativePtr = AtomicNativePtr(NativePtr.NULL)
     private val ignoreNextRightAlt: AtomicBoolean = atomic(false)
@@ -70,9 +69,9 @@ object WindowsKeyboardHandler : NativeKeyboardHandler {
                 .filter { it }
                 .onEach {
                     worker.execute(mode = TransferMode.SAFE, { this }) { handler ->
-                        handler.prepare()
-                        handler.startMessagePumping()
-                        handler.cleanup()
+                        prepare()
+                        startMessagePumping()
+                        cleanup()
                     }
                 }
                 .launchIn(CoroutineScope(Dispatchers.Unconfined))
@@ -97,7 +96,7 @@ object WindowsKeyboardHandler : NativeKeyboardHandler {
     }
 
     // ==================================== Internals ====================================
-    const val FAKE_ALT: Int = LLKHF_INJECTED or 0x20
+    internal const val FAKE_ALT: Int = LLKHF_INJECTED or 0x20
     private const val INPUT_KEYBOARD = 1U
 
     /**
@@ -184,6 +183,6 @@ internal fun lowLevelKeyboardProc(nCode: Int, wParam: WPARAM, lParam: LPARAM): L
  */
 @ExperimentalUnsignedTypes
 @ExperimentalKeyIO
-actual fun nativeKbHandlerForPlatform(): NativeKeyboardHandler {
+public actual fun nativeKbHandlerForPlatform(): NativeKeyboardHandler {
     return WindowsKeyboardHandler
 }

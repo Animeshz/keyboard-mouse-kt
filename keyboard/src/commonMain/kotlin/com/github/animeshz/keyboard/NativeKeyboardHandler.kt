@@ -1,6 +1,5 @@
-package com.github.animeshz.keyboard.internal
+package com.github.animeshz.keyboard
 
-import com.github.animeshz.keyboard.ExperimentalKeyIO
 import com.github.animeshz.keyboard.events.KeyEvent
 import kotlinx.coroutines.flow.SharedFlow
 

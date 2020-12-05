@@ -7,6 +7,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                api(kotlin("stdlib-common"))
             }
         }
         val commonTest by getting {
