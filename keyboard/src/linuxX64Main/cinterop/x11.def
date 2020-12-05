@@ -1,0 +1,3 @@
+package = x11
+headers = X11/Xlib.h X11/Xutil.h X11/Xatom.h
+headerFilter = X11/*

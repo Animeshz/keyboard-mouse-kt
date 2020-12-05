@@ -3,8 +3,6 @@ package com.github.animeshz.keyboard
 import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.entity.KeySet
 import com.github.animeshz.keyboard.events.KeyEventType
-import com.github.animeshz.keyboard.internal.NativeKeyboardHandler
-import com.github.animeshz.keyboard.internal.nativeKbHandlerForPlatform
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
 import kotlin.time.Duration

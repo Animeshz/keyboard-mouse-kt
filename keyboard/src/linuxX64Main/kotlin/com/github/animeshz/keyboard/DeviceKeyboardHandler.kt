@@ -1,60 +1,25 @@
-package com.github.animeshz.keyboard.internal
+package com.github.animeshz.keyboard
 
-import com.github.animeshz.keyboard.ExperimentalKeyIO
 import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyEventType
+import device.input_event
 import kotlin.native.concurrent.AtomicInt
-import kotlin.native.concurrent.TransferMode
-import kotlin.native.concurrent.Worker
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.sizeOf
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import platform.posix.O_RDWR
 import platform.posix.close
+import platform.posix.ioctl
 import platform.posix.open
 import platform.posix.read
 import platform.posix.write
-import struct.input_event
 
 @ExperimentalUnsignedTypes
 @ExperimentalKeyIO
-object LinuxKeyboardHandler : NativeKeyboardHandler {
+internal object DeviceKeyboardHandler : LinuxKeyboardHandlerBase() {
     private val inputFile = AtomicInt(0)
-    private val worker = Worker.start(errorReporting = true, name = "LinuxKeyboardHandler")
-    private val eventsInternal = MutableSharedFlow<KeyEvent>(extraBufferCapacity = 8)
-
-    /**
-     * A [SharedFlow] of [KeyEvent] for receiving Key events from the target platform.
-     */
-    override val events: SharedFlow<KeyEvent> get() = eventsInternal.asSharedFlow()
-
-    init {
-        // When subscriptionCount increments from 0 to 1, setup the native hook.
-        eventsInternal.subscriptionCount
-                .map { it > 0 }
-                .distinctUntilChanged()
-                .filter { it }
-                .onEach {
-                    worker.execute(mode = TransferMode.SAFE, { this }) { handler ->
-                        handler.prepare()
-                        handler.readEvents()
-                        handler.cleanup()
-                    }
-                }
-                .launchIn(CoroutineScope(Dispatchers.Unconfined))
-    }
 
     /**
      * Sends the [keyEvent] to the platform.
@@ -77,15 +42,27 @@ object LinuxKeyboardHandler : NativeKeyboardHandler {
 
     // ==================================== Internals ====================================
     private const val EV_KEY: UShort = 1U
+    private const val UI_SET_EVBIT: ULong = 1074025828U
+    private const val UI_SET_KEYBIT: ULong = 1074025829U
+
     private const val LINUX_KEY_UP = 0U
     private const val LINUX_KEY_DOWN = 1U
 
-    private fun prepare() {
+    override fun prepare() {
         if (inputFile.value != 0) return
-        inputFile.value = open("/dev/uinput", O_RDWR)
+        val ip = open("/dev/uinput", O_RDWR)
+
+        ioctl(ip, UI_SET_EVBIT, EV_KEY)
+        for (i in 0 until 256) ioctl(ip, UI_SET_KEYBIT, i)
+
+        memScoped {
+
+        }
+
+        inputFile.value = ip
     }
 
-    private fun readEvents() {
+    override fun readEvents() {
         memScoped {
             // Reading into input_event: https://stackoverflow.com/a/16695758/11377112
             val buffer = alloc<input_event>()
@@ -100,7 +77,7 @@ object LinuxKeyboardHandler : NativeKeyboardHandler {
         }
     }
 
-    private fun cleanup() {
+    override fun cleanup() {
         val ip = inputFile.value
         if (ip != 0) {
             close(ip)
@@ -117,10 +94,4 @@ object LinuxKeyboardHandler : NativeKeyboardHandler {
         eventsInternal.tryEmit(KeyEvent(key, keyEventType))
     }
 
-}
-
-@ExperimentalUnsignedTypes
-@ExperimentalKeyIO
-actual fun nativeKbHandlerForPlatform(): NativeKeyboardHandler {
-    return LinuxKeyboardHandler
 }
