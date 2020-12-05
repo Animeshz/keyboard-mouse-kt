@@ -21,7 +21,7 @@ subprojects {
         publications.withType<MavenPublication> {
             pom {
                 name.set("keyboard-mouse-kt-${project.name}")
-                description.set("A multiplatform library for listening to global keyboard and mouse events.")
+                description.set("A multiplatform kotlin library for listening to global keyboard and mouse events.")
                 url.set("https://github.com/Animeshz/keyboard-mouse-kt")
 
                 licenses {
