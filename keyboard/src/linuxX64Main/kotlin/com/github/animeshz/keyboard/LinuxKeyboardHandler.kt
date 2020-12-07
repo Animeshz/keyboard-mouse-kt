@@ -1,8 +1,21 @@
 package com.github.animeshz.keyboard
 
+import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.events.KeyEvent
+import com.github.animeshz.keyboard.events.KeyEventType
+import kotlin.native.concurrent.AtomicNativePtr
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
+import kotlin.native.internal.NativePtr
+import kotlinx.cinterop.COpaquePointerVar
+import kotlinx.cinterop.IntVar
+import kotlinx.cinterop.ULongVar
+import kotlinx.cinterop.alloc
+import kotlinx.cinterop.interpretCPointer
+import kotlinx.cinterop.memScoped
+import kotlinx.cinterop.ptr
+import kotlinx.cinterop.reinterpret
+import kotlinx.cinterop.value
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -13,13 +26,30 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import platform.posix.RTLD_LAZY
+import platform.posix.dlclose
+import platform.posix.dlopen
 import platform.posix.getenv
-import platform.posix.geteuid
+import x11.Display
+import x11.KeyPress
+import x11.KeyPressMask
+import x11.KeyRelease
+import x11.KeyReleaseMask
+import x11.True
+import x11.XCloseDisplay
+import x11.XEvent
+import x11.XGetInputFocus
+import x11.XKeyEvent
+import x11.XOpenDisplay
+import x11.XPeekEvent
+import x11.XSendEvent
 
 @ExperimentalKeyIO
-internal abstract class LinuxKeyboardHandlerBase : NativeKeyboardHandler {
+internal object X11KeyboardHandler : NativeKeyboardHandler {
     private val worker: Worker = Worker.start(errorReporting = true, name = "LinuxKeyboardHandler")
-    protected val eventsInternal: MutableSharedFlow<KeyEvent> = MutableSharedFlow(extraBufferCapacity = 8)
+    private val dl: AtomicNativePtr = AtomicNativePtr(NativePtr.NULL)
+    private val connection: AtomicNativePtr = AtomicNativePtr(NativePtr.NULL)
+    private val eventsInternal: MutableSharedFlow<KeyEvent> = MutableSharedFlow(extraBufferCapacity = 8)
 
     /**
      * A [SharedFlow] of [KeyEvent] for receiving Key events from the target platform.
@@ -43,9 +73,67 @@ internal abstract class LinuxKeyboardHandlerBase : NativeKeyboardHandler {
                 .launchIn(CoroutineScope(Dispatchers.Unconfined))
     }
 
-    protected abstract fun prepare()
-    protected abstract fun readEvents()
-    protected abstract fun cleanup()
+    override fun sendEvent(keyEvent: KeyEvent) {
+        memScoped {
+            val display = interpretCPointer<Display>(connection.value)
+            val focusedWindow = alloc<ULongVar>()
+            val focusRevert = alloc<IntVar>()
+            val mask = if (keyEvent.type == KeyEventType.KeyDown) KeyPressMask else KeyReleaseMask
+
+            XGetInputFocus(display, focusedWindow.ptr, focusRevert.ptr)
+            val event = alloc<XKeyEvent>().apply {
+                keycode = keyEvent.key.keyCode.toUInt()
+                type = if (keyEvent.type == KeyEventType.KeyDown) KeyPress else KeyRelease
+                root = focusedWindow.value
+                this.display = display
+            }
+
+            XSendEvent(display, focusedWindow.value, True, mask, event.ptr.reinterpret())
+        }
+    }
+
+    // ==================================== Internals ====================================
+    private const val X11_PATH = "/usr/lib/x86_64-linux-gnu/libX11.so"
+
+    private fun prepare() {
+        dl.value =
+                dlopen(X11_PATH, RTLD_LAZY)?.rawValue ?: throw RuntimeException("X11 connection can't be established")
+        connection.value = XOpenDisplay(null)?.rawValue ?: throw RuntimeException("X11 connection can't be established")
+    }
+
+    private fun readEvents() {
+        memScoped {
+            val dl = interpretCPointer<COpaquePointerVar>(dl.value)
+            val event = alloc<XEvent>()
+            val display = interpretCPointer<Display>(connection.value)
+            while (true) {
+                XPeekEvent(display, event.ptr)
+                val keyEventType = when (event.type) {
+                    KeyPress -> KeyEventType.KeyDown
+                    KeyRelease -> KeyEventType.KeyUp
+                    else -> continue
+                }
+
+                process(keyEventType, event.xkey.keycode.toInt())
+            }
+        }
+    }
+
+    private fun cleanup() {
+        XCloseDisplay(interpretCPointer(connection.value))
+        dlclose(interpretCPointer<COpaquePointerVar>(dl.value))
+
+        connection.value = NativePtr.NULL
+        dl.value = NativePtr.NULL
+    }
+
+    /**
+     * Processes the event.
+     */
+    private fun process(keyEventType: KeyEventType, code: Int) {
+        val key = Key.fromKeyCode(code)
+        eventsInternal.tryEmit(KeyEvent(key, keyEventType))
+    }
 }
 
 @ExperimentalUnsignedTypes
@@ -53,7 +141,6 @@ internal abstract class LinuxKeyboardHandlerBase : NativeKeyboardHandler {
 public actual fun nativeKbHandlerForPlatform(): NativeKeyboardHandler {
     return when {
         getenv("DISPLAY") != null -> X11KeyboardHandler
-        geteuid() == 0U -> DeviceKeyboardHandler  // Reading & Writing to /dev/uinput if we have root access
-        else -> throw RuntimeException("Neither X11 is present nor root access is granted, cannot receive events.")
+        else -> throw RuntimeException("X11 is not present/running in the host.")
     }
 }
