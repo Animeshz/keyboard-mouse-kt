@@ -156,6 +156,7 @@ public enum class Key(public val keyCode: Int) {
     F22(192),
     F23(193),
     F24(194),
+    // TODO: Add shift-pressed keys like colon, triangular braces
     ;
 
     override fun toString(): String {
@@ -163,11 +164,13 @@ public enum class Key(public val keyCode: Int) {
     }
 
     public companion object {
+        // TODO: Add support for non-alphanumeric symbols
         public fun fromChar(char: Char): Key {
             if (char == '0') return Number0
             if (char in 49..57) return values()[char - '0' + 2]
 
-            return values().firstOrNull { it.name.length == 1 && it.name[0] == char } ?: Unknown
+            /* if (char in 65..90) */
+            return values().firstOrNull { it.name.length == 1 && it.name[0] == char.toUpperCase() } ?: Unknown
         }
 
         public fun fromKeyCode(keyCode: Int): Key {
