@@ -14,7 +14,7 @@ We aim to provide high-level as well as high-performant low-level access to such
 ## Status of KeyboardMouse.kt
 
   - [ ] Keyboard
-    - [ ] Windows <sup>1</sup>
+    - [X] Windows <sup>1</sup>
     - [ ] Linux <sup>1</sup>
     - [ ] MacOS
     - [ ] JVM
@@ -33,66 +33,66 @@ At this early stage, library is not published to a any public repository.
 
 You can currently clone the project and publish it to your mavenLocal repository on your host machine and use it.
 
-  1. Clone the repo:
-    `$ git clone https://github.com/Animeshz/keyboard-mouse-kt.git`
-   
-  2. Build and publish to mavenLocal:
-    `gradle build publishToMavenLocal`
-  
-  3. Add the library to your project (`build.gradle.kts`):
-    
-    ```kotlin
-    plugins {
-        kotlin("multiplatform") version "1.4.10"
+1. Clone the repo:
+   `$ git clone https://github.com/Animeshz/keyboard-mouse-kt.git`
+
+2. Build and publish to mavenLocal:
+   `gradle build publishToMavenLocal`
+
+3. Add the library to your project (`build.gradle.kts`):
+
+  ```kotlin
+  plugins {
+    kotlin("multiplatform") version "1.4.10"
+}
+
+repositories {
+    mavenLocal()
+}
+
+kotlin {
+    // Your targets
+    mingwX64 {
+        binaries { executable { entryPoint = "main" } }
     }
-    
-    repositories {
-        mavenLocal()
+    linuxX64 {
+        binaries { executable { entryPoint = "main" } }
     }
-    
-    kotlin {
-        // Your targets
-        mingwX64() {
-            binaries { executable { entryPoint = "main" } }
-        }
-        linuxX64 {
-            binaries { executable { entryPoint = "main" } }
-        }
-        
-        sourceSets {
-            // Either in common:
-            val commonMain by getting {
-                dependencies {
-                    implementation(kotlin("stdlib-common"))
-                    implementation("com.github.animeshz:keyboard:0.0.1")
-                    implementation("com.github.animeshz:mouse:0.0.1")
-                }
-            }
-            
-            // Or configuring per platform:
-            val mingwX64Main by getting {
-                dependencies {
-                    implementation("com.github.animeshz:keyboard-mingwx64:0.0.1")
-                    implementation("com.github.animeshz:mouse-mingwx64:0.0.1")
-                }
+
+    sourceSets {
+        // Either in common:
+        val commonMain by getting {
+            dependencies {
+                implementation(kotlin("stdlib-common"))
+                implementation("com.github.animeshz:keyboard:0.0.1")
+                implementation("com.github.animeshz:mouse:0.0.1")
             }
         }
+
+        // Or configuring per platform:
+        val mingwX64Main by getting {
+            dependencies {
+                implementation("com.github.animeshz:keyboard-mingwx64:0.0.1")
+                implementation("com.github.animeshz:mouse-mingwx64:0.0.1")
+            }
+        }
     }
-    ```
+}
+  ```
 
 ## Usage
 
 ### Low Level API:
 
-  Low Level API depends on [NativeKeyboardHandler][1] that can be obtained via [nativeKbHandlerForPlatform][2].
+Low Level API depends on [NativeKeyboardHandler][1] that can be obtained via [nativeKbHandlerForPlatform][2].
 
-  - Listening to events using Flow.
-    ```kotlin
-    handler.events
-            .filter { it.type == KeyEventType.KeyPress }
-            .map { it.key }
-            .collect { println(it) }
-    ```
+- Listening to events using Flow.
+  ```kotlin
+  handler.events
+          .filter { it.type == KeyEventType.KeyPress }
+          .map { it.key }
+          .collect { println(it) }
+  ```
 
   - Sending a [Key][3] event.
     ```

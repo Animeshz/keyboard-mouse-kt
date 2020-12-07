@@ -7,8 +7,6 @@ import kotlin.native.concurrent.AtomicNativePtr
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
 import kotlin.native.internal.NativePtr
-import kotlinx.atomicfu.AtomicBoolean
-import kotlinx.atomicfu.atomic
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.interpretCPointer
 import kotlinx.cinterop.memScoped
@@ -53,7 +51,6 @@ import platform.windows.tagKBDLLHOOKSTRUCT
 internal object WindowsKeyboardHandler : NativeKeyboardHandler {
     private val worker = Worker.start(errorReporting = true, name = "WindowsKeyboardHandler")
     private val hook: AtomicNativePtr = AtomicNativePtr(NativePtr.NULL)
-    private val ignoreNextRightAlt: AtomicBoolean = atomic(false)
     private val eventsInternal = MutableSharedFlow<KeyEvent>(extraBufferCapacity = 8)
 
     /**
@@ -69,9 +66,9 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandler {
                 .filter { it }
                 .onEach {
                     worker.execute(mode = TransferMode.SAFE, { this }) { handler ->
-                        prepare()
-                        startMessagePumping()
-                        cleanup()
+                        handler.prepare()
+                        handler.startMessagePumping()
+                        handler.cleanup()
                     }
                 }
                 .launchIn(CoroutineScope(Dispatchers.Unconfined))
@@ -82,7 +79,9 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandler {
      */
     // TODO("Add support for extended key sending")
     override fun sendEvent(keyEvent: KeyEvent) {
-        return memScoped {
+        if (keyEvent.key == Key.Unknown) return
+
+        memScoped {
             val input = alloc<INPUT>().apply {
                 type = INPUT_KEYBOARD
                 ki.wVk = keyEvent.key.keyCode.toUShort()
@@ -118,7 +117,7 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandler {
     private fun startMessagePumping() {
         memScoped {
             val msg = alloc<MSG>().ptr
-            while (eventsInternal.subscriptionCount.value == 0) {
+            while (eventsInternal.subscriptionCount.value != 0) {
                 if (GetMessageW(msg, null, 0, 0) == 0) break
                 TranslateMessage(msg)
                 DispatchMessageA(msg)
@@ -135,18 +134,30 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandler {
             UnhookWindowsHookEx(interpretCPointer(hookPtr))
             hook.value = NativePtr.NULL
         }
-        ignoreNextRightAlt.value = false
     }
 
     /**
      * Processes the event.
      */
-    // TODO("Add support for extended key parsing")
+    // TODO(
+    //  Fix: PageUp/PageDn Arrow keys are sending Keypad inputs
+    //    Up -> Key8
+    //    Down -> Key 2
+    //    Right -> 6
+    //    Left -> 4
+    //    PgUp -> 9
+    //    UpDn -> 3
+    //    Home -> 7
+    //    End -> 1
+    //  )
     internal fun process(keyEventType: KeyEventType, vk: Int, scanCode: Int, extended: Boolean) {
-        if (vk == 0xA5 && ignoreNextRightAlt.getAndSet(false)) return
-        if (scanCode == 541 && vk == 162) ignoreNextRightAlt.value = true
+        var keyCode = scanCode
+        if (extended) {
+            if (scanCode == Key.LeftAlt.keyCode) keyCode = Key.RightAlt.keyCode
+            else if (scanCode == Key.LeftCtrl.keyCode) keyCode = Key.RightCtrl.keyCode
+        }
 
-        val key = Key.fromKeyCode(vk)
+        val key = Key.fromKeyCode(keyCode)
         eventsInternal.tryEmit(KeyEvent(key, keyEventType))
     }
 }

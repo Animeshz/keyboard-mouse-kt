@@ -1,5 +1,7 @@
 @file:Suppress("UNUSED_VARIABLE")
 
+import org.apache.tools.ant.taskdefs.condition.Os
+
 kotlin {
     linuxX64 {
         val main by compilations.getting
@@ -7,7 +9,7 @@ kotlin {
         main.cinterops.create("device") { defFile("src/linuxX64Main/cinterop/device.def") }
         main.cinterops.create("x11") {
             defFile("src/linuxX64Main/cinterop/x11.def")
-            compilerOpts.add("-Isrc/linuxX64Main/cinterop/")
+            compilerOpts.add("-I" + rootDir.resolve("include"))
         }
     }
     mingwX64()
@@ -50,4 +52,14 @@ kotlin {
     }
 
     explicitApi()
+}
+
+afterEvaluate {
+    if (!Os.isFamily(Os.FAMILY_UNIX)) {
+        tasks.all {
+            if (name.toLowerCase().contains("linux")) {
+                enabled = false
+            }
+        }
+    }
 }
