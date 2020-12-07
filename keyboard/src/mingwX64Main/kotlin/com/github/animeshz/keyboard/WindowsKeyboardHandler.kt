@@ -78,7 +78,7 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandler {
      * Sends the [keyEvent] to the platform.
      */
     // TODO("Add support for extended key sending")
-    override fun sendEvent(keyEvent: KeyEvent) {
+    override fun sendEvent(keyEvent: KeyEvent, moreOnTheWay: Boolean) {
         if (keyEvent.key == Key.Unknown) return
 
         memScoped {

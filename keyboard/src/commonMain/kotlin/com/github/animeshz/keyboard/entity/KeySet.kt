@@ -12,6 +12,10 @@ public class KeySet(
     public operator fun plus(other: Key): KeySet =
             KeySet(this.keys + other)
 
+    override fun toString(): String {
+        return "KeySet(keys=$keys)"
+    }
+
     override fun hashCode(): Int = keys.hashCode()
 
     override fun equals(other: Any?): Boolean {

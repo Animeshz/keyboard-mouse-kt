@@ -2,6 +2,7 @@ package com.github.animeshz.keyboard
 
 import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.entity.KeySet
+import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyEventType
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
@@ -15,14 +16,20 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.buffer
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 
 public typealias Cancellable = () -> Unit
+
+/**
+ * Represents a keypress sequence with each element in ascending order of duration from the start time.
+ */
+@ExperimentalKeyIO
+@ExperimentalTime
+public typealias KeyPressSequence = List<Pair<Duration, KeyEvent>>
 
 /**
  * The central class for receiving and interacting with the Keyboard Events.
@@ -33,6 +40,7 @@ public typealias Cancellable = () -> Unit
  *
  * @param context The [CoroutineContext] used for processing of data.
  */
+@Suppress("unused", "MemberVisibilityCanBePrivate")
 @ExperimentalKeyIO
 public class Keyboard(
         context: CoroutineContext = Dispatchers.Default
@@ -71,18 +79,38 @@ public class Keyboard(
     }
 
     /**
-     * Tries to press the [keys] on the host machine.
-     * If successful returns true.
+     * Presses the [keySet] on the host machine.
      */
-    public suspend fun press(keys: KeySet): Boolean {
-        TODO()
+    public fun press(keySet: KeySet) {
+        if (keySet.keys.isEmpty()) return
+
+        for (key in keySet.keys) {
+            handler.sendEvent(KeyEvent(key, KeyEventType.KeyDown), moreOnTheWay = true)
+        }
+
+        val iterator = keySet.keys.iterator()
+        while (true) {
+            val item = iterator.next()
+            if (iterator.hasNext()) handler.sendEvent(KeyEvent(item, KeyEventType.KeyUp), moreOnTheWay = true)
+            else return handler.sendEvent(KeyEvent(item, KeyEventType.KeyUp))
+        }
     }
 
     /**
-     * Tries to write the following [string] on the host machine.
+     * Writes the following [string] on the host machine.
      */
-    public suspend fun write(string: String) {
-        TODO()
+    public fun write(string: String) {
+        if (string.isEmpty()) return
+
+        val iterator = string.iterator()
+        while (true) {
+            val char = iterator.next()
+            if (iterator.hasNext()) handler.sendEvent(
+                    KeyEvent(Key.fromChar(char), KeyEventType.KeyUp),
+                    moreOnTheWay = true
+            )
+            else return handler.sendEvent(KeyEvent(Key.fromChar(char), KeyEventType.KeyUp))
+        }
     }
 
     /**
@@ -115,15 +143,15 @@ public class Keyboard(
     public suspend fun recordKeyPressesTill(
             keySet: KeySet,
             trigger: KeyEventType = KeyEventType.KeyDown
-    ): List<Pair<Duration, Key>> = suspendCancellableCoroutine { cont ->
-        val record = mutableListOf<Pair<Duration, Key>>()
+    ): KeyPressSequence = suspendCancellableCoroutine { cont ->
+        val record = mutableListOf<Pair<Duration, KeyEvent>>()
         val mark = TimeSource.Monotonic.markNow()
 
         val handlers = if (trigger == KeyEventType.KeyDown) keyDownHandlers else keyUpHandlers
 
         val recJob = scope.launch {
-            handler.events.buffer(Channel.UNLIMITED).collect {
-                record.add(mark.elapsedNow() to it.key)
+            handler.events.collect {
+                record.add(mark.elapsedNow() to it)
             }
         }
         handlers[keySet] = {
@@ -143,8 +171,17 @@ public class Keyboard(
     }
 
     @ExperimentalTime
-    public suspend fun play(orderedPresses: List<Pair<Duration, Key>>, speedFactor: Float = 1.0f) {
-        TODO()
+    public suspend fun play(orderedPresses: KeyPressSequence, speedFactor: Double = 1.0) {
+        val mark = TimeSource.Monotonic.markNow()
+
+        val iterator = orderedPresses.iterator()
+        while (true) {
+            val (duration, event) = iterator.next()
+            delay((duration - mark.elapsedNow()) / speedFactor)
+
+            if (iterator.hasNext()) handler.sendEvent(event, moreOnTheWay = true)
+            else return handler.sendEvent(event)
+        }
     }
 
     /**
@@ -159,7 +196,7 @@ public class Keyboard(
         if (job!!.isActive) return
 
         job = scope.launch {
-            handler.events.buffer(Channel.UNLIMITED).collect {
+            handler.events.collect {
                 when (it.type) {
                     KeyEventType.KeyDown -> {
                         pressedKeys.add(it.key)
