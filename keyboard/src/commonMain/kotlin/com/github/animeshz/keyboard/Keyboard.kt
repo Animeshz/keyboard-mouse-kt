@@ -2,6 +2,7 @@ package com.github.animeshz.keyboard
 
 import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.entity.KeySet
+import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyEventType
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
@@ -71,18 +72,38 @@ public class Keyboard(
     }
 
     /**
-     * Tries to press the [keys] on the host machine.
-     * If successful returns true.
+     * Presses the [keySet] on the host machine.
      */
-    public suspend fun press(keys: KeySet): Boolean {
-        TODO()
+    public fun press(keySet: KeySet) {
+        if (keySet.keys.isEmpty()) return
+
+        for (key in keySet.keys) {
+            handler.sendEvent(KeyEvent(key, KeyEventType.KeyDown), moreOnTheWay = true)
+        }
+
+        val iterator = keySet.keys.iterator()
+        while (true) {
+            val item = iterator.next()
+            if (iterator.hasNext()) handler.sendEvent(KeyEvent(item, KeyEventType.KeyUp), moreOnTheWay = true)
+            else return handler.sendEvent(KeyEvent(item, KeyEventType.KeyUp))
+        }
     }
 
     /**
-     * Tries to write the following [string] on the host machine.
+     * Writes the following [string] on the host machine.
      */
-    public suspend fun write(string: String) {
-        TODO()
+    public fun write(string: String) {
+        if (string.isEmpty()) return
+
+        val iterator = string.iterator()
+        while (true) {
+            val char = iterator.next()
+            if (iterator.hasNext()) handler.sendEvent(
+                    KeyEvent(Key.fromChar(char), KeyEventType.KeyUp),
+                    moreOnTheWay = true
+            )
+            else return handler.sendEvent(KeyEvent(Key.fromChar(char), KeyEventType.KeyUp))
+        }
     }
 
     /**

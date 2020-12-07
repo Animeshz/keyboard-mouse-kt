@@ -163,6 +163,13 @@ public enum class Key(public val keyCode: Int) {
     }
 
     public companion object {
+        public fun fromChar(char: Char): Key {
+            if (char == '0') return Number0
+            if (char in 49..57) return values()[char - '0' + 2]
+
+            return values().firstOrNull { it.name.length == 1 && it.name[0] == char } ?: Unknown
+        }
+
         public fun fromKeyCode(keyCode: Int): Key {
             val values = values()
 

@@ -15,8 +15,13 @@ public interface NativeKeyboardHandler {
 
     /**
      * Sends the [keyEvent] to the platform.
+     *
+     * If [moreOnTheWay] is true, the resources won't be closed even if [events] subscriptionCount is 0,
+     * usually should be true when there are more events to be sent on the way.
      */
-    public fun sendEvent(keyEvent: KeyEvent)
+    public fun sendEvent(keyEvent: KeyEvent, moreOnTheWay: Boolean = false)
+
+    //    TODO: public fun getKeyState(key: Key)
 }
 
 /**

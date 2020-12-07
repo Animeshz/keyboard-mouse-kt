@@ -101,18 +101,21 @@ Low Level API depends on [NativeKeyboardHandler][1] that can be obtained via [na
     
 ### High level API:
 
-  High Level API depends on [Keyboard][4] which is a wrapper around the [NativeKeyboardHandler][1].
+High Level API depends on [Keyboard][4] which is a wrapper around the [NativeKeyboardHandler][1].
 
-  - Adding a shortcut (Hotkey).
-  - Press a [KeySet][5] to the host machine.
-  - Write a sentence (String) on the host machine.
-  - Suspensive wait till a [KeySet][5] is pressed.
-  - Record Key presses till specific [KeySet][5] is pressed.
-  - Play a recorded or created collection of Keys at defined order.
+- Adding a shortcut (Hotkey).
+- Press a [KeySet][5] to the host machine.
+- Write a sentence (String) on the host machine.
+- Suspensive wait till a [KeySet][5] is pressed.
+- Record Key presses till specific [KeySet][5] is pressed.
+- Play a recorded or created collection of Keys at defined order.
 
+[1]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/NativeKeyboardHandler.kt
 
-  [1]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/NativeKeyboardHandler.kt#L6-L20
-  [2]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/NativeKeyboardHandler.kt#L22-L26
-  [3]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/Key.kt
-  [4]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/Keyboard.kt
-  [5]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/KeySet.kt
+[2]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/NativeKeyboardHandler.kt
+
+[3]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/Key.kt
+
+[4]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/Keyboard.kt
+
+[5]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/KeySet.kt
