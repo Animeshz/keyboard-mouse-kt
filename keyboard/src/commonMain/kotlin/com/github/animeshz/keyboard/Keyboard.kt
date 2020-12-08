@@ -78,9 +78,9 @@ public class Keyboard(
     }
 
     /**
-     * Presses the [keySet] on the host machine.
+     * Presses and releases the [keySet] on the host machine.
      */
-    public fun press(keySet: KeySet) {
+    public fun send(keySet: KeySet) {
         if (keySet.keys.isEmpty()) return
 
         for (key in keySet.keys) {

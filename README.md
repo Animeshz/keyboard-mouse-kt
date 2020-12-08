@@ -109,9 +109,9 @@ High Level API depends on [Keyboard][4] which is a wrapper around the [NativeKey
       println("triggered")
   }
   ```
-- Press a [KeySet][5] to the host machine.
+- Send a [KeySet][5] to the host machine.
   ```kotlin
-  keyboard.press(Key.LeftAlt + Key.M)
+  keyboard.send(Key.LeftAlt + Key.M)
   ```
 - Write a sentence (String) on the host machine.
   ```kotlin

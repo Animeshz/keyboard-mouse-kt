@@ -7,9 +7,12 @@ import kotlin.native.concurrent.AtomicNativePtr
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
 import kotlin.native.internal.NativePtr
+import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.IntVar
 import kotlinx.cinterop.ULongVar
 import kotlinx.cinterop.alloc
+import kotlinx.cinterop.allocArray
+import kotlinx.cinterop.get
 import kotlinx.cinterop.interpretCPointer
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.ptr
@@ -38,6 +41,7 @@ import x11.XGetInputFocus
 import x11.XKeyEvent
 import x11.XOpenDisplay
 import x11.XPeekEvent
+import x11.XQueryKeymap
 import x11.XSendEvent
 
 @ExperimentalUnsignedTypes
@@ -90,6 +94,20 @@ internal object X11KeyboardHandler : NativeKeyboardHandler {
             XSendEvent(display, focusedWindow.value, True, mask, event.ptr.reinterpret())
         }
         if (!moreOnTheWay) cleanup()
+    }
+
+    override fun getKeyState(key: Key): KeyState {
+        if (key == Key.Unknown) return KeyState.KeyUp
+        if (key == Key.Super) return KeyState.KeyUp  // TODO: Temporarily return KeyUp for Super key, Fix it.
+
+        val display = interpretCPointer<Display>(connection.value)
+        memScoped {
+            val keyStates = allocArray<ByteVar>(32)
+            XQueryKeymap(display, keyStates)
+
+            return if (keyStates[key.keyCode / 8].toInt() and (1 shl key.keyCode % 8) != 0) KeyState.KeyDown
+            else KeyState.KeyUp
+        }
     }
 
     // ==================================== Internals ====================================

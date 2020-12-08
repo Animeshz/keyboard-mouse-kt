@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import platform.windows.CallNextHookEx
 import platform.windows.DispatchMessageA
+import platform.windows.GetKeyState
 import platform.windows.GetLastError
 import platform.windows.GetMessageW
 import platform.windows.GetModuleHandleW
@@ -34,7 +35,9 @@ import platform.windows.INPUT
 import platform.windows.LLKHF_INJECTED
 import platform.windows.LPARAM
 import platform.windows.LRESULT
+import platform.windows.MAPVK_VSC_TO_VK_EX
 import platform.windows.MSG
+import platform.windows.MapVirtualKeyA
 import platform.windows.SendInput
 import platform.windows.SetWindowsHookExW
 import platform.windows.TranslateMessage
@@ -83,14 +86,33 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandler {
         memScoped {
             val input = alloc<INPUT>().apply {
                 type = INPUT_KEYBOARD
-                ki.wVk = keyEvent.key.keyCode.toUShort()
-                ki.dwFlags = if (keyEvent.state == KeyState.KeyDown) 0U else 2U
                 ki.time = 0U
                 ki.dwExtraInfo = 0U
+
+                // Send Windows/Super key with virtual code, because there's no particular scan code for that.
+                if (keyEvent.key == Key.Super) {
+                    ki.wVk = 0x5B.toUShort()
+                    ki.dwFlags = if (keyEvent.state == KeyState.KeyUp) 2U else 0U
+                } else {
+                    ki.wScan = keyEvent.key.keyCode.toUShort()
+                    ki.dwFlags = 8U or if (keyEvent.state == KeyState.KeyUp) 2U else 0U
+                }
             }
 
             SendInput(1, input.ptr, sizeOf<INPUT>().toInt())
         }
+    }
+
+    override fun getKeyState(key: Key): KeyState {
+        if (key == Key.Unknown) return KeyState.KeyUp
+
+        val vk = if (key == Key.Super) {
+            0x5B
+        } else {
+            MapVirtualKeyA(key.keyCode.toUInt(), MAPVK_VSC_TO_VK_EX).toInt()
+        }
+
+        return if (GetKeyState(vk) < 0) KeyState.KeyDown else KeyState.KeyUp
     }
 
     // ==================================== Internals ====================================
