@@ -2,7 +2,7 @@ package com.github.animeshz.keyboard
 
 import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.events.KeyEvent
-import com.github.animeshz.keyboard.events.KeyEventType
+import com.github.animeshz.keyboard.events.KeyState
 import kotlin.native.concurrent.AtomicNativePtr
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
@@ -77,7 +77,6 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandler {
     /**
      * Sends the [keyEvent] to the platform.
      */
-    // TODO("Add support for extended key sending")
     override fun sendEvent(keyEvent: KeyEvent, moreOnTheWay: Boolean) {
         if (keyEvent.key == Key.Unknown) return
 
@@ -85,7 +84,7 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandler {
             val input = alloc<INPUT>().apply {
                 type = INPUT_KEYBOARD
                 ki.wVk = keyEvent.key.keyCode.toUShort()
-                ki.dwFlags = if (keyEvent.type == KeyEventType.KeyDown) 0U else 2U
+                ki.dwFlags = if (keyEvent.state == KeyState.KeyDown) 0U else 2U
                 ki.time = 0U
                 ki.dwExtraInfo = 0U
             }
@@ -97,6 +96,17 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandler {
     // ==================================== Internals ====================================
     internal const val FAKE_ALT: Int = LLKHF_INJECTED or 0x20
     private const val INPUT_KEYBOARD = 1U
+    private val WINDOWS_VK_MAPPING = mapOf(
+            0x21 to Key.PageUp,
+            0x22 to Key.PageDown,
+            0x23 to Key.End,
+            0x24 to Key.Home,
+            0x25 to Key.Left,
+            0x26 to Key.Up,
+            0x27 to Key.Right,
+            0x28 to Key.Down,
+            0x5B to Key.Super
+    )
 
     /**
      * Registers the native hook.
@@ -139,26 +149,17 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandler {
     /**
      * Processes the event.
      */
-    // TODO(
-    //  Fix: PageUp/PageDn Arrow keys are sending Keypad inputs
-    //    Up -> Key8
-    //    Down -> Key 2
-    //    Right -> 6
-    //    Left -> 4
-    //    PgUp -> 9
-    //    UpDn -> 3
-    //    Home -> 7
-    //    End -> 1
-    //  )
-    internal fun process(keyEventType: KeyEventType, vk: Int, scanCode: Int, extended: Boolean) {
+    internal fun process(keyState: KeyState, vk: Int, scanCode: Int, extended: Boolean) {
         var keyCode = scanCode
         if (extended) {
-            if (scanCode == Key.LeftAlt.keyCode) keyCode = Key.RightAlt.keyCode
-            else if (scanCode == Key.LeftCtrl.keyCode) keyCode = Key.RightCtrl.keyCode
+            when (scanCode) {
+                Key.LeftAlt.keyCode -> keyCode = Key.RightAlt.keyCode
+                Key.LeftCtrl.keyCode -> keyCode = Key.RightCtrl.keyCode
+            }
         }
 
-        val key = Key.fromKeyCode(keyCode)
-        eventsInternal.tryEmit(KeyEvent(key, keyEventType))
+        val key = WINDOWS_VK_MAPPING[vk] ?: Key.fromKeyCode(keyCode)
+        eventsInternal.tryEmit(KeyEvent(key, keyState))
     }
 }
 
@@ -175,8 +176,8 @@ internal fun lowLevelKeyboardProc(nCode: Int, wParam: WPARAM, lParam: LPARAM): L
 
         if (vk != VK_PACKET && keyInfo.flags.toInt() and WindowsKeyboardHandler.FAKE_ALT != WindowsKeyboardHandler.FAKE_ALT) {
             val keyEventType = when (wParam.toInt()) {
-                WM_KEYDOWN, WM_SYSKEYDOWN -> KeyEventType.KeyDown
-                else -> KeyEventType.KeyUp
+                WM_KEYDOWN, WM_SYSKEYDOWN -> KeyState.KeyDown
+                else -> KeyState.KeyUp
             }
 
             val extended = keyInfo.flags.toInt() and 1 == 1
@@ -194,6 +195,6 @@ internal fun lowLevelKeyboardProc(nCode: Int, wParam: WPARAM, lParam: LPARAM): L
  */
 @ExperimentalUnsignedTypes
 @ExperimentalKeyIO
-public actual fun nativeKbHandlerForPlatform(): NativeKeyboardHandler {
+actual fun nativeKbHandlerForPlatform(): NativeKeyboardHandler {
     return WindowsKeyboardHandler
 }
