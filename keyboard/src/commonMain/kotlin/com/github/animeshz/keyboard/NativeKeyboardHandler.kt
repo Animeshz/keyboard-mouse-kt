@@ -1,6 +1,8 @@
 package com.github.animeshz.keyboard
 
+import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.events.KeyEvent
+import com.github.animeshz.keyboard.events.KeyState
 import kotlinx.coroutines.flow.SharedFlow
 
 /**
@@ -21,7 +23,10 @@ public interface NativeKeyboardHandler {
      */
     public fun sendEvent(keyEvent: KeyEvent, moreOnTheWay: Boolean = false)
 
-    //    TODO: public fun getKeyState(key: Key)
+    /**
+     * Gets the current key state from the host.
+     */
+    public fun getKeyState(key: Key): KeyState
 }
 
 /**
