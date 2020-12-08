@@ -2,6 +2,11 @@ package com.github.animeshz.keyboard.entity
 
 import com.github.animeshz.keyboard.ExperimentalKeyIO
 
+/**
+ * Represents key of the keyboard.
+ *
+ * [keyCode] matches with hardware scan codes.
+ */
 @Suppress("unused")
 @ExperimentalKeyIO
 public enum class Key(public val keyCode: Int) {
@@ -46,7 +51,7 @@ public enum class Key(public val keyCode: Int) {
     L(38),
     Semicolon(39),
     Apostrophe(40),
-    Grave(41),
+    Backtick(41),
     LeftShift(42),
     Backslash(43),
     Z(44),
@@ -156,7 +161,7 @@ public enum class Key(public val keyCode: Int) {
     F22(192),
     F23(193),
     F24(194),
-    // TODO: Add shift-pressed keys like colon, triangular braces
+    Super(1000)  // Not mapped to hardware scan code
     ;
 
     override fun toString(): String {
@@ -164,15 +169,60 @@ public enum class Key(public val keyCode: Int) {
     }
 
     public companion object {
-        // TODO: Add support for non-alphanumeric symbols
-        public fun fromChar(char: Char): Key {
-            if (char == '0') return Number0
-            if (char in 49..57) return values()[char - '0' + 2]
+        /**
+         * 'Symbol' to Pair(Key, SHIFT_REQUIRED)
+         */
+        private val SYMBOL_MAPPING = mapOf(
+                '~' to Pair(Backtick, true),
+                '!' to Pair(Number1, true),
+                '@' to Pair(Number2, true),
+                '#' to Pair(Number3, true),
+                '$' to Pair(Number4, true),
+                '%' to Pair(Number5, true),
+                '^' to Pair(Number6, true),
+                '&' to Pair(Number7, true),
+                '*' to Pair(Number8, true),
+                '(' to Pair(Number9, true),
+                ')' to Pair(Number0, true),
+                '-' to Pair(Minus, false),
+                '_' to Pair(Minus, true),
+                '=' to Pair(Equal, false),
+                '+' to Pair(Equal, true),
+                '[' to Pair(LeftBrace, false),
+                '{' to Pair(LeftBrace, true),
+                '[' to Pair(RightBrace, false),
+                '{' to Pair(RightBrace, true),
+                ';' to Pair(Semicolon, false),
+                ':' to Pair(Semicolon, true),
+                '\'' to Pair(Apostrophe, false),
+                '"' to Pair(Apostrophe, true),
+                ',' to Pair(Comma, false),
+                '<' to Pair(Comma, true),
+                '.' to Pair(Dot, false),
+                '>' to Pair(Dot, true),
+                '/' to Pair(Slash, false),
+                '?' to Pair(Slash, true),
+        )
 
-            /* if (char in 65..90) */
-            return values().firstOrNull { it.name.length == 1 && it.name[0] == char.toUpperCase() } ?: Unknown
+        /**
+         * Resolves [Key] and should the Shift Key be pressed for sending the [char] to the host.
+         */
+        public fun fromChar(char: Char): Pair<Key, Boolean> {
+            if (char == '0') return Number0 to false
+            if (char in '1'..'9') return values()[char - '0' + 2] to false
+            return SYMBOL_MAPPING[char] ?: run {
+                when (char) {
+                    in 'A'..'Z' -> values().first { it.name.length == 1 && it.name[0] == char } to true
+                    in 'a'..'z' -> char.toUpperCase()
+                            .let { c -> values().first { it.name.length == 1 && it.name[0] == c } to false }
+                    else -> Unknown to false
+                }
+            }
         }
 
+        /**
+         * Resolves [Key] for the given [keyCode].
+         */
         public fun fromKeyCode(keyCode: Int): Key {
             val values = values()
 

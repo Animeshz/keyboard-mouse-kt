@@ -2,7 +2,7 @@ package com.github.animeshz.keyboard
 
 import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.events.KeyEvent
-import com.github.animeshz.keyboard.events.KeyEventType
+import com.github.animeshz.keyboard.events.KeyState
 import kotlin.native.concurrent.AtomicNativePtr
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
@@ -77,12 +77,12 @@ internal object X11KeyboardHandler : NativeKeyboardHandler {
             val display = interpretCPointer<Display>(connection.value)
             val focusedWindow = alloc<ULongVar>()
             val focusRevert = alloc<IntVar>()
-            val mask = if (keyEvent.type == KeyEventType.KeyDown) KeyPressMask else KeyReleaseMask
+            val mask = if (keyEvent.state == KeyState.KeyDown) KeyPressMask else KeyReleaseMask
 
             XGetInputFocus(display, focusedWindow.ptr, focusRevert.ptr)
             val event = alloc<XKeyEvent>().apply {
                 keycode = keyEvent.key.keyCode.toUInt()
-                type = if (keyEvent.type == KeyEventType.KeyDown) KeyPress else KeyRelease
+                type = if (keyEvent.state == KeyState.KeyDown) KeyPress else KeyRelease
                 root = focusedWindow.value
                 this.display = display
             }
@@ -104,8 +104,8 @@ internal object X11KeyboardHandler : NativeKeyboardHandler {
             while (true) {
                 XPeekEvent(display, event.ptr)
                 val keyEventType = when (event.type) {
-                    KeyPress -> KeyEventType.KeyDown
-                    KeyRelease -> KeyEventType.KeyUp
+                    KeyPress -> KeyState.KeyDown
+                    KeyRelease -> KeyState.KeyUp
                     else -> continue
                 }
 
@@ -122,15 +122,15 @@ internal object X11KeyboardHandler : NativeKeyboardHandler {
     /**
      * Processes the event.
      */
-    private fun process(keyEventType: KeyEventType, code: Int) {
+    private fun process(keyState: KeyState, code: Int) {
         val key = Key.fromKeyCode(code)
-        eventsInternal.tryEmit(KeyEvent(key, keyEventType))
+        eventsInternal.tryEmit(KeyEvent(key, keyState))
     }
 }
 
 @ExperimentalUnsignedTypes
 @ExperimentalKeyIO
-public actual fun nativeKbHandlerForPlatform(): NativeKeyboardHandler {
+actual fun nativeKbHandlerForPlatform(): NativeKeyboardHandler {
     return when {
         getenv("DISPLAY") != null -> X11KeyboardHandler
         else -> throw RuntimeException("X11 is not present/running in the host.")

@@ -43,41 +43,41 @@ You can currently clone the project and publish it to your mavenLocal repository
 
   ```kotlin
   plugins {
-    kotlin("multiplatform") version "1.4.10"
-}
+      kotlin("multiplatform") version "1.4.10"
+  }
 
-repositories {
-    mavenLocal()
-}
+  repositories {
+      mavenLocal()
+  }
 
-kotlin {
-    // Your targets
-    mingwX64 {
-        binaries { executable { entryPoint = "main" } }
-    }
-    linuxX64 {
-        binaries { executable { entryPoint = "main" } }
-    }
+  kotlin {
+      // Your targets
+      mingwX64 {
+          binaries { executable { entryPoint = "main" } }
+      }
+      linuxX64 {
+          binaries { executable { entryPoint = "main" } }
+      }
 
-    sourceSets {
-        // Either in common:
-        val commonMain by getting {
-            dependencies {
-                implementation(kotlin("stdlib-common"))
-                implementation("com.github.animeshz:keyboard:0.0.1")
-                implementation("com.github.animeshz:mouse:0.0.1")
-            }
-        }
+      sourceSets {
+          // Either in common:
+          val commonMain by getting {
+              dependencies {
+                  implementation(kotlin("stdlib-common"))
+                  implementation("com.github.animeshz:keyboard:0.0.1")
+                  implementation("com.github.animeshz:mouse:0.0.1")
+              }
+          }
 
-        // Or configuring per platform:
-        val mingwX64Main by getting {
-            dependencies {
-                implementation("com.github.animeshz:keyboard-mingwx64:0.0.1")
-                implementation("com.github.animeshz:mouse-mingwx64:0.0.1")
-            }
-        }
-    }
-}
+          // Or configuring per platform:
+          val mingwX64Main by getting {
+              dependencies {
+                  implementation("com.github.animeshz:keyboard-mingwx64:0.0.1")
+                  implementation("com.github.animeshz:mouse-mingwx64:0.0.1")
+              }
+          }
+      }
+  }
   ```
 
 ## Usage
@@ -89,26 +89,46 @@ Low Level API depends on [NativeKeyboardHandler][1] that can be obtained via [na
 - Listening to events using Flow.
   ```kotlin
   handler.events
-          .filter { it.type == KeyEventType.KeyPress }
+          .filter { it.state == KeyState.KeyDown }
           .map { it.key }
           .collect { println(it) }
   ```
 
-  - Sending a [Key][3] event.
-    ```
-    handler.sendEvent(KeyEvent(Key.A, KeyEventType.KeyPress))
-    ```
+- Sending a [Key][3] event.
+  ```
+  handler.sendEvent(KeyEvent(Key.A, KeyState.KeyDown))
+  ```
     
 ### High level API:
 
 High Level API depends on [Keyboard][4] which is a wrapper around the [NativeKeyboardHandler][1].
 
 - Adding a shortcut (Hotkey).
+  ```kotlin
+  keyboard.addShortcut(Key.LeftCtrl + Key.E, trigger = KeyState.KeyDown) {
+      println("triggered")
+  }
+  ```
 - Press a [KeySet][5] to the host machine.
+  ```kotlin
+  keyboard.press(Key.LeftAlt + Key.M)
+  ```
 - Write a sentence (String) on the host machine.
+  ```kotlin
+  keyboard.write("Hello Keyboard!")
+  ```
 - Suspensive wait till a [KeySet][5] is pressed.
-- Record Key presses till specific [KeySet][5] is pressed.
+  ```kotlin
+  keyboard.awaitTill(Key.LeftCtrl + Key.LeftShift + Key.R)
+  ```
+- Record Key presses till specific [KeySet][5] is pressed into a [KeyPressSequence][6].
+  ```kotlin
+  val records: KeyPressSequence = keyboard.recordTill(Key.LeftAlt + Key.A)
+  ```
 - Play a recorded or created collection of Keys at defined order.
+  ```kotlin
+  keyboard.play(records, speedFactor = 1.25)
+  ```
 
 [1]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/NativeKeyboardHandler.kt
 
@@ -119,3 +139,5 @@ High Level API depends on [Keyboard][4] which is a wrapper around the [NativeKey
 [4]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/Keyboard.kt
 
 [5]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/KeySet.kt
+
+[6]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/Keyboard.kt#L31
