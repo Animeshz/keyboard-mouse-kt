@@ -217,6 +217,6 @@ internal fun lowLevelKeyboardProc(nCode: Int, wParam: WPARAM, lParam: LPARAM): L
  */
 @ExperimentalUnsignedTypes
 @ExperimentalKeyIO
-actual fun nativeKbHandlerForPlatform(): NativeKeyboardHandler {
+public actual fun nativeKbHandlerForPlatform(): NativeKeyboardHandler {
     return WindowsKeyboardHandler
 }

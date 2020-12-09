@@ -148,7 +148,7 @@ internal object X11KeyboardHandler : NativeKeyboardHandler {
 
 @ExperimentalUnsignedTypes
 @ExperimentalKeyIO
-actual fun nativeKbHandlerForPlatform(): NativeKeyboardHandler {
+public actual fun nativeKbHandlerForPlatform(): NativeKeyboardHandler {
     return when {
         getenv("DISPLAY") != null -> X11KeyboardHandler
         else -> throw RuntimeException("X11 is not present/running in the host.")

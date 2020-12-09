@@ -7,10 +7,7 @@ kotlin {
         val main by compilations.getting
 
         main.cinterops.create("device") { defFile("src/linuxX64Main/cinterop/device.def") }
-        main.cinterops.create("x11") {
-            defFile("src/linuxX64Main/cinterop/x11.def")
-            compilerOpts.add("-I" + rootDir.resolve("include"))
-        }
+        main.cinterops.create("x11") { defFile("src/linuxX64Main/cinterop/x11.def") }
     }
     mingwX64()
 

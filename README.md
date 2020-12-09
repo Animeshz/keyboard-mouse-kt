@@ -37,7 +37,10 @@ You can currently clone the project and publish it to your mavenLocal repository
    `$ git clone https://github.com/Animeshz/keyboard-mouse-kt.git`
 
 2. Build and publish to mavenLocal:
-   `gradle build publishToMavenLocal`
+   `$ ./gradlew build publishToMavenLocal`
+
+   <sub>Note: When building for linux, you need libX11 (for Ubuntu: `apt install libX11-dev`, for
+   Arch: `pacman -S libx11`)</sub>
 
 3. Add the library to your project (`build.gradle.kts`):
 
@@ -95,8 +98,13 @@ Low Level API depends on [NativeKeyboardHandler][1] that can be obtained via [na
   ```
 
 - Sending a [Key][3] event.
-  ```
+  ```kotlin
   handler.sendEvent(KeyEvent(Key.A, KeyState.KeyDown))
+  ```
+- Get [KeyState][7] (KeyDown or KeyUp) of the [Key][3].
+  ```kotlin
+  handler.getKeyState(Key.A)
+  handler.getKeyState(Key.RightAlt)
   ```
     
 ### High level API:
@@ -141,3 +149,5 @@ High Level API depends on [Keyboard][4] which is a wrapper around the [NativeKey
 [5]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/KeySet.kt
 
 [6]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/Keyboard.kt#L31
+
+[7]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/events/KeyEvent.kt
