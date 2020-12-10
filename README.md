@@ -15,7 +15,7 @@ We aim to provide high-level as well as high-performant low-level access to such
 
   - [ ] Keyboard
     - [X] Windows <sup>1</sup>
-    - [ ] Linux <sup>1</sup>
+    - [X] Linux <sup>1</sup>
     - [ ] MacOS
     - [ ] JVM
   - [ ] Mouse
@@ -39,8 +39,8 @@ You can currently clone the project and publish it to your mavenLocal repository
 2. Build and publish to mavenLocal:
    `$ ./gradlew build publishToMavenLocal`
 
-   <sub>Note: When building for linux, you need libX11 (for Ubuntu: `apt install libX11-dev`, for
-   Arch: `pacman -S libx11`)</sub>
+   <sub>Note: When building for linux, you need libX11 and XInput2 (for Ubuntu: `apt install libX11-dev liblxi-dev`, for
+   Arch: `pacman -S libx11 libxi`)</sub>
 
 3. Add the library to your project (`build.gradle.kts`):
 
@@ -101,10 +101,14 @@ Low Level API depends on [NativeKeyboardHandler][1] that can be obtained via [na
   ```kotlin
   handler.sendEvent(KeyEvent(Key.A, KeyState.KeyDown))
   ```
-- Get [KeyState][7] (KeyDown or KeyUp) of the [Key][3].
+- Get [KeyState][7] (KeyDown or KeyUp) or [KeyToggleState][7] (On or Off) of the [Key][3].
   ```kotlin
   handler.getKeyState(Key.A)
   handler.getKeyState(Key.RightAlt)
+  
+  handler.getKeyToggleState(Key.CapsLock)
+  handler.getKeyToggleState(Key.NumLock)
+  handler.getKeyToggleState(Key.ScrollLock)
   ```
     
 ### High level API:

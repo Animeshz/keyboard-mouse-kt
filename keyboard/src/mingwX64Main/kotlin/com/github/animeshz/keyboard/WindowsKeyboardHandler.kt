@@ -3,6 +3,7 @@ package com.github.animeshz.keyboard
 import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyState
+import com.github.animeshz.keyboard.events.KeyToggleState
 import kotlin.native.concurrent.AtomicNativePtr
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
@@ -90,7 +91,7 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandler {
                 ki.dwExtraInfo = 0U
 
                 // Send Windows/Super key with virtual code, because there's no particular scan code for that.
-                if (keyEvent.key == Key.Super) {
+                if (keyEvent.key == Key.LeftSuper) {
                     ki.wVk = 0x5B.toUShort()
                     ki.dwFlags = if (keyEvent.state == KeyState.KeyUp) 2U else 0U
                 } else {
@@ -106,13 +107,25 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandler {
     override fun getKeyState(key: Key): KeyState {
         if (key == Key.Unknown) return KeyState.KeyUp
 
-        val vk = if (key == Key.Super) {
+        val vk = if (key == Key.LeftSuper) {
             0x5B
         } else {
             MapVirtualKeyA(key.keyCode.toUInt(), MAPVK_VSC_TO_VK_EX).toInt()
         }
 
         return if (GetKeyState(vk) < 0) KeyState.KeyDown else KeyState.KeyUp
+    }
+
+    override fun getKeyToggleState(key: Key): KeyToggleState {
+        if (key == Key.Unknown) return KeyToggleState.Off
+        val vk = when (key) {
+            Key.CapsLock -> 0x14
+            Key.NumLock -> 0x90
+            Key.ScrollLock -> 0x91
+            else -> return KeyToggleState.Off
+        }
+
+        return if (GetKeyState(vk).toInt() and 1 != 0) KeyToggleState.On else KeyToggleState.Off
     }
 
     // ==================================== Internals ====================================
@@ -127,7 +140,7 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandler {
             0x26 to Key.Up,
             0x27 to Key.Right,
             0x28 to Key.Down,
-            0x5B to Key.Super
+            0x5B to Key.LeftSuper
     )
 
     /**

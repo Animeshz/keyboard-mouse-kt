@@ -18,17 +18,34 @@ public class KeyEvent(
 }
 
 /**
- * The type of Key Event.
+ * The State of [Key].
  */
 @ExperimentalKeyIO
 public enum class KeyState {
     /**
-     * Type of KeyEvent sent when the user lifts their finger off a key on the keyboard.
+     * Type of state when the user lifts their finger off a key on the keyboard.
      */
     KeyUp,
 
     /**
-     * Type of KeyEvent sent when the user presses down their finger on a key on the keyboard.
+     * Type of state when the user presses down their finger on a key on the keyboard.
      */
     KeyDown
+}
+
+/**
+ * The Toggle State of [Key], if it is toggleable otherwise Off is default.
+ *
+ * Only for [Key.CapsLock], [Key.NumLock] and [Key.ScrollLock].
+ */
+public enum class KeyToggleState {
+    /**
+     * The type of state when the toggleable key is in off state.
+     */
+    Off,
+
+    /**
+     * The type of state when the toggleable key is in off state.
+     */
+    On
 }

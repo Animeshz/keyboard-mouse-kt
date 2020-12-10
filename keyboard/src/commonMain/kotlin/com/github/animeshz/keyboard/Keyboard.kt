@@ -1,14 +1,20 @@
 package com.github.animeshz.keyboard
 
+import co.touchlab.stately.collections.sharedMutableListOf
+import co.touchlab.stately.collections.sharedMutableMapOf
+import co.touchlab.stately.collections.sharedMutableSetOf
 import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.entity.KeySet
 import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyState
+import com.github.animeshz.keyboard.events.KeyToggleState
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 import kotlin.time.TimeSource
+import kotlinx.atomicfu.AtomicRef
+import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -45,11 +51,11 @@ public class Keyboard(
         context: CoroutineContext = Dispatchers.Default
 ) {
     private val scope = CoroutineScope(context + SupervisorJob())
-    private var job: Job? = null
+    private var job: AtomicRef<Job?> = atomic(null)
 
-    private val pressedKeys = mutableSetOf<Key>()
-    private val keyDownHandlers = mutableMapOf<KeySet, suspend () -> Unit>()
-    private val keyUpHandlers = mutableMapOf<KeySet, suspend () -> Unit>()
+    private val pressedKeys = sharedMutableSetOf<Key>()
+    private val keyDownHandlers = sharedMutableMapOf<KeySet, suspend () -> Unit>()
+    private val keyUpHandlers = sharedMutableMapOf<KeySet, suspend () -> Unit>()
 
     /**
      * The backing [NativeKeyboardHandler].
@@ -100,12 +106,14 @@ public class Keyboard(
     public fun write(string: String) {
         if (string.isEmpty()) return
 
+        val capsState = handler.getKeyToggleState(Key.CapsLock)
         val iterator = string.iterator()
         while (iterator.hasNext()) {
             val char = iterator.next()
             val (key, shift) = Key.fromChar(char)
 
-            if (shift) {
+            // (shift and char.toLowerCase() in 'a'..'z') xor capsState
+            if ((shift && char.toLowerCase() in 'a'..'z') != (capsState == KeyToggleState.On)) {
                 handler.sendEvent(KeyEvent(Key.LeftShift, KeyState.KeyDown), moreOnTheWay = true)
                 handler.sendEvent(KeyEvent(key, KeyState.KeyDown), moreOnTheWay = true)
                 handler.sendEvent(KeyEvent(key, KeyState.KeyUp), moreOnTheWay = true)
@@ -148,7 +156,7 @@ public class Keyboard(
             keySet: KeySet,
             trigger: KeyState = KeyState.KeyDown
     ): KeyPressSequence = suspendCancellableCoroutine { cont ->
-        val record = mutableListOf<Pair<Duration, KeyEvent>>()
+        val record = sharedMutableListOf<Pair<Duration, KeyEvent>>()
         val mark = TimeSource.Monotonic.markNow()
 
         val handlers = if (trigger == KeyState.KeyDown) keyDownHandlers else keyUpHandlers
@@ -162,7 +170,8 @@ public class Keyboard(
             handlers.remove(keySet)
             recJob.cancel()
             stopIfNeeded()
-            cont.resume(record)
+
+            cont.resume(record.dropLast(keySet.keys.size).also { record.dispose() })
         }
 
         startIfNeeded()
@@ -195,13 +204,17 @@ public class Keyboard(
      */
     public fun cancel(cause: CancellationException? = null) {
         scope.cancel(cause)
+        job.value = null
+
+        keyUpHandlers.dispose()
+        keyDownHandlers.dispose()
     }
 
     private fun startIfNeeded() {
-        if (job != null) return
-        if (job!!.isActive) return
+        val jobCopy = job.value
+        if (jobCopy != null && jobCopy.isActive) return
 
-        job = scope.launch {
+        job.value = scope.launch {
             handler.events.collect {
                 when (it.state) {
                     KeyState.KeyDown -> {
@@ -221,25 +234,25 @@ public class Keyboard(
         if (keyDownHandlers.count() != 0) return
         if (keyUpHandlers.count() != 0) return
 
-        val activeJob = job ?: return
+        val activeJob = job.value ?: return
         activeJob.cancel()
-        job = null
+        job.value = null
     }
 
-    private fun handleKeyDown() {
-        for ((keySet, handler) in keyDownHandlers) {
+    private fun handleKeyDown(): Unit = keyDownHandlers.access { handlers ->
+        for ((keySet, handler) in handlers) {
             if (pressedKeys.containsAll(keySet.keys)) {
                 scope.launch { handler() }
-                return
+                break
             }
         }
     }
 
-    private fun handleKeyUp() {
-        for ((keySet, handler) in keyUpHandlers) {
+    private fun handleKeyUp() = keyUpHandlers.access { handlers ->
+        for ((keySet, handler) in handlers) {
             if (pressedKeys.containsAll(keySet.keys)) {
                 scope.launch { handler() }
-                return
+                break
             }
         }
     }

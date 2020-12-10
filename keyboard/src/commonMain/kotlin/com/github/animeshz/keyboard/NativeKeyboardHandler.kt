@@ -3,6 +3,7 @@ package com.github.animeshz.keyboard
 import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyState
+import com.github.animeshz.keyboard.events.KeyToggleState
 import kotlinx.coroutines.flow.SharedFlow
 
 /**
@@ -27,6 +28,12 @@ public interface NativeKeyboardHandler {
      * Gets the current key state from the host.
      */
     public fun getKeyState(key: Key): KeyState
+
+    /**
+     * Gets the current toggle key state from the host, only for [Key.CapsLock], [Key.NumLock] and [Key.ScrollLock].
+     * Returns [KeyToggleState.Off] if key is not the above three.
+     */
+    public fun getKeyToggleState(key: Key): KeyToggleState
 }
 
 /**
