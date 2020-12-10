@@ -117,8 +117,8 @@ public enum class Key(public val keyCode: Int) {
     KeypadEqual(117),
     Pause(119),
     KeypadComma(121),
-    LeftMeta(125),
-    RightMeta(126),
+    LeftSuper(125),
+    RightSuper(126),
     Compose(127),
     Stop(128),
     Again(129),
@@ -161,7 +161,6 @@ public enum class Key(public val keyCode: Int) {
     F22(192),
     F23(193),
     F24(194),
-    Super(1000)  // Not mapped to hardware scan code
     ;
 
     override fun toString(): String {

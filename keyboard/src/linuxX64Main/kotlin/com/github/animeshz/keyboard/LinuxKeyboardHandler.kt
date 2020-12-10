@@ -107,7 +107,7 @@ internal object X11KeyboardHandler : NativeKeyboardHandler {
 
             XGetInputFocus(display, focusedWindow.ptr, focusRevert.ptr)
             val event = alloc<XKeyEvent>().apply {
-                keycode = keyEvent.key.keyCode.toUInt()
+                keycode = (keyEvent.key.keyCode + 8).toUInt()
                 type = if (keyEvent.state == KeyState.KeyDown) KeyPress else KeyRelease
                 root = focusedWindow.value
                 this.display = display
@@ -120,14 +120,13 @@ internal object X11KeyboardHandler : NativeKeyboardHandler {
 
     override fun getKeyState(key: Key): KeyState {
         if (key == Key.Unknown) return KeyState.KeyUp
-        if (key == Key.Super) return KeyState.KeyUp  // TODO: Temporarily return KeyUp for Super key, Fix it.
 
         val display = interpretCPointer<Display>(connection.value)
         memScoped {
             val keyStates = allocArray<ByteVar>(32)
             XQueryKeymap(display, keyStates)
-
-            return if (keyStates[key.keyCode / 8].toInt() and (1 shl key.keyCode % 8) != 0) KeyState.KeyDown
+            val xKeyCode = key.keyCode + 8
+            return if (keyStates[xKeyCode / 8].toInt() and (1 shl xKeyCode % 8) != 0) KeyState.KeyDown
             else KeyState.KeyUp
         }
     }
@@ -183,6 +182,7 @@ internal object X11KeyboardHandler : NativeKeyboardHandler {
     private fun cleanup() {
         XCloseDisplay(interpretCPointer(connection.value))
         connection.value = NativePtr.NULL
+        xiOpcode.value = 0
     }
 
     /**

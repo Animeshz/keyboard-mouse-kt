@@ -90,7 +90,7 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandler {
                 ki.dwExtraInfo = 0U
 
                 // Send Windows/Super key with virtual code, because there's no particular scan code for that.
-                if (keyEvent.key == Key.Super) {
+                if (keyEvent.key == Key.LeftSuper) {
                     ki.wVk = 0x5B.toUShort()
                     ki.dwFlags = if (keyEvent.state == KeyState.KeyUp) 2U else 0U
                 } else {
@@ -106,7 +106,7 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandler {
     override fun getKeyState(key: Key): KeyState {
         if (key == Key.Unknown) return KeyState.KeyUp
 
-        val vk = if (key == Key.Super) {
+        val vk = if (key == Key.LeftSuper) {
             0x5B
         } else {
             MapVirtualKeyA(key.keyCode.toUInt(), MAPVK_VSC_TO_VK_EX).toInt()
@@ -127,7 +127,7 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandler {
             0x26 to Key.Up,
             0x27 to Key.Right,
             0x28 to Key.Down,
-            0x5B to Key.Super
+            0x5B to Key.LeftSuper
     )
 
     /**
