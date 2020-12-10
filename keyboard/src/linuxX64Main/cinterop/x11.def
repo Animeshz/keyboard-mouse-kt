@@ -1,5 +1,5 @@
 package = x11
-headers = X11/Xlib.h X11/Xutil.h X11/Xatom.h
-headerFilter = X11/*
+headers = X11/X.h X11/extensions/XInput2.h
+headerFilter = X11/* X11/extensions/*
 compilerOpts = -I/usr/include/ -I/usr/include/x86_64-linux-gnu
-linkerOpts = -lX11 -L/usr/lib/x86_64-linux-gnu/
+linkerOpts = -lX11 -lXi -L/usr/lib/x86_64-linux-gnu/
