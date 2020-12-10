@@ -163,10 +163,8 @@ internal object X11KeyboardHandler : NativeKeyboardHandler {
             while (eventsInternal.subscriptionCount.value != 0) {
                 XNextEvent(display, event.ptr)
                 val cookie = event.xcookie
-                if (XGetEventData(
-                            display,
-                            cookie.ptr
-                    ) != 0 && cookie.type == GenericEvent && cookie.extension == xiOpcode.value
+                if (XGetEventData(display, cookie.ptr) != 0 &&
+                    cookie.type == GenericEvent && cookie.extension == xiOpcode.value
                 ) {
                     val keyEventType = when (cookie.evtype) {
                         XI_RawKeyPress -> KeyState.KeyDown

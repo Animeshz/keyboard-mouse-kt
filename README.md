@@ -15,7 +15,7 @@ We aim to provide high-level as well as high-performant low-level access to such
 
   - [ ] Keyboard
     - [X] Windows <sup>1</sup>
-    - [ ] Linux <sup>1</sup>
+    - [X] Linux <sup>1</sup>
     - [ ] MacOS
     - [ ] JVM
   - [ ] Mouse
