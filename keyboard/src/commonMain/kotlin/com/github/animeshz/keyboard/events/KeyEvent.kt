@@ -32,20 +32,3 @@ public enum class KeyState {
      */
     KeyDown
 }
-
-/**
- * The Toggle State of [Key], if it is toggleable otherwise Off is default.
- *
- * Only for [Key.CapsLock], [Key.NumLock] and [Key.ScrollLock].
- */
-public enum class KeyToggleState {
-    /**
-     * The type of state when the toggleable key is in off state.
-     */
-    Off,
-
-    /**
-     * The type of state when the toggleable key is in off state.
-     */
-    On
-}

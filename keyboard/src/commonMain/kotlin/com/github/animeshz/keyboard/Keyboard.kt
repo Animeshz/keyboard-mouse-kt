@@ -7,7 +7,6 @@ import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.entity.KeySet
 import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyState
-import com.github.animeshz.keyboard.events.KeyToggleState
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
 import kotlin.time.Duration
@@ -106,14 +105,13 @@ public class Keyboard(
     public fun write(string: String) {
         if (string.isEmpty()) return
 
-        val capsState = handler.getKeyToggleState(Key.CapsLock)
+        val capsState = handler.isCapsLockOn()
         val iterator = string.iterator()
         while (iterator.hasNext()) {
             val char = iterator.next()
             val (key, shift) = Key.fromChar(char)
 
-            // (shift and char.toLowerCase() in 'a'..'z') xor capsState
-            if ((shift && char.toLowerCase() in 'a'..'z') != (capsState == KeyToggleState.On)) {
+            if ((shift && char.toLowerCase() in 'a'..'z') != capsState) {
                 handler.sendEvent(KeyEvent(Key.LeftShift, KeyState.KeyDown), moreOnTheWay = true)
                 handler.sendEvent(KeyEvent(key, KeyState.KeyDown), moreOnTheWay = true)
                 handler.sendEvent(KeyEvent(key, KeyState.KeyUp), moreOnTheWay = true)
