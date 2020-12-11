@@ -3,7 +3,6 @@ package com.github.animeshz.keyboard
 import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyState
-import com.github.animeshz.keyboard.events.KeyToggleState
 import kotlin.native.concurrent.AtomicNativePtr
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
@@ -107,29 +106,21 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandler {
     override fun getKeyState(key: Key): KeyState {
         if (key == Key.Unknown) return KeyState.KeyUp
 
-        val vk = if (key == Key.LeftSuper) {
-            0x5B
-        } else {
-            MapVirtualKeyA(key.keyCode.toUInt(), MAPVK_VSC_TO_VK_EX).toInt()
-        }
+        val vk = if (key == Key.LeftSuper) 0x5B
+        else MapVirtualKeyA(key.keyCode.toUInt(), MAPVK_VSC_TO_VK_EX).toInt()
 
         return if (GetKeyState(vk) < 0) KeyState.KeyDown else KeyState.KeyUp
     }
 
-    override fun getKeyToggleState(key: Key): KeyToggleState {
-        if (key == Key.Unknown) return KeyToggleState.Off
-        val vk = when (key) {
-            Key.CapsLock -> 0x14
-            Key.NumLock -> 0x90
-            Key.ScrollLock -> 0x91
-            else -> return KeyToggleState.Off
-        }
+    override fun isCapsLockOn(): Boolean = GetKeyState(0x14).toInt() and 1 != 0
 
-        return if (GetKeyState(vk).toInt() and 1 != 0) KeyToggleState.On else KeyToggleState.Off
-    }
+    override fun isNumLockOn(): Boolean = GetKeyState(0x90).toInt() and 1 != 0
+
+    override fun isScrollLockOn(): Boolean = GetKeyState(0x91).toInt() and 1 != 0
 
     // ==================================== Internals ====================================
     internal const val FAKE_ALT: Int = LLKHF_INJECTED or 0x20
+    private const val TEST = 5.toShort()
     private const val INPUT_KEYBOARD = 1U
     private val WINDOWS_VK_MAPPING = mapOf(
             0x21 to Key.PageUp,
@@ -230,6 +221,6 @@ internal fun lowLevelKeyboardProc(nCode: Int, wParam: WPARAM, lParam: LPARAM): L
  */
 @ExperimentalUnsignedTypes
 @ExperimentalKeyIO
-public actual fun nativeKbHandlerForPlatform(): NativeKeyboardHandler {
+actual fun nativeKbHandlerForPlatform(): NativeKeyboardHandler {
     return WindowsKeyboardHandler
 }

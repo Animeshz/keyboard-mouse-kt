@@ -25,7 +25,7 @@ class NativeKeyboardHandlerTest {
     fun `get state of Caps Lock`() = runBlocking {
         val handler = nativeKbHandlerForPlatform()
 
-        println("Toggle state of CapsLock: ${handler.getKeyToggleState(Key.CapsLock)}")
+        println("Toggle state of CapsLock: ${if (handler.isCapsLockOn()) "On" else "Off"}")
     }
 
     @Test

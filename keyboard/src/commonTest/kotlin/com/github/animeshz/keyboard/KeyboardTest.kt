@@ -63,11 +63,6 @@ class KeyboardTest {
         keyboard.write(toWrite)
     }
 
-    @Test
-    fun `send test`() {
-
-    }
-
     @ExperimentalTime
     @Test
     fun `record test`() = runBlocking {

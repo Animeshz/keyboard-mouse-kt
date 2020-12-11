@@ -96,19 +96,20 @@ Low Level API depends on [NativeKeyboardHandler][1] that can be obtained via [na
           .map { it.key }
           .collect { println(it) }
   ```
-
 - Sending a [Key][3] event.
   ```kotlin
   handler.sendEvent(KeyEvent(Key.A, KeyState.KeyDown))
   ```
-- Get [KeyState][7] (KeyDown or KeyUp) or [KeyToggleState][7] (On or Off) of the [Key][3].
+- Get [KeyState][7] (KeyDown or KeyUp) of the [Key][3].
   ```kotlin
   handler.getKeyState(Key.A)
   handler.getKeyState(Key.RightAlt)
-  
-  handler.getKeyToggleState(Key.CapsLock)
-  handler.getKeyToggleState(Key.NumLock)
-  handler.getKeyToggleState(Key.ScrollLock)
+  ```
+- Get States of Toggleable Keys (returns a Boolean).
+  ```kotlin
+  handler.isCapsLockOn()
+  handler.isNumLockOn()
+  handler.isScrollLockOn()
   ```
     
 ### High level API:

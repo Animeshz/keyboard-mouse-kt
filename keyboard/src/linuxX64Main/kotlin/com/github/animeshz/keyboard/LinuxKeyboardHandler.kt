@@ -3,7 +3,6 @@ package com.github.animeshz.keyboard
 import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyState
-import com.github.animeshz.keyboard.events.KeyToggleState
 import kotlin.native.concurrent.AtomicInt
 import kotlin.native.concurrent.AtomicNativePtr
 import kotlin.native.concurrent.TransferMode
@@ -135,26 +134,15 @@ internal object X11KeyboardHandler : NativeKeyboardHandler {
         }
     }
 
-    override fun getKeyToggleState(key: Key): KeyToggleState {
-        if (key == Key.Unknown) return KeyToggleState.Off
+    override fun isCapsLockOn(): Boolean = toggleStates().toInt() and 1 != 0
 
-        // ScrollLock is not implemented in X11 as: https://stackoverflow.com/a/8429021/11377112
-        val maskBit = when (key) {
-            Key.CapsLock -> 0x01UL
-            Key.NumLock -> 0x10UL
-            else -> return KeyToggleState.Off
-        }
+    override fun isNumLockOn(): Boolean = toggleStates().toInt() and 2 != 0
 
-        prepare()
-
-        val display = interpretCPointer<Display>(connection.value)
-        memScoped {
-            val mask = alloc<XKeyboardState>()
-            XGetKeyboardControl(display, mask.ptr)
-
-            return if (mask.led_mask and maskBit != 0UL) KeyToggleState.On else KeyToggleState.Off
-        }
-    }
+    /**
+     * This always returns false.
+     * ScrollLock is not implemented in X11 as: https://stackoverflow.com/a/8429021/11377112
+     */
+    override fun isScrollLockOn(): Boolean = false
 
     // ==================================== Internals ====================================
     private fun prepare() {
@@ -220,6 +208,18 @@ internal object X11KeyboardHandler : NativeKeyboardHandler {
         eventsInternal.tryEmit(KeyEvent(key, keyState))
     }
 
+    private fun toggleStates(): ULong {
+        prepare()
+
+        val display = interpretCPointer<Display>(connection.value)
+        memScoped {
+            val mask = alloc<XKeyboardState>()
+            XGetKeyboardControl(display, mask.ptr)
+
+            return mask.led_mask
+        }
+    }
+
     /**
      * Ensures host has XInput2 and gets the XI op code.
      */
@@ -257,7 +257,7 @@ internal object X11KeyboardHandler : NativeKeyboardHandler {
 
 @ExperimentalUnsignedTypes
 @ExperimentalKeyIO
-public actual fun nativeKbHandlerForPlatform(): NativeKeyboardHandler {
+actual fun nativeKbHandlerForPlatform(): NativeKeyboardHandler {
     return when {
         getenv("DISPLAY") != null -> X11KeyboardHandler
         else -> throw RuntimeException("X11 is not present/running in the host.")
