@@ -2,10 +2,15 @@ package com.github.animeshz.keyboard.entity
 
 import com.github.animeshz.keyboard.ExperimentalKeyIO
 
+/**
+ * Represents an unordered set of [Key]s.
+ */
 @ExperimentalKeyIO
 public class KeySet(
         public val keys: Set<Key>
 ) {
+    public constructor(vararg keys: Key) : this(keys.toSet())
+
     public operator fun plus(other: KeySet): KeySet =
             KeySet(this.keys + other.keys)
 
@@ -25,6 +30,9 @@ public class KeySet(
     }
 }
 
+/**
+ * Creates a [KeySet] of two [Key]s.
+ */
 @ExperimentalKeyIO
 public operator fun Key.plus(other: Key): KeySet =
         KeySet(setOf(this, other))

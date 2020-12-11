@@ -3,6 +3,7 @@ package com.github.animeshz.keyboard
 import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyState
+import com.github.animeshz.keyboard.events.KeyToggleState
 import kotlin.native.concurrent.AtomicInt
 import kotlin.native.concurrent.AtomicNativePtr
 import kotlin.native.concurrent.TransferMode
@@ -49,6 +50,7 @@ import x11.XEvent
 import x11.XFreeEventData
 import x11.XGetEventData
 import x11.XGetInputFocus
+import x11.XGetKeyboardControl
 import x11.XIAllMasterDevices
 import x11.XIEventMask
 import x11.XIQueryVersion
@@ -58,6 +60,7 @@ import x11.XI_LASTEVENT
 import x11.XI_RawKeyPress
 import x11.XI_RawKeyRelease
 import x11.XKeyEvent
+import x11.XKeyboardState
 import x11.XNextEvent
 import x11.XOpenDisplay
 import x11.XQueryExtension
@@ -87,7 +90,7 @@ internal object X11KeyboardHandler : NativeKeyboardHandler {
                 .filter { it }
                 .onEach {
                     worker.execute(mode = TransferMode.SAFE, { this }) { handler ->
-                        if (connection.value == NativePtr.NULL) handler.prepare()
+                        handler.prepare()
                         handler.readEvents()
                         handler.cleanup()
                     }
@@ -97,7 +100,7 @@ internal object X11KeyboardHandler : NativeKeyboardHandler {
 
     override fun sendEvent(keyEvent: KeyEvent, moreOnTheWay: Boolean) {
         if (keyEvent.key == Key.Unknown) return
-        if (connection.value == NativePtr.NULL) prepare()
+        prepare()
 
         memScoped {
             val display = interpretCPointer<Display>(connection.value)
@@ -120,6 +123,7 @@ internal object X11KeyboardHandler : NativeKeyboardHandler {
 
     override fun getKeyState(key: Key): KeyState {
         if (key == Key.Unknown) return KeyState.KeyUp
+        prepare()
 
         val display = interpretCPointer<Display>(connection.value)
         memScoped {
@@ -131,8 +135,31 @@ internal object X11KeyboardHandler : NativeKeyboardHandler {
         }
     }
 
+    override fun getKeyToggleState(key: Key): KeyToggleState {
+        if (key == Key.Unknown) return KeyToggleState.Off
+
+        // ScrollLock is not implemented in X11 as: https://stackoverflow.com/a/8429021/11377112
+        val maskBit = when (key) {
+            Key.CapsLock -> 0x01UL
+            Key.NumLock -> 0x10UL
+            else -> return KeyToggleState.Off
+        }
+
+        prepare()
+
+        val display = interpretCPointer<Display>(connection.value)
+        memScoped {
+            val mask = alloc<XKeyboardState>()
+            XGetKeyboardControl(display, mask.ptr)
+
+            return if (mask.led_mask and maskBit != 0UL) KeyToggleState.On else KeyToggleState.Off
+        }
+    }
+
     // ==================================== Internals ====================================
     private fun prepare() {
+        if (connection.value != NativePtr.NULL) return
+
         val display = XOpenDisplay(null)?.also { connection.value = it.rawValue }
             ?: throw RuntimeException("X11 connection can't be established")
 
@@ -162,9 +189,9 @@ internal object X11KeyboardHandler : NativeKeyboardHandler {
             while (eventsInternal.subscriptionCount.value != 0) {
                 XNextEvent(display, event.ptr)
                 val cookie = event.xcookie
-                if (XGetEventData(display, cookie.ptr) != 0 &&
-                    cookie.type == GenericEvent && cookie.extension == xiOpcode.value
-                ) {
+                if (cookie.type != GenericEvent || cookie.extension != xiOpcode.value) continue
+
+                if (XGetEventData(display, cookie.ptr) != 0) {
                     val keyEventType = when (cookie.evtype) {
                         XI_RawKeyPress -> KeyState.KeyDown
                         XI_RawKeyRelease -> KeyState.KeyUp

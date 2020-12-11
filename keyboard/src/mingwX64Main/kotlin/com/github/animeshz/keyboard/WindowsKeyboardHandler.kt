@@ -3,6 +3,7 @@ package com.github.animeshz.keyboard
 import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyState
+import com.github.animeshz.keyboard.events.KeyToggleState
 import kotlin.native.concurrent.AtomicNativePtr
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
@@ -113,6 +114,18 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandler {
         }
 
         return if (GetKeyState(vk) < 0) KeyState.KeyDown else KeyState.KeyUp
+    }
+
+    override fun getKeyToggleState(key: Key): KeyToggleState {
+        if (key == Key.Unknown) return KeyToggleState.Off
+        val vk = when (key) {
+            Key.CapsLock -> 0x14
+            Key.NumLock -> 0x90
+            Key.ScrollLock -> 0x91
+            else -> return KeyToggleState.Off
+        }
+
+        return if (GetKeyState(vk).toInt() and 1 != 0) KeyToggleState.On else KeyToggleState.Off
     }
 
     // ==================================== Internals ====================================

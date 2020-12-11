@@ -16,14 +16,17 @@ kotlin {
             dependencies {
                 api(kotlin("stdlib-common"))
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2-native-mt")
+                implementation("co.touchlab:stately-isolate:1.+")
+                implementation("co.touchlab:stately-iso-collections:1.+")
             }
         }
         val commonTest by getting {
+            dependsOn(commonMain)
             dependencies {
-                api(kotlin("test-common"))
-                api(kotlin("test-annotations-common"))
-                api("io.mockk:mockk-common:1.10.3")
-                api("io.kotest:kotest-assertions-core:4.3.1")
+                implementation(kotlin("test-common"))
+                implementation(kotlin("test-annotations-common"))
+                implementation("io.mockk:mockk-common:1.10.3")
+                implementation("io.kotest:kotest-assertions-core:4.3.1")
             }
         }
 
