@@ -96,7 +96,6 @@ Low Level API depends on [NativeKeyboardHandler][1] that can be obtained via [na
           .map { it.key }
           .collect { println(it) }
   ```
-
 - Sending a [Key][3] event.
   ```kotlin
   handler.sendEvent(KeyEvent(Key.A, KeyState.KeyDown))

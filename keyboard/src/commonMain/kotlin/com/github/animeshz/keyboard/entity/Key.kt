@@ -172,6 +172,7 @@ public enum class Key(public val keyCode: Int) {
          * 'Symbol' to Pair(Key, SHIFT_REQUIRED)
          */
         private val SYMBOL_MAPPING = mapOf(
+                ' ' to Pair(Space, false),
                 '~' to Pair(Backtick, true),
                 '!' to Pair(Number1, true),
                 '@' to Pair(Number2, true),

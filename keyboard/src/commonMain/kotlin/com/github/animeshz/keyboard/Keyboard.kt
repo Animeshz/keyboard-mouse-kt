@@ -111,7 +111,8 @@ public class Keyboard(
             val char = iterator.next()
             val (key, shift) = Key.fromChar(char)
 
-            if ((shift && char.toLowerCase() in 'a'..'z') != capsState) {
+            // Simplification of: char.toLowerCase() !in 'a'..'z' && shift || char.toLowerCase() in 'a'..'z' && shift != capsState
+            if ((char.toLowerCase() in 'a'..'z' && capsState) != shift) {
                 handler.sendEvent(KeyEvent(Key.LeftShift, KeyState.KeyDown), moreOnTheWay = true)
                 handler.sendEvent(KeyEvent(key, KeyState.KeyDown), moreOnTheWay = true)
                 handler.sendEvent(KeyEvent(key, KeyState.KeyUp), moreOnTheWay = true)

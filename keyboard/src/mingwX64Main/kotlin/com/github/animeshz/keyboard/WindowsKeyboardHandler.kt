@@ -120,6 +120,7 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandler {
 
     // ==================================== Internals ====================================
     internal const val FAKE_ALT: Int = LLKHF_INJECTED or 0x20
+    private const val TEST = 5.toShort()
     private const val INPUT_KEYBOARD = 1U
     private val WINDOWS_VK_MAPPING = mapOf(
             0x21 to Key.PageUp,
