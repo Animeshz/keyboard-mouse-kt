@@ -207,6 +207,7 @@ public class Keyboard(
 
         keyUpHandlers.dispose()
         keyDownHandlers.dispose()
+        pressedKeys.dispose()
     }
 
     private fun startIfNeeded() {

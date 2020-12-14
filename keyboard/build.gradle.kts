@@ -1,23 +1,56 @@
 @file:Suppress("UNUSED_VARIABLE")
 
-import org.apache.tools.ant.taskdefs.condition.Os
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.konan.target.HostManager
 
-kotlin {
+val ideaActive = System.getProperty("idea.active") == "true"
+
+val mainSourceSets = mutableListOf<org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet>()
+val testSourceSets = mutableListOf<org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet>()
+
+fun KotlinMultiplatformExtension.configureLinux() {
     linuxX64 {
         val main by compilations.getting
 
         main.cinterops.create("device") { defFile("src/linuxX64Main/cinterop/device.def") }
         main.cinterops.create("x11") { defFile("src/linuxX64Main/cinterop/x11.def") }
+        mavenPublication { artifactId = "${project.name}-kt-linuxx64" }
     }
-    mingwX64()
+
+    val linuxX64Main by sourceSets.getting
+    val linuxX64Test by sourceSets.getting { dependsOn(linuxX64Main) }
+    mainSourceSets.add(linuxX64Main)
+    testSourceSets.add(linuxX64Test)
+}
+
+fun KotlinMultiplatformExtension.configureMingw() {
+    mingwX64 { mavenPublication { artifactId = "${project.name}-kt-mingwx64" } }
+
+    val mingwX64Main by sourceSets.getting
+    val mingwX64Test by sourceSets.getting { dependsOn(mingwX64Main) }
+    mainSourceSets.add(mingwX64Main)
+    testSourceSets.add(mingwX64Test)
+}
+
+kotlin {
+    if (ideaActive) {
+        when {
+            HostManager.hostIsLinux -> configureLinux()
+            HostManager.hostIsMingw -> configureMingw()
+        }
+    } else {
+        configureLinux()
+        configureMingw()
+    }
 
     sourceSets {
         val commonMain by getting {
             dependencies {
                 api(kotlin("stdlib-common"))
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2-native-mt")
-                implementation("co.touchlab:stately-isolate:1.+")
-                implementation("co.touchlab:stately-iso-collections:1.+")
+                implementation("org.jetbrains.kotlinx:atomicfu:0.14.4")
+                implementation("co.touchlab:stately-isolate:1.1.1-a1")
+                implementation("co.touchlab:stately-iso-collections:1.1.1-a1")
             }
         }
         val commonTest by getting {
@@ -30,19 +63,10 @@ kotlin {
             }
         }
 
-        val linuxX64Main by getting {
+        configure(mainSourceSets) {
             dependsOn(commonMain)
         }
-        val linuxX64Test by getting {
-            dependsOn(linuxX64Main)
-            dependsOn(commonTest)
-        }
-
-        val mingwX64Main by getting {
-            dependsOn(commonMain)
-        }
-        val mingwX64Test by getting {
-            dependsOn(mingwX64Main)
+        configure(testSourceSets) {
             dependsOn(commonTest)
         }
 
@@ -52,14 +76,4 @@ kotlin {
     }
 
     explicitApi()
-}
-
-afterEvaluate {
-    if (!Os.isFamily(Os.FAMILY_UNIX)) {
-        tasks.all {
-            if (name.toLowerCase().contains("linux")) {
-                enabled = false
-            }
-        }
-    }
 }
