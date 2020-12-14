@@ -67,16 +67,16 @@ You can currently clone the project and publish it to your mavenLocal repository
           val commonMain by getting {
               dependencies {
                   implementation(kotlin("stdlib-common"))
-                  implementation("com.github.animeshz:keyboard:0.0.1")
-                  implementation("com.github.animeshz:mouse:0.0.1")
+                  implementation("com.github.animeshz:keyboard-kt:0.0.1")
+                  implementation("com.github.animeshz:mouse-kt:0.0.1")
               }
           }
 
           // Or configuring per platform:
           val mingwX64Main by getting {
               dependencies {
-                  implementation("com.github.animeshz:keyboard-mingwx64:0.0.1")
-                  implementation("com.github.animeshz:mouse-mingwx64:0.0.1")
+                  implementation("com.github.animeshz:keyboard-kt-mingwx64:0.0.1")
+                  implementation("com.github.animeshz:mouse-kt-mingwx64:0.0.1")
               }
           }
       }

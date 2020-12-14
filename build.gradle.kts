@@ -20,7 +20,7 @@ subprojects {
     publishing {
         publications.withType<MavenPublication> {
             pom {
-                name.set("keyboard-mouse-kt-${project.name}")
+                name.set("${project.name}-kt")
                 description.set("A multiplatform kotlin library for listening to global keyboard and mouse events.")
                 url.set("https://github.com/Animeshz/keyboard-mouse-kt")
 
@@ -43,9 +43,9 @@ subprojects {
 
             val publication = this@withType
             if (publication.name == "kotlinMultiplatform") {
-                publication.artifactId = "keyboard-mouse-kt-${project.name}"
+                publication.artifactId = "${project.name}-kt"
             } else {
-                publication.artifactId = "keyboard-mouse-kt-${project.name}-${publication.name}"
+                publication.artifactId = "${project.name}-kt-${publication.name}"
             }
 
         }
