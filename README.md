@@ -1,9 +1,25 @@
 # KeyboardMouse.kt
 
+<p>
+    <a href="https://github.com/Animeshz/keyboard-mouse-kt/releases">
+        <img src="https://img.shields.io/github/release-date/Animeshz/keyboard-mouse-kt?style=flat-square&label=Latest%20Release" alt="Latest Release" />
+    </a>
+    <img src="https://img.shields.io/github/languages/code-size/Animeshz/keyboard-mouse-kt?style=flat-square" alt="Code Size"/>
+    <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/LICENSE">
+        <img src="https://img.shields.io/github/license/Animeshz/keyboard-mouse-kt?style=flat-square" alt="License" />
+    </a>
+</p>
+
+__NOTICE: This project is on hold, I'm busy on my own (I have my entrance exams in few months, so I won't be able to
+manage this). I've created
+a [CONTRIBUTING.md](https://github.com/Animeshz/keyboard-mouse-kt/blob/master/CONTRIBUTING.md) if somebody wants to keep
+it alive, along with future plans (which I'm going to do when I come back). Feel free to create issues or PRs, if issues
+are small I'll try to solve them.__
 
 A multiplatform kotlin library for listening to global keyboard and mouse events.
 
-__KeyboardMouse.kt is still in an experimental stage, as such we can't guarantee API stability between releases. While we'd love for you to try out our library, we don't recommend you use this in production just yet.__
+__KeyboardMouse.kt is still in an experimental stage, as such we can't guarantee API stability between releases. While
+we'd love for you to try out our library, we don't recommend you use this in production just yet.__
 
 ## What is KeyboardMouse.kt
 
@@ -29,59 +45,42 @@ We aim to provide high-level as well as high-performant low-level access to such
 
 ## Installation
 
-At this early stage, library is not published to a any public repository.
+To add the library to your project, add the following the repository and dependency (`build.gradle.kts`):
 
-You can currently clone the project and publish it to your mavenLocal repository on your host machine and use it.
+```kotlin
+repositories {
+    maven(url = "https://dl.bintray.com/animeshz/maven")
+}
 
-1. Clone the repo:
-   `$ git clone https://github.com/Animeshz/keyboard-mouse-kt.git`
+kotlin {
+    // Your targets
+    mingwX64 {
+        binaries { executable { entryPoint = "main" } }
+    }
+    linuxX64 {
+        binaries { executable { entryPoint = "main" } }
+    }
 
-2. Build and publish to mavenLocal:
-   `$ ./gradlew build publishToMavenLocal`
+    sourceSets {
+        // Either in common:
+        val commonMain by getting {
+            dependencies {
+                implementation(kotlin("stdlib-common"))
+                implementation("com.github.animeshz:keyboard-kt:0.0.1")
+                implementation("com.github.animeshz:mouse-kt:0.0.1")
+            }
+        }
 
-   <sub>Note: When building for linux, you need libX11 and XInput2 (for Ubuntu: `apt install libX11-dev liblxi-dev`, for
-   Arch: `pacman -S libx11 libxi`)</sub>
-
-3. Add the library to your project (`build.gradle.kts`):
-
-  ```kotlin
-  plugins {
-      kotlin("multiplatform") version "1.4.10"
-  }
-
-  repositories {
-      mavenLocal()
-  }
-
-  kotlin {
-      // Your targets
-      mingwX64 {
-          binaries { executable { entryPoint = "main" } }
-      }
-      linuxX64 {
-          binaries { executable { entryPoint = "main" } }
-      }
-
-      sourceSets {
-          // Either in common:
-          val commonMain by getting {
-              dependencies {
-                  implementation(kotlin("stdlib-common"))
-                  implementation("com.github.animeshz:keyboard-kt:0.0.1")
-                  implementation("com.github.animeshz:mouse-kt:0.0.1")
-              }
-          }
-
-          // Or configuring per platform:
-          val mingwX64Main by getting {
-              dependencies {
-                  implementation("com.github.animeshz:keyboard-kt-mingwx64:0.0.1")
-                  implementation("com.github.animeshz:mouse-kt-mingwx64:0.0.1")
-              }
-          }
-      }
-  }
-  ```
+        // Or configuring per platform:
+        val mingwX64Main by getting {
+            dependencies {
+                implementation("com.github.animeshz:keyboard-kt-mingwx64:0.0.1")
+                implementation("com.github.animeshz:mouse-kt-mingwx64:0.0.1")
+            }
+        }
+    }
+}
+```
 
 ## Usage
 
