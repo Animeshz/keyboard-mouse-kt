@@ -36,6 +36,7 @@ subprojects {
                     name.set("${project.name}-kt")
                     description.set("A multiplatform kotlin library for interacting with global keyboard and mouse events.")
                     url.set(projectUrl)
+//                    version = this@afterEvaluate.version as String
 
                     licenses {
                         license {

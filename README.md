@@ -1,5 +1,15 @@
 # KeyboardMouse.kt
 
+<p>
+    <a href="https://github.com/Animeshz/keyboard-mouse-kt/releases">
+        <img src="https://img.shields.io/github/release-date/Animeshz/keyboard-mouse-kt?style=flat-square&label=Latest%20Release" alt="Latest Release" />
+    </a>
+    <img src="https://img.shields.io/github/languages/code-size/Animeshz/keyboard-mouse-kt?style=flat-square" alt="Code Size"/>
+    <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/LICENSE">
+        <img src="https://img.shields.io/github/license/Animeshz/keyboard-mouse-kt?style=flat-square" alt="License" />
+    </a>
+</p>
+
 __NOTICE: This project is on hold, I'm busy on my own (I have my entrance exams in few months, so I won't be able to
 manage this). I've created
 a [CONTRIBUTING.md](https://github.com/Animeshz/keyboard-mouse-kt/blob/master/CONTRIBUTING.md) if somebody wants to keep
@@ -8,7 +18,8 @@ are small I'll try to solve them.__
 
 A multiplatform kotlin library for listening to global keyboard and mouse events.
 
-__KeyboardMouse.kt is still in an experimental stage, as such we can't guarantee API stability between releases. While we'd love for you to try out our library, we don't recommend you use this in production just yet.__
+__KeyboardMouse.kt is still in an experimental stage, as such we can't guarantee API stability between releases. While
+we'd love for you to try out our library, we don't recommend you use this in production just yet.__
 
 ## What is KeyboardMouse.kt
 
