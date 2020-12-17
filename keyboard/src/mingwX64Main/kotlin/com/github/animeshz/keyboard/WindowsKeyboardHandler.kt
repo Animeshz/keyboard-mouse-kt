@@ -137,6 +137,8 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandler {
      * Registers the native hook.
      */
     private fun prepare() {
+        if (hook.value != NativePtr.NULL) return
+
         hook.value = SetWindowsHookExW(
                 WH_KEYBOARD_LL,
                 staticCFunction(::lowLevelKeyboardProc),
