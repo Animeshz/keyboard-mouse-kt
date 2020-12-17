@@ -71,7 +71,7 @@ import x11.XSync
 @ExperimentalKeyIO
 internal object X11KeyboardHandler : NativeKeyboardHandler {
     private val worker: Worker = Worker.start(errorReporting = true, name = "LinuxKeyboardHandler")
-    private val connection: AtomicNativePtr = AtomicNativePtr(NativePtr.NULL)
+    private val x11DisplayPtr: AtomicNativePtr = AtomicNativePtr(NativePtr.NULL)
     private val xiOpcode: AtomicInt = AtomicInt(0)
     private val eventsInternal: MutableSharedFlow<KeyEvent> = MutableSharedFlow(extraBufferCapacity = 8)
 
@@ -102,7 +102,7 @@ internal object X11KeyboardHandler : NativeKeyboardHandler {
         prepare()
 
         memScoped {
-            val display = interpretCPointer<Display>(connection.value)
+            val display = interpretCPointer<Display>(x11DisplayPtr.value)
             val focusedWindow = alloc<ULongVar>()
             val focusRevert = alloc<IntVar>()
             val mask = if (keyEvent.state == KeyState.KeyDown) KeyPressMask else KeyReleaseMask
@@ -117,14 +117,14 @@ internal object X11KeyboardHandler : NativeKeyboardHandler {
 
             XSendEvent(display, focusedWindow.value, True, mask, event.ptr.reinterpret())
         }
-        if (!moreOnTheWay) cleanup()
+        if (!moreOnTheWay && eventsInternal.subscriptionCount.value == 0) cleanup()
     }
 
     override fun getKeyState(key: Key): KeyState {
         if (key == Key.Unknown) return KeyState.KeyUp
         prepare()
 
-        val display = interpretCPointer<Display>(connection.value)
+        val display = interpretCPointer<Display>(x11DisplayPtr.value)
         memScoped {
             val keyStates = allocArray<ByteVar>(32)
             XQueryKeymap(display, keyStates)
@@ -146,9 +146,9 @@ internal object X11KeyboardHandler : NativeKeyboardHandler {
 
     // ==================================== Internals ====================================
     private fun prepare() {
-        if (connection.value != NativePtr.NULL) return
+        if (x11DisplayPtr.value != NativePtr.NULL) return
 
-        val display = XOpenDisplay(null)?.also { connection.value = it.rawValue }
+        val display = XOpenDisplay(null)?.also { x11DisplayPtr.value = it.rawValue }
             ?: throw RuntimeException("X11 connection can't be established")
 
         xiOpcode.value = getXiOpCode(display)
@@ -166,12 +166,12 @@ internal object X11KeyboardHandler : NativeKeyboardHandler {
             XSync(display, 0)
         }
 
-        connection.value = display.rawValue
+        x11DisplayPtr.value = display.rawValue
     }
 
     private fun readEvents() {
         memScoped {
-            val display = interpretCPointer<Display>(connection.value)
+            val display = interpretCPointer<Display>(x11DisplayPtr.value)
             val event = alloc<XEvent>()
 
             while (eventsInternal.subscriptionCount.value != 0) {
@@ -195,9 +195,12 @@ internal object X11KeyboardHandler : NativeKeyboardHandler {
     }
 
     private fun cleanup() {
-        XCloseDisplay(interpretCPointer(connection.value))
-        connection.value = NativePtr.NULL
-        xiOpcode.value = 0
+        val displayPtr = x11DisplayPtr.value
+        if (displayPtr != NativePtr.NULL) {
+            XCloseDisplay(interpretCPointer(displayPtr))
+            x11DisplayPtr.value = NativePtr.NULL
+            xiOpcode.value = 0
+        }
     }
 
     /**
@@ -211,7 +214,7 @@ internal object X11KeyboardHandler : NativeKeyboardHandler {
     private fun toggleStates(): ULong {
         prepare()
 
-        val display = interpretCPointer<Display>(connection.value)
+        val display = interpretCPointer<Display>(x11DisplayPtr.value)
         memScoped {
             val mask = alloc<XKeyboardState>()
             XGetKeyboardControl(display, mask.ptr)
