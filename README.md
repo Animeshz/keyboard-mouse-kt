@@ -10,7 +10,7 @@
     </a>
 </p>
 
-__NOTICE: This project is on hold, I'm busy on my own (I have my entrance exams in few months, so I won't be able to
+__NOTICE: This project is ~~on hold~~ Edit: "I may work slowly if I get time", I'm busy on my own (I have my entrance exams in few months, so I won't be able to
 manage this). I've created
 a [CONTRIBUTING.md](https://github.com/Animeshz/keyboard-mouse-kt/blob/master/CONTRIBUTING.md) if somebody wants to keep
 it alive, along with future plans (which I'm going to do when I come back). Feel free to create issues or PRs, if issues

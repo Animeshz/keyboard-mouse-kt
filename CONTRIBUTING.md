@@ -31,8 +31,9 @@ XLib and XInput2.
 
 Following are the future plans for the project:
 
-- Migrate to dynamic library linking for linux (using dlopen/dlsym/dlclose from Posix API), see [#1][1] for more
+- [X] Migrate to dynamic library linking for linux (using dlopen/dlsym/dlclose from Posix API), see [#1][1] for more
   details.
+  Implemented in the branch 0.1.x on [this commit](https://github.com/Animeshz/keyboard-mouse-kt/commit/92027738f2093b7cc71c4693bcbc565aec26d206).
 - Create gradle task in to generate JNI headers for Kotlin external functions. Possibly by putting the task between
   compile-task and jar packaging task.
   References: [Kotlin replacement for javah](https://stackoverflow.com/q/48816188/11377112)
