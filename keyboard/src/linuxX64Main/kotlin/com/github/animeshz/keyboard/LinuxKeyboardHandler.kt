@@ -3,12 +3,12 @@ package com.github.animeshz.keyboard
 import kotlinx.atomicfu.AtomicRef
 import kotlinx.atomicfu.atomic
 
-@ExperimentalKeyIO
+//@ExperimentalKeyIO  // https://youtrack.jetbrains.com/issue/KT-44007
 @SharedImmutable
 private val globalHandler: AtomicRef<NativeKeyboardHandler?> = atomic(null)
 
 // Thread local copy to provide fast (cached) access
-@ExperimentalKeyIO
+//@ExperimentalKeyIO  // https://youtrack.jetbrains.com/issue/KT-44007
 @ThreadLocal
 private var localCachedHandler: NativeKeyboardHandler? = null
 

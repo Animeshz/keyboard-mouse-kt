@@ -66,7 +66,7 @@ internal class X11KeyboardHandler(
         x11: COpaquePointer,
         xInput2: COpaquePointer,
 ) : NativeKeyboardHandler {
-    private val worker: Worker = Worker.start(errorReporting = true, name = "LinuxKeyboardHandler")
+    private val worker: Worker = Worker.start(errorReporting = true, name = "X11KeyboardHandler")
     private val display: CPointer<DisplayVar>
     private val xiOpcode: Int
     private val eventsInternal: MutableSharedFlow<KeyEvent> = MutableSharedFlow(extraBufferCapacity = 8)
@@ -192,6 +192,7 @@ internal class X11KeyboardHandler(
             val argsStableRef = argsPtr!!.asStableRef<List<COpaquePointer>>()
             val args = argsStableRef.get()
             (args[3] as CoroutineScope).cancel()
+            (args[4] as Worker).requestTermination()  // Inline may cause problems
 
             @Suppress("LocalVariableName")
             val XCloseDisplay = resolveDlFun<(CValuesRef<DisplayVar>) -> Int>(args[0], "XCloseDisplay")
@@ -201,7 +202,7 @@ internal class X11KeyboardHandler(
             dlclose(args[1])
 
             argsStableRef.dispose()
-        }, StableRef.create(listOf(x11, xInput2, display, unconfinedScope)).asCPointer())
+        }, StableRef.create(listOf(x11, xInput2, display, unconfinedScope, worker)).asCPointer())
     }
 
     private fun readEvents() {

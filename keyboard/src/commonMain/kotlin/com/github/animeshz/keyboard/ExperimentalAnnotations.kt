@@ -2,7 +2,8 @@ package com.github.animeshz.keyboard
 
 @MustBeDocumented
 @Retention(AnnotationRetention.BINARY)
-@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
+// TODO: Revert back to Level.WARNING after https://youtrack.jetbrains.com/issue/KT-44007
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 @Target(
         AnnotationTarget.CLASS,
         AnnotationTarget.PROPERTY,
