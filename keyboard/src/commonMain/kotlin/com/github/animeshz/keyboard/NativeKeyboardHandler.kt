@@ -48,6 +48,7 @@ public interface NativeKeyboardHandler {
 
 /**
  * Gets the [NativeKeyboardHandler] for the particular platform.
+ * Always returns the same instance.
  */
 @ExperimentalKeyIO
 public expect fun nativeKbHandlerForPlatform(): NativeKeyboardHandler
