@@ -51,7 +51,4 @@ Following are the future plans for the project:
 To build and publish to mavenLocal:
 `$ ./gradlew build publishToMavenLocal`
 
-<sub>Note: When building for linux, you need libX11 and XInput2 (for Ubuntu: `apt install libX11-dev liblxi-dev`, for
-Arch: `pacman -S libx11 libxi`), this soon is not going to be requirement see [#1][1]</sub>
-
 [1]: https://github.com/Animeshz/keyboard-mouse-kt/issues/1
