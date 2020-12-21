@@ -6,9 +6,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     id("cpp-library")
-}
-
-plugins {
     id("org.jlleitschuh.gradle.ktlint") version "9.4.1"
 }
 
@@ -41,6 +38,7 @@ fun KotlinMultiplatformExtension.configureJvm() {
 
     val generateJniHeaders by tasks.creating(Exec::class) {
         group = "build"
+
         //        if (HostManager.hostIsMingw) {
         //            commandLine(
         //                    "cmd", "/c", "'${Jvm.current().javaHome.canonicalPath}\\bin\\javah'",

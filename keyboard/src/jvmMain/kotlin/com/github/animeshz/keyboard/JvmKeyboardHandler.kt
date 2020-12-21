@@ -10,7 +10,7 @@ internal object JvmKeyboardHandler : NativeKeyboardHandler {
     override val events: SharedFlow<KeyEvent>
         get() = TODO("Not yet implemented")
 
-    override fun sendEvent(keyEvent: KeyEvent, moreOnTheWay: Boolean) {
+    override fun sendEvent(keyEvent: KeyEvent) {
         TODO("Not yet implemented")
     }
 
