@@ -189,17 +189,18 @@ internal class X11KeyboardHandler(
 
         @Suppress("UNCHECKED_CAST")
         on_exit(staticCFunction { _, argsPtr ->
-            val argsStableRef = argsPtr!!.asStableRef<List<COpaquePointer>>()
+            val argsStableRef = argsPtr!!.asStableRef<List<Any>>()
             val args = argsStableRef.get()
             (args[3] as CoroutineScope).cancel()
-            (args[4] as Worker).requestTermination()  // Inline may cause problems
+            (args[4] as Worker).requestTermination()
 
             @Suppress("LocalVariableName")
-            val XCloseDisplay = resolveDlFun<(CValuesRef<DisplayVar>) -> Int>(args[0], "XCloseDisplay")
+            val XCloseDisplay =
+                    resolveDlFun<(CValuesRef<DisplayVar>) -> Int>(args[0] as COpaquePointer, "XCloseDisplay")
 
             XCloseDisplay(args[2] as CValuesRef<DisplayVar>)
-            dlclose(args[0])
-            dlclose(args[1])
+            dlclose(args[0] as COpaquePointer)
+            dlclose(args[1] as COpaquePointer)
 
             argsStableRef.dispose()
         }, StableRef.create(listOf(x11, xInput2, display, unconfinedScope, worker)).asCPointer())
