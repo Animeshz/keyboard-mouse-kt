@@ -1,7 +1,6 @@
 @file:Suppress("UNUSED_VARIABLE")
 
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.konan.target.HostManager
 
 val ideaActive = System.getProperty("idea.active") == "true"
 

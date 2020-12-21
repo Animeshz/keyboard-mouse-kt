@@ -77,7 +77,7 @@ internal class X11KeyboardHandler(
     override val events: SharedFlow<KeyEvent>
         get() = eventsInternal.asSharedFlow()
 
-    override fun sendEvent(keyEvent: KeyEvent, moreOnTheWay: Boolean) {
+    override fun sendEvent(keyEvent: KeyEvent) {
         if (keyEvent.key == Key.Unknown) return
 
         memScoped {
