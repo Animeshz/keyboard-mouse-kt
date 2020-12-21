@@ -33,7 +33,7 @@ Following are the future plans for the project:
 
 - [X] Migrate to dynamic library linking for linux (using dlopen/dlsym/dlclose from Posix API), see [#1][1] for more
   details.
-  Implemented in the branch 0.1.x on [this commit](https://github.com/Animeshz/keyboard-mouse-kt/commit/92027738f2093b7cc71c4693bcbc565aec26d206).
+  Implemented in the branch **0.1.x** on [this commit](https://github.com/Animeshz/keyboard-mouse-kt/commit/92027738f2093b7cc71c4693bcbc565aec26d206).
 - Create gradle task in to generate JNI headers for Kotlin external functions. Possibly by putting the task between
   compile-task and jar packaging task.
   References: [Kotlin replacement for javah](https://stackoverflow.com/q/48816188/11377112)
@@ -50,8 +50,5 @@ Following are the future plans for the project:
 
 To build and publish to mavenLocal:
 `$ ./gradlew build publishToMavenLocal`
-
-<sub>Note: When building for linux, you need libX11 and XInput2 (for Ubuntu: `apt install libX11-dev liblxi-dev`, for
-Arch: `pacman -S libx11 libxi`), this soon is not going to be requirement see [#1][1]</sub>
 
 [1]: https://github.com/Animeshz/keyboard-mouse-kt/issues/1

@@ -89,13 +89,11 @@ public class Keyboard(
         if (keySet.keys.isEmpty()) return
 
         for (key in keySet.keys) {
-            handler.sendEvent(KeyEvent(key, KeyState.KeyDown), moreOnTheWay = true)
+            handler.sendEvent(KeyEvent(key, KeyState.KeyDown))
         }
 
-        val iterator = keySet.keys.iterator()
-        while (iterator.hasNext()) {
-            val key = iterator.next()
-            handler.sendEvent(KeyEvent(key, KeyState.KeyUp), moreOnTheWay = iterator.hasNext())
+        for (key in keySet.keys) {
+            handler.sendEvent(KeyEvent(key, KeyState.KeyUp))
         }
     }
 
@@ -106,20 +104,18 @@ public class Keyboard(
         if (string.isEmpty()) return
 
         val capsState = handler.isCapsLockOn()
-        val iterator = string.iterator()
-        while (iterator.hasNext()) {
-            val char = iterator.next()
+        for (char in string) {
             val (key, shift) = Key.fromChar(char)
 
             // Simplification of: char.toLowerCase() !in 'a'..'z' && shift || char.toLowerCase() in 'a'..'z' && shift != capsState
             if ((char.toLowerCase() in 'a'..'z' && capsState) != shift) {
-                handler.sendEvent(KeyEvent(Key.LeftShift, KeyState.KeyDown), moreOnTheWay = true)
-                handler.sendEvent(KeyEvent(key, KeyState.KeyDown), moreOnTheWay = true)
-                handler.sendEvent(KeyEvent(key, KeyState.KeyUp), moreOnTheWay = true)
-                handler.sendEvent(KeyEvent(Key.LeftShift, KeyState.KeyUp), moreOnTheWay = iterator.hasNext())
+                handler.sendEvent(KeyEvent(Key.LeftShift, KeyState.KeyDown))
+                handler.sendEvent(KeyEvent(key, KeyState.KeyDown))
+                handler.sendEvent(KeyEvent(key, KeyState.KeyUp))
+                handler.sendEvent(KeyEvent(Key.LeftShift, KeyState.KeyUp))
             } else {
-                handler.sendEvent(KeyEvent(key, KeyState.KeyDown), moreOnTheWay = true)
-                handler.sendEvent(KeyEvent(key, KeyState.KeyUp), moreOnTheWay = iterator.hasNext())
+                handler.sendEvent(KeyEvent(key, KeyState.KeyDown))
+                handler.sendEvent(KeyEvent(key, KeyState.KeyUp))
             }
         }
     }
@@ -189,12 +185,9 @@ public class Keyboard(
     public suspend fun play(orderedPresses: KeyPressSequence, speedFactor: Double = 1.0) {
         val mark = TimeSource.Monotonic.markNow()
 
-        val iterator = orderedPresses.iterator()
-        while (iterator.hasNext()) {
-            val (duration, event) = iterator.next()
+        for ((duration, event) in orderedPresses) {
             delay((duration - mark.elapsedNow()) / speedFactor)
-
-            handler.sendEvent(event, moreOnTheWay = iterator.hasNext())
+            handler.sendEvent(event)
         }
     }
 
