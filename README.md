@@ -61,16 +61,16 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(kotlin("stdlib-common"))
-                implementation("com.github.animeshz:keyboard-kt:0.0.1")
-                implementation("com.github.animeshz:mouse-kt:0.0.1")
+                implementation("com.github.animeshz:keyboard-kt:<version>")
+                implementation("com.github.animeshz:mouse-kt:<version>")
             }
         }
 
         // Or configuring per platform:
         val mingwX64Main by getting {
             dependencies {
-                implementation("com.github.animeshz:keyboard-kt-mingwX64:0.0.1")
-                implementation("com.github.animeshz:mouse-kt-mingwX64:0.0.1")
+                implementation("com.github.animeshz:keyboard-kt-mingwX64:<version>")
+                implementation("com.github.animeshz:mouse-kt-mingwX64:<version>")
             }
         }
     }
