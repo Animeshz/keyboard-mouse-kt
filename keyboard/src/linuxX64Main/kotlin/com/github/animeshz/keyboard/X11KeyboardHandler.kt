@@ -3,8 +3,6 @@ package com.github.animeshz.keyboard
 import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyState
-import kotlin.native.concurrent.TransferMode
-import kotlin.native.concurrent.Worker
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CFunction
 import kotlinx.cinterop.COpaquePointer
@@ -58,14 +56,14 @@ import x11.XIEventMask
 import x11.XIRawEvent
 import x11.XKeyEvent
 import x11.XKeyboardState
+import kotlin.native.concurrent.TransferMode
+import kotlin.native.concurrent.Worker
 
 @Suppress("PrivatePropertyName")
 @ExperimentalUnsignedTypes
 @ExperimentalKeyIO
-internal class X11KeyboardHandler(
-        x11: COpaquePointer,
-        xInput2: COpaquePointer,
-) : NativeKeyboardHandler {
+internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) : NativeKeyboardHandler {
+
     private val worker: Worker = Worker.start(errorReporting = true, name = "X11KeyboardHandler")
     private val display: CPointer<DisplayVar>
     private val xiOpcode: Int
@@ -122,43 +120,30 @@ internal class X11KeyboardHandler(
     // ==================================== Internals ====================================
     private val XOpenDisplay = resolveDlFun<(CValuesRef<ByteVar>?) -> CPointer<DisplayVar>?>(x11, "XOpenDisplay")
     private val XDefaultRootWindow = resolveDlFun<(CValuesRef<DisplayVar>) -> ULong>(x11, "XDefaultRootWindow")
-    private val XQueryExtension =
-            resolveDlFun<(CValuesRef<DisplayVar>, CValuesRef<ByteVar>, CValuesRef<IntVar>, CValuesRef<IntVar>, CValuesRef<IntVar>) -> Int>(
-                    x11, "XQueryExtension"
-            )
+    private val XQueryExtension = resolveDlFun<(CValuesRef<DisplayVar>, CValuesRef<ByteVar>, CValuesRef<IntVar>, CValuesRef<IntVar>, CValuesRef<IntVar>) -> Int>(x11, "XQueryExtension")
 
     private val XSync = resolveDlFun<(CValuesRef<DisplayVar>, Int) -> Int>(x11, "XSync")
     private val XQueryKeymap = resolveDlFun<(CValuesRef<DisplayVar>, CValuesRef<ByteVar>) -> Int>(x11, "XQueryKeymap")
     private val XNextEvent = resolveDlFun<(CValuesRef<DisplayVar>, CValuesRef<XEvent>) -> Int>(x11, "XNextEvent")
-    private val XSendEvent =
-            resolveDlFun<(CValuesRef<DisplayVar>, ULong, Int, Long, CValuesRef<XEvent>) -> Int>(x11, "XSendEvent")
+    private val XSendEvent = resolveDlFun<(CValuesRef<DisplayVar>, ULong, Int, Long, CValuesRef<XEvent>) -> Int>(x11, "XSendEvent")
 
-    private val XFreeEventData =
-            resolveDlFun<(CValuesRef<DisplayVar>, CValuesRef<XGenericEventCookie>) -> Unit>(x11, "XFreeEventData")
-    private val XGetEventData =
-            resolveDlFun<(CValuesRef<DisplayVar>, CValuesRef<XGenericEventCookie>) -> Int>(x11, "XGetEventData")
-    private val XGetInputFocus =
-            resolveDlFun<(CValuesRef<DisplayVar>, CValuesRef<ULongVar>, CValuesRef<IntVar>) -> Int>(
-                    x11, "XGetInputFocus"
-            )
-    private val XGetKeyboardControl =
-            resolveDlFun<(CValuesRef<DisplayVar>, CValuesRef<XKeyboardState>) -> Int>(x11, "XGetKeyboardControl")
-    private val XISelectEvents =
-            resolveDlFun<(CValuesRef<DisplayVar>, ULong, CValuesRef<XIEventMask>, Int) -> Int>(
-                    xInput2, "XISelectEvents"
-            )
+    private val XFreeEventData = resolveDlFun<(CValuesRef<DisplayVar>, CValuesRef<XGenericEventCookie>) -> Unit>(x11, "XFreeEventData")
+    private val XGetEventData = resolveDlFun<(CValuesRef<DisplayVar>, CValuesRef<XGenericEventCookie>) -> Int>(x11, "XGetEventData")
+    private val XGetInputFocus = resolveDlFun<(CValuesRef<DisplayVar>, CValuesRef<ULongVar>, CValuesRef<IntVar>) -> Int>(x11, "XGetInputFocus")
+    private val XGetKeyboardControl = resolveDlFun<(CValuesRef<DisplayVar>, CValuesRef<XKeyboardState>) -> Int>(x11, "XGetKeyboardControl")
+    private val XISelectEvents = resolveDlFun<(CValuesRef<DisplayVar>, ULong, CValuesRef<XIEventMask>, Int) -> Int>(xInput2, "XISelectEvents")
 
     init {
         val unconfinedScope = CoroutineScope(Dispatchers.Unconfined)
         // When subscriptionCount increments from 0 to 1, setup the native hook.
         eventsInternal.subscriptionCount
-                .map { it > 0 }
-                .distinctUntilChanged()
-                .filter { it }
-                .onEach {
-                    worker.execute(mode = TransferMode.SAFE, { this }) { handler -> handler.readEvents() }
-                }
-                .launchIn(unconfinedScope)
+            .map { it > 0 }
+            .distinctUntilChanged()
+            .filter { it }
+            .onEach {
+                worker.execute(mode = TransferMode.SAFE, { this }) { handler -> handler.readEvents() }
+            }
+            .launchIn(unconfinedScope)
 
         display = XOpenDisplay(null) ?: throw RuntimeException("X11 connection can't be established")
 
@@ -187,23 +172,26 @@ internal class X11KeyboardHandler(
         // Force execute cleanup handlers on SIGINT (Ctrl + C)
         signal(SIGINT, staticCFunction { _ -> exit(0) })
 
-        @Suppress("UNCHECKED_CAST")
-        on_exit(staticCFunction { _, argsPtr ->
-            val argsStableRef = argsPtr!!.asStableRef<List<Any>>()
-            val args = argsStableRef.get()
-            (args[3] as CoroutineScope).cancel()
-            (args[4] as Worker).requestTermination()
+        on_exit(
+            staticCFunction { _, argsPtr ->
+                val argsStableRef = argsPtr!!.asStableRef<List<Any>>()
+                val args = argsStableRef.get()
+                (args[3] as CoroutineScope).cancel()
+                (args[4] as Worker).requestTermination()
 
-            @Suppress("LocalVariableName")
-            val XCloseDisplay =
+                @Suppress("LocalVariableName")
+                val XCloseDisplay =
                     resolveDlFun<(CValuesRef<DisplayVar>) -> Int>(args[0] as COpaquePointer, "XCloseDisplay")
 
-            XCloseDisplay(args[2] as CValuesRef<DisplayVar>)
-            dlclose(args[0] as COpaquePointer)
-            dlclose(args[1] as COpaquePointer)
+                @Suppress("UNCHECKED_CAST")
+                XCloseDisplay(args[2] as CValuesRef<DisplayVar>)
+                dlclose(args[0] as COpaquePointer)
+                dlclose(args[1] as COpaquePointer)
 
-            argsStableRef.dispose()
-        }, StableRef.create(listOf(x11, xInput2, display, unconfinedScope, worker)).asCPointer())
+                argsStableRef.dispose()
+            },
+            StableRef.create(listOf(x11, xInput2, display, unconfinedScope, worker)).asCPointer()
+        )
     }
 
     private fun readEvents() {
@@ -281,14 +269,11 @@ internal class X11KeyboardHandler(
             return X11KeyboardHandler(x11, xInput2)
         }
 
-        private inline fun <T : Function<*>> resolveDlFun(
-                handle: COpaquePointer,
-                name: String
-        ): CPointer<CFunction<T>> =
-                resolveDlPtr(handle, name)
+        private inline fun <T : Function<*>> resolveDlFun(handle: COpaquePointer, name: String): CPointer<CFunction<T>> =
+            resolveDlPtr(handle, name)
 
         @Suppress("UNCHECKED_CAST")
         private inline fun <T : CPointed> resolveDlPtr(handle: COpaquePointer, name: String): CPointer<T> =
-                dlsym(handle, name) as CPointer<T>? ?: throw NoSuchElementException(name)
+            dlsym(handle, name) as CPointer<T>? ?: throw NoSuchElementException(name)
     }
 }

@@ -11,8 +11,8 @@ import com.github.animeshz.keyboard.entity.Key
  */
 @ExperimentalKeyIO
 public class KeyEvent(
-        public val key: Key,
-        public val state: KeyState
+    public val key: Key,
+    public val state: KeyState
 ) {
     override fun toString(): String = "KeyEvent(key=$key, type=$state)"
 }

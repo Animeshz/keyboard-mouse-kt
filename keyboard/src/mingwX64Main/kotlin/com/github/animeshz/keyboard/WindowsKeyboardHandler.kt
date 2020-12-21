@@ -3,8 +3,6 @@ package com.github.animeshz.keyboard
 import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyState
-import kotlin.native.concurrent.TransferMode
-import kotlin.native.concurrent.Worker
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.pointed
@@ -51,6 +49,8 @@ import platform.windows.WM_KEYDOWN
 import platform.windows.WM_SYSKEYDOWN
 import platform.windows.WPARAM
 import platform.windows.tagKBDLLHOOKSTRUCT
+import kotlin.native.concurrent.TransferMode
+import kotlin.native.concurrent.Worker
 
 @ExperimentalKeyIO
 @ExperimentalUnsignedTypes
@@ -108,15 +108,15 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandler {
     internal const val FAKE_ALT: Int = LLKHF_INJECTED or 0x20
     private const val INPUT_KEYBOARD = 1U
     private val WINDOWS_VK_MAPPING = mapOf(
-            0x21 to Key.PageUp,
-            0x22 to Key.PageDown,
-            0x23 to Key.End,
-            0x24 to Key.Home,
-            0x25 to Key.Left,
-            0x26 to Key.Up,
-            0x27 to Key.Right,
-            0x28 to Key.Down,
-            0x5B to Key.LeftSuper
+        0x21 to Key.PageUp,
+        0x22 to Key.PageDown,
+        0x23 to Key.End,
+        0x24 to Key.Home,
+        0x25 to Key.Left,
+        0x26 to Key.Up,
+        0x27 to Key.Right,
+        0x28 to Key.Down,
+        0x5B to Key.LeftSuper
     )
 
     // Static variables to properly close resources at exit.
@@ -126,31 +126,33 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandler {
     init {
         // When subscriptionCount increments from 0 to 1, setup the native hook.
         eventsInternal.subscriptionCount
-                .map { it > 0 }
-                .distinctUntilChanged()
-                .filter { it }
-                .onEach {
-                    worker.execute(mode = TransferMode.SAFE, { this }) { handler -> handler.startMessagePumping() }
-                }
-                .launchIn(unconfinedScope)
+            .map { it > 0 }
+            .distinctUntilChanged()
+            .filter { it }
+            .onEach {
+                worker.execute(mode = TransferMode.SAFE, { this }) { handler -> handler.startMessagePumping() }
+            }
+            .launchIn(unconfinedScope)
 
         hook = worker.execute(mode = TransferMode.SAFE, {}) {
             SetWindowsHookExW(
-                    WH_KEYBOARD_LL,
-                    staticCFunction(::lowLevelKeyboardProc),
-                    GetModuleHandleW(null),
-                    0U
+                WH_KEYBOARD_LL,
+                staticCFunction(::lowLevelKeyboardProc),
+                GetModuleHandleW(null),
+                0U
             )
         }.result ?: throw RuntimeException("Unable to set native hook. Error code: ${GetLastError()}")
 
         // Force execute cleanup handlers on SIGINT (Ctrl + C)
         signal(SIGINT, staticCFunction { _ -> exit(0) })
 
-        atexit(staticCFunction { ->
-            unconfinedScope.cancel()
-            worker.execute(mode = TransferMode.SAFE, {}) { UnhookWindowsHookEx(hook) }.consume {}
-            worker.requestTermination().consume {}
-        })
+        atexit(
+            staticCFunction { ->
+                unconfinedScope.cancel()
+                worker.execute(mode = TransferMode.SAFE, {}) { UnhookWindowsHookEx(hook) }.consume {}
+                worker.requestTermination().consume {}
+            }
+        )
     }
 
     /**
@@ -217,6 +219,4 @@ internal fun lowLevelKeyboardProc(nCode: Int, wParam: WPARAM, lParam: LPARAM): L
  */
 @ExperimentalUnsignedTypes
 @ExperimentalKeyIO
-public actual fun nativeKbHandlerForPlatform(): NativeKeyboardHandler {
-    return WindowsKeyboardHandler
-}
+public actual fun nativeKbHandlerForPlatform(): NativeKeyboardHandler = WindowsKeyboardHandler

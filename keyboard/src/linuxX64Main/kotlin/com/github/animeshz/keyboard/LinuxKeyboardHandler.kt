@@ -1,16 +1,16 @@
-@file:Suppress("EXPERIMENTAL_API_USAGE")  // https://youtrack.jetbrains.com/issue/KT-44007
+@file:Suppress("EXPERIMENTAL_API_USAGE") // https://youtrack.jetbrains.com/issue/KT-44007
 
 package com.github.animeshz.keyboard
 
 import kotlinx.atomicfu.AtomicRef
 import kotlinx.atomicfu.atomic
 
-//@ExperimentalKeyIO
+// @ExperimentalKeyIO
 @SharedImmutable
 private val globalHandler: AtomicRef<NativeKeyboardHandler?> = atomic(null)
 
 // Thread local copy to provide fast (cached) access
-//@ExperimentalKeyIO
+// @ExperimentalKeyIO
 @ThreadLocal
 private var localCachedHandler: NativeKeyboardHandler? = null
 
