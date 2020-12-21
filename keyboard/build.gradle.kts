@@ -3,7 +3,6 @@
 import org.gradle.internal.jvm.Jvm
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
     id("cpp-library")
@@ -92,7 +91,7 @@ fun KotlinMultiplatformExtension.configureLinux() {
 
         main.cinterops.create("device") { defFile("src/linuxX64Main/cinterop/device.def") }
         main.cinterops.create("x11") { defFile("src/linuxX64Main/cinterop/x11.def") }
-        mavenPublication { artifactId = "${project.name}-kt-linuxx64" }
+        mavenPublication { artifactId = "${project.name}-kt-linuxX64" }
     }
 
     val linuxX64Main by sourceSets.getting
@@ -102,7 +101,7 @@ fun KotlinMultiplatformExtension.configureLinux() {
 }
 
 fun KotlinMultiplatformExtension.configureMingw() {
-    mingwX64 { mavenPublication { artifactId = "${project.name}-kt-mingwx64" } }
+    mingwX64 { mavenPublication { artifactId = "${project.name}-kt-mingwX64" } }
 
     val mingwX64Main by sourceSets.getting
     val mingwX64Test by sourceSets.getting { dependsOn(mingwX64Main) }
@@ -112,16 +111,8 @@ fun KotlinMultiplatformExtension.configureMingw() {
 
 kotlin {
     configureJvm()
-    if (ideaActive) {
-        when {
-            HostManager.hostIsLinux -> configureLinux()
-            HostManager.hostIsMingw -> configureMingw()
-            else -> error("OS ${HostManager.hostName} is not supported")
-        }
-    } else {
-        configureLinux()
-        configureMingw()
-    }
+    configureLinux()
+    configureMingw()
 
     sourceSets {
         val commonMain by getting {

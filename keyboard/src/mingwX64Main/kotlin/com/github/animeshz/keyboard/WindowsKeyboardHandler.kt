@@ -3,12 +3,9 @@ package com.github.animeshz.keyboard
 import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyState
-import kotlin.native.concurrent.AtomicNativePtr
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
-import kotlin.native.internal.NativePtr
 import kotlinx.cinterop.alloc
-import kotlinx.cinterop.interpretCPointer
 import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.pointed
 import kotlinx.cinterop.ptr
@@ -17,6 +14,7 @@ import kotlinx.cinterop.staticCFunction
 import kotlinx.cinterop.toCPointer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -25,12 +23,17 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import platform.posix.SIGINT
+import platform.posix.atexit
+import platform.posix.exit
+import platform.posix.signal
 import platform.windows.CallNextHookEx
 import platform.windows.DispatchMessageA
 import platform.windows.GetKeyState
 import platform.windows.GetLastError
 import platform.windows.GetMessageW
 import platform.windows.GetModuleHandleW
+import platform.windows.HHOOK
 import platform.windows.INPUT
 import platform.windows.LLKHF_INJECTED
 import platform.windows.LPARAM
@@ -53,7 +56,6 @@ import platform.windows.tagKBDLLHOOKSTRUCT
 @ExperimentalUnsignedTypes
 internal object WindowsKeyboardHandler : NativeKeyboardHandler {
     private val worker = Worker.start(errorReporting = true, name = "WindowsKeyboardHandler")
-    private val hook: AtomicNativePtr = AtomicNativePtr(NativePtr.NULL)
     private val eventsInternal = MutableSharedFlow<KeyEvent>(extraBufferCapacity = 8)
 
     /**
@@ -61,26 +63,10 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandler {
      */
     override val events: SharedFlow<KeyEvent> = eventsInternal.asSharedFlow()
 
-    init {
-        // When subscriptionCount increments from 0 to 1, setup the native hook.
-        eventsInternal.subscriptionCount
-                .map { it > 0 }
-                .distinctUntilChanged()
-                .filter { it }
-                .onEach {
-                    worker.execute(mode = TransferMode.SAFE, { this }) { handler ->
-                        handler.prepare()
-                        handler.startMessagePumping()
-                        handler.cleanup()
-                    }
-                }
-                .launchIn(CoroutineScope(Dispatchers.Unconfined))
-    }
-
     /**
      * Sends the [keyEvent] to the platform.
      */
-    override fun sendEvent(keyEvent: KeyEvent, moreOnTheWay: Boolean) {
+    override fun sendEvent(keyEvent: KeyEvent) {
         if (keyEvent.key == Key.Unknown) return
 
         memScoped {
@@ -133,16 +119,38 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandler {
             0x5B to Key.LeftSuper
     )
 
-    /**
-     * Registers the native hook.
-     */
-    private fun prepare() {
-        hook.value = SetWindowsHookExW(
-                WH_KEYBOARD_LL,
-                staticCFunction(::lowLevelKeyboardProc),
-                GetModuleHandleW(null),
-                0U
-        )?.rawValue ?: throw RuntimeException("Unable to set native hook, Report it with error code: ${GetLastError()}")
+    // Static variables to properly close resources at exit.
+    private val unconfinedScope = CoroutineScope(Dispatchers.Unconfined)
+    private val hook: HHOOK
+
+    init {
+        // When subscriptionCount increments from 0 to 1, setup the native hook.
+        eventsInternal.subscriptionCount
+                .map { it > 0 }
+                .distinctUntilChanged()
+                .filter { it }
+                .onEach {
+                    worker.execute(mode = TransferMode.SAFE, { this }) { handler -> handler.startMessagePumping() }
+                }
+                .launchIn(unconfinedScope)
+
+        hook = worker.execute(mode = TransferMode.SAFE, {}) {
+            SetWindowsHookExW(
+                    WH_KEYBOARD_LL,
+                    staticCFunction(::lowLevelKeyboardProc),
+                    GetModuleHandleW(null),
+                    0U
+            )
+        }.result ?: throw RuntimeException("Unable to set native hook. Error code: ${GetLastError()}")
+
+        // Force execute cleanup handlers on SIGINT (Ctrl + C)
+        signal(SIGINT, staticCFunction { _ -> exit(0) })
+
+        atexit(staticCFunction { ->
+            unconfinedScope.cancel()
+            worker.execute(mode = TransferMode.SAFE, {}) { UnhookWindowsHookEx(hook) }.consume {}
+            worker.requestTermination().consume {}
+        })
     }
 
     /**
@@ -157,17 +165,6 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandler {
                 TranslateMessage(msg)
                 DispatchMessageA(msg)
             }
-        }
-    }
-
-    /**
-     * Cleans up the handler.
-     */
-    private fun cleanup() {
-        val hookPtr = hook.value
-        if (hookPtr != NativePtr.NULL) {
-            UnhookWindowsHookEx(interpretCPointer(hookPtr))
-            hook.value = NativePtr.NULL
         }
     }
 

@@ -1,10 +1,16 @@
 # KeyboardMouse.kt
 
-__NOTICE: This project is on hold, I'm busy on my own (I have my entrance exams in few months, so I won't be able to
-manage this). I've created
-a [CONTRIBUTING.md](https://github.com/Animeshz/keyboard-mouse-kt/blob/master/CONTRIBUTING.md) if somebody wants to keep
-it alive, along with future plans (which I'm going to do when I come back). Feel free to create issues or PRs, if issues
-are small I'll try to solve them.__
+<p>
+    <a href="https://github.com/Animeshz/keyboard-mouse-kt/releases">
+        <img src="https://img.shields.io/github/release-date/Animeshz/keyboard-mouse-kt?style=flat-square&label=Latest%20Release" alt="Latest Release" />
+    </a>
+    <img src="https://img.shields.io/github/languages/code-size/Animeshz/keyboard-mouse-kt?style=flat-square" alt="Code Size"/>
+    <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/LICENSE">
+        <img src="https://img.shields.io/github/license/Animeshz/keyboard-mouse-kt?style=flat-square" alt="License" />
+    </a>
+</p>
+
+__NOTICE: ~~This project is on hold~~ Edit: I may work slowly if I get time, I'm busy on my own (I have my entrance exams in few months, so I won't be able to manage this). I've created a [CONTRIBUTING.md](https://github.com/Animeshz/keyboard-mouse-kt/blob/master/CONTRIBUTING.md) if somebody wants to keep it alive, along with future plans (which I'm going to do when I come back). Feel free to create issues or PRs, if issues are small I'll try to solve them.__
 
 A multiplatform kotlin library for listening to global keyboard and mouse events.
 
@@ -29,7 +35,7 @@ We aim to provide high-level as well as high-performant low-level access to such
     - [ ] MacOS
     - [ ] JVM
 
-<sub>1. Almost done, few optimizations and tests are remaining (tests are on hold due to MockK does not support K/N).</sub>
+<sub>1. Tests are remaining (tests are on hold due to MockK does not support K/N).</sub>
 
 
 ## Installation
@@ -55,16 +61,16 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 implementation(kotlin("stdlib-common"))
-                implementation("com.github.animeshz:keyboard-kt:0.0.1")
-                implementation("com.github.animeshz:mouse-kt:0.0.1")
+                implementation("com.github.animeshz:keyboard-kt:<version>")
+                implementation("com.github.animeshz:mouse-kt:<version>")
             }
         }
 
         // Or configuring per platform:
         val mingwX64Main by getting {
             dependencies {
-                implementation("com.github.animeshz:keyboard-kt-mingwx64:0.0.1")
-                implementation("com.github.animeshz:mouse-kt-mingwx64:0.0.1")
+                implementation("com.github.animeshz:keyboard-kt-mingwX64:<version>")
+                implementation("com.github.animeshz:mouse-kt-mingwX64:<version>")
             }
         }
     }
