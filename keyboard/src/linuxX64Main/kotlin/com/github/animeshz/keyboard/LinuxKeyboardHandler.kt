@@ -1,14 +1,16 @@
+@file:Suppress("EXPERIMENTAL_API_USAGE")  // https://youtrack.jetbrains.com/issue/KT-44007
+
 package com.github.animeshz.keyboard
 
 import kotlinx.atomicfu.AtomicRef
 import kotlinx.atomicfu.atomic
 
-//@ExperimentalKeyIO  // https://youtrack.jetbrains.com/issue/KT-44007
+//@ExperimentalKeyIO
 @SharedImmutable
 private val globalHandler: AtomicRef<NativeKeyboardHandler?> = atomic(null)
 
 // Thread local copy to provide fast (cached) access
-//@ExperimentalKeyIO  // https://youtrack.jetbrains.com/issue/KT-44007
+//@ExperimentalKeyIO
 @ThreadLocal
 private var localCachedHandler: NativeKeyboardHandler? = null
 
@@ -26,7 +28,7 @@ public actual fun nativeKbHandlerForPlatform(): NativeKeyboardHandler {
 
     val handler = X11KeyboardHandler.create()
         ?: DeviceKeyboardHandler.create()
-        ?: error("Neither X11 and XInput2 is present nor root access is given, Cannot instantiate ")
+        ?: error("Neither X11 and XInput2 is present nor root access is given, Cannot instantiate NativeKeyboardHandler.")
 
     localCachedHandler = handler
     globalHandler.value = handler

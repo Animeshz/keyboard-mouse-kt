@@ -16,12 +16,9 @@ public interface NativeKeyboardHandler {
     public val events: SharedFlow<KeyEvent>
 
     /**
-     * Sends the [keyEvent] to the platform.
-     *
-     * If [moreOnTheWay] is true, the resources won't be closed even if [events] subscriptionCount is 0,
-     * usually should be true when there are more events to be sent on the way.
+     * Sends the [keyEvent] to the host.
      */
-    public fun sendEvent(keyEvent: KeyEvent, moreOnTheWay: Boolean = false)
+    public fun sendEvent(keyEvent: KeyEvent)
 
     /**
      * Gets the current key state (if its pressed or not) from the host.
