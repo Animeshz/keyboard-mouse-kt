@@ -10,16 +10,11 @@
     </a>
 </p>
 
-__NOTICE: This project is ~~on hold~~ Edit: I may work slowly if I get time, I'm busy on my own (I have my entrance exams in few months, so I won't be able to
-manage this). I've created
-a [CONTRIBUTING.md](https://github.com/Animeshz/keyboard-mouse-kt/blob/master/CONTRIBUTING.md) if somebody wants to keep
-it alive, along with future plans (which I'm going to do when I come back). Feel free to create issues or PRs, if issues
-are small I'll try to solve them.__
+__NOTICE: ~~This project is on hold~~ Edit: I may work slowly if I get time, I'm busy on my own (I have my entrance exams in few months, so I won't be able to manage this). I've created a [CONTRIBUTING.md](https://github.com/Animeshz/keyboard-mouse-kt/blob/master/CONTRIBUTING.md) if somebody wants to keep it alive, along with future plans (which I'm going to do when I come back). Feel free to create issues or PRs, if issues are small I'll try to solve them.__
 
 A multiplatform kotlin library for listening to global keyboard and mouse events.
 
-__KeyboardMouse.kt is still in an experimental stage, as such we can't guarantee API stability between releases. While
-we'd love for you to try out our library, we don't recommend you use this in production just yet.__
+__KeyboardMouse.kt is still in an experimental stage, as such we can't guarantee API stability between releases. While we'd love for you to try out our library, we don't recommend you use this in production just yet.__
 
 ## What is KeyboardMouse.kt
 
@@ -40,7 +35,7 @@ We aim to provide high-level as well as high-performant low-level access to such
     - [ ] MacOS
     - [ ] JVM
 
-<sub>1. Almost done, few optimizations and tests are remaining (tests are on hold due to MockK does not support K/N).</sub>
+<sub>1. Tests are remaining (tests are on hold due to MockK does not support K/N).</sub>
 
 
 ## Installation
@@ -74,8 +69,8 @@ kotlin {
         // Or configuring per platform:
         val mingwX64Main by getting {
             dependencies {
-                implementation("com.github.animeshz:keyboard-kt-mingwx64:0.0.1")
-                implementation("com.github.animeshz:mouse-kt-mingwx64:0.0.1")
+                implementation("com.github.animeshz:keyboard-kt-mingwX64:0.0.1")
+                implementation("com.github.animeshz:mouse-kt-mingwX64:0.0.1")
             }
         }
     }
