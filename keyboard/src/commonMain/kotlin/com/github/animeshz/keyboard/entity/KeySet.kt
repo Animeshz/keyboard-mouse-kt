@@ -7,15 +7,15 @@ import com.github.animeshz.keyboard.ExperimentalKeyIO
  */
 @ExperimentalKeyIO
 public class KeySet(
-        public val keys: Set<Key>
+    public val keys: Set<Key>
 ) {
     public constructor(vararg keys: Key) : this(keys.toSet())
 
     public operator fun plus(other: KeySet): KeySet =
-            KeySet(this.keys + other.keys)
+        KeySet(this.keys + other.keys)
 
     public operator fun plus(other: Key): KeySet =
-            KeySet(this.keys + other)
+        KeySet(this.keys + other)
 
     override fun toString(): String {
         return "KeySet(keys=$keys)"
@@ -35,4 +35,4 @@ public class KeySet(
  */
 @ExperimentalKeyIO
 public operator fun Key.plus(other: Key): KeySet =
-        KeySet(setOf(this, other))
+    KeySet(setOf(this, other))

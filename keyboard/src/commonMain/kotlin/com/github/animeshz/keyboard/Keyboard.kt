@@ -7,11 +7,6 @@ import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.entity.KeySet
 import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyState
-import kotlin.coroutines.CoroutineContext
-import kotlin.coroutines.resume
-import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
-import kotlin.time.TimeSource
 import kotlinx.atomicfu.AtomicRef
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CancellationException
@@ -25,7 +20,15 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.resume
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
+import kotlin.time.TimeSource
 
+/**
+ * A typealias of lambda returned from [Keyboard.addShortcut] for better readability.
+ */
 public typealias Cancellable = () -> Unit
 
 /**
@@ -47,7 +50,7 @@ public typealias KeyPressSequence = List<Pair<Duration, KeyEvent>>
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 @ExperimentalKeyIO
 public class Keyboard(
-        context: CoroutineContext = Dispatchers.Default
+    context: CoroutineContext = Dispatchers.Default
 ) {
     private val scope = CoroutineScope(context + SupervisorJob())
     private var job: AtomicRef<Job?> = atomic(null)
@@ -67,9 +70,9 @@ public class Keyboard(
      * @return Returns a [Cancellable], which when invoked the handler is removed.
      */
     public fun addShortcut(
-            keySet: KeySet,
-            trigger: KeyState = KeyState.KeyDown,
-            handler: suspend () -> Unit
+        keySet: KeySet,
+        trigger: KeyState = KeyState.KeyDown,
+        handler: suspend () -> Unit
     ): Cancellable {
         val handlers = if (trigger == KeyState.KeyDown) keyDownHandlers else keyUpHandlers
 
@@ -124,8 +127,8 @@ public class Keyboard(
      * Suspends till the [keySet] are pressed.
      */
     public suspend fun awaitTill(
-            keySet: KeySet,
-            trigger: KeyState = KeyState.KeyDown
+        keySet: KeySet,
+        trigger: KeyState = KeyState.KeyDown
     ): Unit = suspendCancellableCoroutine { cont ->
         val handlers = if (trigger == KeyState.KeyDown) keyDownHandlers else keyUpHandlers
 
@@ -148,8 +151,8 @@ public class Keyboard(
      */
     @ExperimentalTime
     public suspend fun recordKeyPressesTill(
-            keySet: KeySet,
-            trigger: KeyState = KeyState.KeyDown
+        keySet: KeySet,
+        trigger: KeyState = KeyState.KeyDown
     ): KeyPressSequence = suspendCancellableCoroutine { cont ->
         val record = sharedMutableListOf<Pair<Duration, KeyEvent>>()
         val mark = TimeSource.Monotonic.markNow()

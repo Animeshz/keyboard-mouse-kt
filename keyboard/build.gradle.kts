@@ -8,6 +8,10 @@ plugins {
     id("cpp-library")
 }
 
+plugins {
+    id("org.jlleitschuh.gradle.ktlint") version "9.4.1"
+}
+
 val ideaActive = System.getProperty("idea.active") == "true"
 
 val mainSourceSets = mutableListOf<org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet>()
@@ -147,4 +151,13 @@ kotlin {
     }
 
     explicitApi()
+}
+
+ktlint {
+    verbose.set(true)
+    outputToConsole.set(true)
+    coloredOutput.set(true)
+    filter {
+        exclude("**/cinterop/**")
+    }
 }
