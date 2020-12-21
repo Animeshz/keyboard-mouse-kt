@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 
 plugins {
     id("cpp-library")
+    id("org.jlleitschuh.gradle.ktlint") version "9.4.1"
 }
 
 val ideaActive = System.getProperty("idea.active") == "true"
@@ -38,6 +39,7 @@ fun KotlinMultiplatformExtension.configureJvm() {
 
     val generateJniHeaders by tasks.creating(Exec::class) {
         group = "build"
+
         //        if (HostManager.hostIsMingw) {
         //            commandLine(
         //                    "cmd", "/c", "'${Jvm.current().javaHome.canonicalPath}\\bin\\javah'",
@@ -147,4 +149,13 @@ kotlin {
     }
 
     explicitApi()
+}
+
+ktlint {
+    verbose.set(true)
+    outputToConsole.set(true)
+    coloredOutput.set(true)
+    filter {
+        exclude("**/cinterop/**")
+    }
 }

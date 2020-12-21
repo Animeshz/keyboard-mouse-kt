@@ -172,36 +172,36 @@ public enum class Key(public val keyCode: Int) {
          * 'Symbol' to Pair(Key, SHIFT_REQUIRED)
          */
         private val SYMBOL_MAPPING = mapOf(
-                ' ' to Pair(Space, false),
-                '~' to Pair(Backtick, true),
-                '!' to Pair(Number1, true),
-                '@' to Pair(Number2, true),
-                '#' to Pair(Number3, true),
-                '$' to Pair(Number4, true),
-                '%' to Pair(Number5, true),
-                '^' to Pair(Number6, true),
-                '&' to Pair(Number7, true),
-                '*' to Pair(Number8, true),
-                '(' to Pair(Number9, true),
-                ')' to Pair(Number0, true),
-                '-' to Pair(Minus, false),
-                '_' to Pair(Minus, true),
-                '=' to Pair(Equal, false),
-                '+' to Pair(Equal, true),
-                '[' to Pair(LeftBrace, false),
-                '{' to Pair(LeftBrace, true),
-                '[' to Pair(RightBrace, false),
-                '{' to Pair(RightBrace, true),
-                ';' to Pair(Semicolon, false),
-                ':' to Pair(Semicolon, true),
-                '\'' to Pair(Apostrophe, false),
-                '"' to Pair(Apostrophe, true),
-                ',' to Pair(Comma, false),
-                '<' to Pair(Comma, true),
-                '.' to Pair(Dot, false),
-                '>' to Pair(Dot, true),
-                '/' to Pair(Slash, false),
-                '?' to Pair(Slash, true),
+            ' ' to Pair(Space, false),
+            '~' to Pair(Backtick, true),
+            '!' to Pair(Number1, true),
+            '@' to Pair(Number2, true),
+            '#' to Pair(Number3, true),
+            '$' to Pair(Number4, true),
+            '%' to Pair(Number5, true),
+            '^' to Pair(Number6, true),
+            '&' to Pair(Number7, true),
+            '*' to Pair(Number8, true),
+            '(' to Pair(Number9, true),
+            ')' to Pair(Number0, true),
+            '-' to Pair(Minus, false),
+            '_' to Pair(Minus, true),
+            '=' to Pair(Equal, false),
+            '+' to Pair(Equal, true),
+            '[' to Pair(LeftBrace, false),
+            '{' to Pair(LeftBrace, true),
+            '[' to Pair(RightBrace, false),
+            '{' to Pair(RightBrace, true),
+            ';' to Pair(Semicolon, false),
+            ':' to Pair(Semicolon, true),
+            '\'' to Pair(Apostrophe, false),
+            '"' to Pair(Apostrophe, true),
+            ',' to Pair(Comma, false),
+            '<' to Pair(Comma, true),
+            '.' to Pair(Dot, false),
+            '>' to Pair(Dot, true),
+            '/' to Pair(Slash, false),
+            '?' to Pair(Slash, true),
         )
 
         /**
@@ -213,7 +213,8 @@ public enum class Key(public val keyCode: Int) {
             return SYMBOL_MAPPING[char] ?: run {
                 when (char) {
                     in 'A'..'Z' -> values().first { it.name.length == 1 && it.name[0] == char } to true
-                    in 'a'..'z' -> char.toUpperCase()
+                    in 'a'..'z' ->
+                        char.toUpperCase()
                             .let { c -> values().first { it.name.length == 1 && it.name[0] == c } to false }
                     else -> Unknown to false
                 }
