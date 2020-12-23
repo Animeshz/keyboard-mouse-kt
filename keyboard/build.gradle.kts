@@ -1,12 +1,13 @@
 @file:Suppress("UNUSED_VARIABLE")
 
+import de.undercouch.gradle.tasks.download.Download
+import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.internal.jvm.Jvm
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.ByteArrayOutputStream
 
 plugins {
-    `cpp-library`
     id("org.jlleitschuh.gradle.ktlint") version "9.4.1"
 }
 
@@ -91,31 +92,67 @@ fun KotlinMultiplatformExtension.configureJvm() {
         }
     }
 
-//    library {
-//        println(this.name)
-//        linkage.set(listOf(Linkage.SHARED))
-//        privateHeaders.setFrom(jniHeaderDirectory.canonicalPath)
-//        targetMachines.set(listOf(machines.linux.x86_64, machines.windows.x86, machines.windows.x86_64))
-//
-//        binaries.configureEach {
-//            val compileTask = compileTask.get()
-//
-//            compileTask.dependsOn(generateJniHeaders)
-//            tasks.getByName("jvmJar").dependsOn(compileTask)
-//
-////            compileTask.includes.from.add(jniHeaderDirectory.canonicalPath)
-//            compileTask.includes.from.add("${Jvm.current().javaHome.canonicalPath}/include")
-//
-//            val currentOs = compileTask.targetPlatform.get().operatingSystem
-//            when {
-//                currentOs.isMacOsX -> compileTask.includes.from.add("${Jvm.current().javaHome.canonicalPath}/include/darwin")
-//                currentOs.isLinux -> compileTask.includes.from.add("${Jvm.current().javaHome.canonicalPath}/include/linux")
-//                currentOs.isWindows -> compileTask.includes.from.add("${Jvm.current().javaHome.canonicalPath}/include/win32")
-//            }
-//
-//            compileTask.source.setFrom(fileTree("src/jvmMain/jni") { include("**/*.c", "**/*.cpp") })
-//        }
-//    }
+    // Setup and cache CMake
+    val cacheDir = File(System.getProperty("user.home")).resolve(".KeyboardMouseKt").apply { mkdir() }
+    val cmakeDir = cacheDir.resolve("cmake")
+
+    if (!cmakeDir.exists()) {
+        val setupCMake by tasks.creating(Download::class) {
+            val file = when {
+                Os.isFamily(Os.FAMILY_WINDOWS) -> "cmake-3.19.2-win64-x64.zip"
+                Os.isFamily(Os.FAMILY_UNIX) -> "cmake-3.19.2-Linux-x86_64.tar.gz"
+                Os.isFamily(Os.FAMILY_MAC) -> "cmake-3.19.2-macos-universal.tar.gz"
+                else -> error("Current OS is not supported to be built for JVM")
+            }
+            src("https://github.com/Kitware/CMake/releases/download/v3.19.2/$file")
+            dest(cacheDir)
+
+            doFirst {
+                println("Downloading CMake '$file' into $cacheDir, this is one time process.")
+            }
+            doLast {
+                val downloaded = cacheDir.resolve(file)
+
+                copy {
+                    from(if ("tar" in file) tarTree(downloaded) else zipTree(downloaded)).into(cacheDir)
+                }
+                cacheDir.resolve(file.replace(".zip", "").replace(".tar.gz", ""))
+                    .renameTo(cmakeDir)
+
+                delete(downloaded)
+            }
+        }
+
+        afterEvaluate {
+            tasks.matching { it != setupCMake }.all { dependsOn(setupCMake) }
+        }
+    }
+
+    //    library {
+    //        println(this.name)
+    //        linkage.set(listOf(Linkage.SHARED))
+    //        privateHeaders.setFrom(jniHeaderDirectory.canonicalPath)
+    //        targetMachines.set(listOf(machines.linux.x86_64, machines.windows.x86, machines.windows.x86_64))
+    //
+    //        binaries.configureEach {
+    //            val compileTask = compileTask.get()
+    //
+    //            compileTask.dependsOn(generateJniHeaders)
+    //            tasks.getByName("jvmJar").dependsOn(compileTask)
+    //
+    // //            compileTask.includes.from.add(jniHeaderDirectory.canonicalPath)
+    //            compileTask.includes.from.add("${Jvm.current().javaHome.canonicalPath}/include")
+    //
+    //            val currentOs = compileTask.targetPlatform.get().operatingSystem
+    //            when {
+    //                currentOs.isMacOsX -> compileTask.includes.from.add("${Jvm.current().javaHome.canonicalPath}/include/darwin")
+    //                currentOs.isLinux -> compileTask.includes.from.add("${Jvm.current().javaHome.canonicalPath}/include/linux")
+    //                currentOs.isWindows -> compileTask.includes.from.add("${Jvm.current().javaHome.canonicalPath}/include/win32")
+    //            }
+    //
+    //            compileTask.source.setFrom(fileTree("src/jvmMain/jni") { include("**/*.c", "**/*.cpp") })
+    //        }
+    //    }
 
     //            tasks.getByName<Test>("jvmTest") {
     //            val sharedLib = library.developmentBinary.get() as CppSharedLibrary
@@ -123,9 +160,9 @@ fun KotlinMultiplatformExtension.configureJvm() {
     //            systemProperty("java.library.path", sharedLib.linkFile.get().asFile.parentFile)
     //        }
     //
-//    tasks.getByName<Jar>("jvmJar") {
-//        from(library.developmentBinary.flatMap { (it as CppSharedLibrary).linkFile })
-//    }
+    //    tasks.getByName<Jar>("jvmJar") {
+    //        from(library.developmentBinary.flatMap { (it as CppSharedLibrary).linkFile })
+    //    }
 }
 
 fun KotlinMultiplatformExtension.configureLinux() {
