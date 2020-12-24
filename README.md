@@ -21,7 +21,7 @@ __KeyboardMouse.kt is still in an experimental stage, as such we can't guarantee
 
 ## What is KeyboardMouse.kt
 
-KeyboardMouse.kt is a coroutine-based cross-platform implementation of Global Keyboard and Mouse events, written 100% in Kotlin.
+KeyboardMouse.kt is a coroutine-based cross-platform implementation of Global Keyboard and Mouse interactions, written 100% in Kotlin.
 
 We aim to provide high-level as well as high-performant low-level access to such APIs. Sometimes you have to do some unconventional things, and we want to allow you to do those in concise, safe and supported way.
 

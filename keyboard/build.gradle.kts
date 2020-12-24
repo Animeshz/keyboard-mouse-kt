@@ -128,31 +128,52 @@ fun KotlinMultiplatformExtension.configureJvm() {
         }
     }
 
-    //    library {
-    //        println(this.name)
-    //        linkage.set(listOf(Linkage.SHARED))
-    //        privateHeaders.setFrom(jniHeaderDirectory.canonicalPath)
-    //        targetMachines.set(listOf(machines.linux.x86_64, machines.windows.x86, machines.windows.x86_64))
-    //
-    //        binaries.configureEach {
-    //            val compileTask = compileTask.get()
-    //
-    //            compileTask.dependsOn(generateJniHeaders)
-    //            tasks.getByName("jvmJar").dependsOn(compileTask)
-    //
-    // //            compileTask.includes.from.add(jniHeaderDirectory.canonicalPath)
-    //            compileTask.includes.from.add("${Jvm.current().javaHome.canonicalPath}/include")
-    //
-    //            val currentOs = compileTask.targetPlatform.get().operatingSystem
-    //            when {
-    //                currentOs.isMacOsX -> compileTask.includes.from.add("${Jvm.current().javaHome.canonicalPath}/include/darwin")
-    //                currentOs.isLinux -> compileTask.includes.from.add("${Jvm.current().javaHome.canonicalPath}/include/linux")
-    //                currentOs.isWindows -> compileTask.includes.from.add("${Jvm.current().javaHome.canonicalPath}/include/win32")
-    //            }
-    //
-    //            compileTask.source.setFrom(fileTree("src/jvmMain/jni") { include("**/*.c", "**/*.cpp") })
-    //        }
-    //    }
+    val cmake = cmakeDir
+        .run { if (Os.isFamily(Os.FAMILY_MAC)) resolve("CMake.app").resolve("Contents") else this }
+        .resolve("bin")
+        .resolve("cmake" + if (Os.isFamily(Os.FAMILY_WINDOWS)) ".exe" else "")
+
+    for (platform in listOf("windows", "linux")) {
+        tasks.create("compileJni${platform.capitalize()}") {
+            dependsOn(generateJniHeaders)
+            tasks.getByName("jvmJar").dependsOn(this)
+
+            val inputDir = file("src/jvmMain/jni/$platform")
+            val tmpDir = file("build/tmp/compileJni${platform.capitalize()}")
+            val outputDir = file("build/lib").apply { mkdirs() }
+
+            // For caching
+            inputs.dir("src/jvmMain/jni/windows")
+            outputs.dir("build/lib")
+
+            doLast {
+                tmpDir.apply { deleteRecursively() }.apply { mkdirs() }
+
+                val cmakeOutput = ByteArrayOutputStream().use {
+                    project.exec {
+                        workingDir(tmpDir)
+                        commandLine(cmake, inputDir.absolutePath, "-DVERSION=0.1.0")
+                        standardOutput = it
+                    }.assertNormalExitValue()
+                    it.toString()
+                }
+                println(cmakeOutput)
+
+                val buildOutput = ByteArrayOutputStream().use {
+                    project.exec {
+                        workingDir(tmpDir)
+                        commandLine(cmake, "--build", ".", "--config", "Release")
+                        standardOutput = it
+                    }.assertNormalExitValue()
+                    it.toString()
+                }
+                println(buildOutput)
+
+                tmpDir.resolve("Release").walk().first { it.extension == "dll" || it.extension == ".so" || it.extension == ".dylib" }
+                    .run { copyTo(outputDir.resolve(name), overwrite = true) }
+            }
+        }
+    }
 
     //            tasks.getByName<Test>("jvmTest") {
     //            val sharedLib = library.developmentBinary.get() as CppSharedLibrary
