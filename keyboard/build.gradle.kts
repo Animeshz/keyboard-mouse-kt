@@ -31,6 +31,8 @@ fun KotlinMultiplatformExtension.configureJvm() {
     // JNI-C++ configuration
     val jniImplementation by configurations.creating
     val jniHeaderDirectory = file("src/jvmMain/generated/jni").apply { mkdirs() }
+    val jniBuildDir = file("build/lib").apply { mkdirs() }
+    jvmMain.resources.srcDir(jniBuildDir.absolutePath)
 
     configurations.matching {
         it.name.startsWith("cppCompile") || it.name.startsWith("nativeLink") || it.name.startsWith("nativeRuntime")
@@ -64,7 +66,7 @@ fun KotlinMultiplatformExtension.configureJvm() {
                     }
 
                     val (packageName, className, methodInfo) =
-                        """public \w*\s*class (.+)\.(\w+) \{\R([^\}]*)\}""".toRegex().find(output)?.destructured ?: return@forEach
+                        """public \w*\s*class (.+)\.(\w+) (?:implements.*)\{\R([^\}]*)\}""".toRegex().find(output)?.destructured ?: return@forEach
                     val nativeMethods =
                         """.*\bnative\b.*""".toRegex().findAll(methodInfo).mapNotNull { it.groups }.flatMap { it.asSequence().mapNotNull { group -> group?.value } }.toList()
                     if (nativeMethods.isEmpty()) return@forEach
@@ -73,11 +75,14 @@ fun KotlinMultiplatformExtension.configureJvm() {
                         appendln("package $packageName;")
                         appendln("public class $className {")
                         for (method in nativeMethods) {
-                            val updatedMethod = StringBuilder(method).apply {
-                                var count = 0
-                                for (i in indices) if (this[i] == ',' || this[i] == ')') insert(i, " arg${count++}")
+                            if ("()" in method) appendln(method)
+                            else {
+                                val updatedMethod = StringBuilder(method).apply {
+                                    var count = 0
+                                    for (i in indices) if (this[i] == ',' || this[i] == ')') insert(i, " arg${count++}")
+                                }
+                                appendln(updatedMethod)
                             }
-                            appendln(updatedMethod)
                         }
                         appendln("}")
                     }
@@ -126,7 +131,7 @@ fun KotlinMultiplatformExtension.configureJvm() {
 
             val inputDir = file("src/jvmMain/jni/$platform")
             val tmpDir = file("build/tmp/compileJni${platform.capitalize()}").apply { mkdirs() }
-            val outputDir = file("build/lib").apply { mkdirs() }
+            val outputDir = jniBuildDir
             inputs.dir(inputDir.absolutePath)
             outputs.dir(outputDir.absolutePath)
 
@@ -145,11 +150,11 @@ fun KotlinMultiplatformExtension.configureJvm() {
                         commandLine(
                             "meson", inputDir.parent,
                             "--reconfigure",
-                            "--cross-file", inputDir.resolve("build.txt").absolutePath,  // TODO: Change for cross compilation
+                            "--cross-file", inputDir.resolve("build.txt").absolutePath, // TODO: Change for cross compilation
                             "--buildtype=release",
                             "-Dplatform=$platform",
                             "-Dversion=${project.version}",
-                            "\"-Dinclude_dirs=${includePaths.joinToString("', '", prefix="['", postfix = "']").replace("\\", "\\\\")}\""
+                            "\"-Dinclude_dirs=${includePaths.joinToString("', '", prefix = "['", postfix = "']").replace("\\", "\\\\")}\""
                         )
                         standardOutput = it
                     }
@@ -168,7 +173,7 @@ fun KotlinMultiplatformExtension.configureJvm() {
                 }
 
                 copy {
-                    val regex = """^libKeyboardKt\.(?:dll|so|dylib)$""".toRegex()
+                    val regex = "^libKeyboardKt\\.(?:dll|so|dylib)$".toRegex()
                     from(tmpDir.walk().maxDepth(1).first { regex.matches(it.name) }).into(outputDir)
                 }
             }
