@@ -1,6 +1,5 @@
 @file:Suppress("UNUSED_VARIABLE")
 
-import de.undercouch.gradle.tasks.download.Download
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.internal.jvm.Jvm
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
@@ -93,38 +92,86 @@ fun KotlinMultiplatformExtension.configureJvm() {
     }
 
     // Setup and cache CMake
-    val cacheDir = File(System.getProperty("user.home")).resolve(".KeyboardMouseKt").apply { mkdir() }
-    val cmakeDir = cacheDir.resolve("cmake")
+    //    val cacheDir = File(System.getProperty("user.home")).resolve(".KeyboardMouseKt").apply { mkdir() }
+    val pythonExists = project.exec { commandLine(if (Os.isFamily(Os.FAMILY_WINDOWS)) "where" else "which", "python3") }.exitValue == 0
 
-    if (!cmakeDir.exists()) {
-        val setupCMake by tasks.creating(Download::class) {
-            val file = when {
-                Os.isFamily(Os.FAMILY_WINDOWS) -> "cmake-3.19.2-win64-x64.zip"
-                Os.isFamily(Os.FAMILY_UNIX) -> "cmake-3.19.2-Linux-x86_64.tar.gz"
-                Os.isFamily(Os.FAMILY_MAC) -> "cmake-3.19.2-macos-universal.tar.gz"
-                else -> error("Current OS is not supported to be built for JVM")
-            }
-            src("https://github.com/Kitware/CMake/releases/download/v3.19.2/$file")
-            dest(cacheDir)
-
-            doFirst {
-                println("Downloading CMake '$file' into $cacheDir, this is one time process.")
-            }
-            doLast {
-                val downloaded = cacheDir.resolve(file)
-
-                copy {
-                    from(if ("tar" in file) tarTree(downloaded) else zipTree(downloaded)).into(cacheDir)
-                }
-                cacheDir.resolve(file.replace(".zip", "").replace(".tar.gz", ""))
-                    .renameTo(cmakeDir)
-
-                delete(downloaded)
+    val setupJvmFirstRun by tasks.creating {
+        doFirst {
+            if (!pythonExists) {
+                error("Please install python3 before compiling for jvm.")
             }
         }
 
-        afterEvaluate {
-            tasks.matching { it != setupCMake }.all { dependsOn(setupCMake) }
+        doLast {
+            println("Trying to install meson and ninja in python3 (no effect if it already exist)")
+            val mesonOutput = ByteArrayOutputStream().use {
+                project.exec {
+                    commandLine("python3", "-m", "pip", "install", "meson", "ninja")
+                    standardOutput = it
+                }.assertNormalExitValue()
+                it.toString()
+            }
+            println(mesonOutput)
+        }
+    }
+
+    afterEvaluate {
+        tasks.getByName("jvmMainClasses") { dependsOn(setupJvmFirstRun) }
+    }
+
+    for (platform in listOf("windows"/*, "linux"*/)) {
+        tasks.create("compileJni${platform.capitalize()}") {
+            dependsOn(generateJniHeaders)
+            tasks.getByName("jvmJar").dependsOn(this)
+
+            val inputDir = file("src/jvmMain/jni/$platform")
+            val tmpDir = file("build/tmp/compileJni${platform.capitalize()}").apply { mkdirs() }
+            val outputDir = file("build/lib").apply { mkdirs() }
+            inputs.dir(inputDir.absolutePath)
+            outputs.dir(outputDir.absolutePath)
+
+            doLast {
+                val includePaths = Jvm.current()
+                    .javaHome
+                    .resolve("include")
+                    .walk()
+                    .filter { it.isDirectory }
+                    .map { it.absolutePath }
+                    .toList() + jniHeaderDirectory.absolutePath
+
+                ByteArrayOutputStream().use {
+                    val exec = project.exec {
+                        workingDir(tmpDir)
+                        commandLine(
+                            "meson", inputDir.parent,
+                            "--reconfigure",
+                            "--cross-file", inputDir.resolve("build.txt").absolutePath,  // TODO: Change for cross compilation
+                            "--buildtype=release",
+                            "-Dplatform=$platform",
+                            "-Dversion=${project.version}",
+                            "\"-Dinclude_dirs=${includePaths.joinToString("', '", prefix="['", postfix = "']").replace("\\", "\\\\")}\""
+                        )
+                        standardOutput = it
+                    }
+                    println(it.toString())
+                    exec.assertNormalExitValue()
+                }
+
+                ByteArrayOutputStream().use {
+                    val exec = project.exec {
+                        workingDir(tmpDir)
+                        commandLine("meson", "compile")
+                        standardOutput = it
+                    }
+                    println(it.toString())
+                    exec.assertNormalExitValue()
+                }
+
+                copy {
+                    val regex = """^libKeyboardKt\.(?:dll|so|dylib)$""".toRegex()
+                    from(tmpDir.walk().maxDepth(1).first { regex.matches(it.name) }).into(outputDir)
+                }
+            }
         }
     }
 

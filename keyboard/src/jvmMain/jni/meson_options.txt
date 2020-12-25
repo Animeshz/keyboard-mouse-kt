@@ -1,0 +1,3 @@
+option('version', type: 'string', description: 'project version')
+option('platform', type: 'string', description: 'source directory of the platform to process')
+option('include_dirs', type: 'array', description: 'directories to include')
