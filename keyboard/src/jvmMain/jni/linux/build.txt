@@ -5,5 +5,6 @@ cpu = 'x86_64'
 endian = 'little'
 
 [binaries]
-c   = '\usr\bin\gcc'
-cpp = '\usr\bin\g++'
+# Incorrect files generated, need a cross compiling toolchain
+c   = 'C:\Applications\TDM-GCC-64\bin\gcc'
+cpp = 'C:\Applications\TDM-GCC-64\bin\g++'

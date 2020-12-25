@@ -46,14 +46,14 @@ internal object JvmKeyboardHandler : NativeKeyboardHandler {
             .apply { deleteOnExit() }
             .resolve(nativeLibFileName)
 
-        javaClass.getResourceAsStream(nativeLibFileName)?.use { input ->
+        javaClass.classLoader.getResourceAsStream(nativeLibFileName)?.use { input ->
             extractionFile.outputStream().use { output ->
                 input.copyTo(output)
             }
-        } ?: error("null")
+        } ?: error("Native libraries were not found in the Jar")
 
         try {
-            System.loadLibrary(extractionFile.absolutePath)
+            System.load(extractionFile.absolutePath)
         } finally {
             if ("posix" in FileSystems.getDefault().supportedFileAttributeViews()) extractionFile.delete()
             else extractionFile.deleteOnExit()

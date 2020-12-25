@@ -5,5 +5,5 @@ cpu = 'x86_64'
 endian = 'little'
 
 [binaries]
-c   = 'C:\Applications\MinGW\bin\gcc'
-cpp = 'C:\Applications\MinGW\bin\g++'
+c   = 'C:\Applications\TDM-GCC-64\bin\gcc'
+cpp = 'C:\Applications\TDM-GCC-64\bin\g++'

@@ -109,14 +109,12 @@ fun KotlinMultiplatformExtension.configureJvm() {
 
         doLast {
             println("Trying to install meson and ninja in python3 (no effect if it already exist)")
-            val mesonOutput = ByteArrayOutputStream().use {
-                project.exec {
-                    commandLine("python3", "-m", "pip", "install", "meson", "ninja")
-                    standardOutput = it
-                }.assertNormalExitValue()
-                it.toString()
-            }
-            println(mesonOutput)
+
+            project.exec {
+                commandLine("python3", "-m", "pip", "install", "meson", "ninja")
+                standardOutput = System.out
+                errorOutput = System.out
+            }.assertNormalExitValue()
         }
     }
 
@@ -124,16 +122,15 @@ fun KotlinMultiplatformExtension.configureJvm() {
         tasks.getByName("jvmMainClasses") { dependsOn(setupJvmFirstRun) }
     }
 
-    for (platform in listOf("windows"/*, "linux"*/)) {
+    for (platform in listOf("windows", "linux")) {
         tasks.create("compileJni${platform.capitalize()}") {
             dependsOn(generateJniHeaders)
             tasks.getByName("jvmJar").dependsOn(this)
 
             val inputDir = file("src/jvmMain/jni/$platform")
-            val tmpDir = file("build/tmp/compileJni${platform.capitalize()}").apply { mkdirs() }
-            val outputDir = jniBuildDir
+            val tmpDir = file("build/tmp/compileJni${platform.capitalize()}").apply { delete() }.apply { mkdirs() }
             inputs.dir(inputDir.absolutePath)
-            outputs.dir(outputDir.absolutePath)
+            outputs.dir(jniBuildDir.absolutePath)
 
             doLast {
                 val includePaths = Jvm.current()
@@ -144,37 +141,33 @@ fun KotlinMultiplatformExtension.configureJvm() {
                     .map { it.absolutePath }
                     .toList() + jniHeaderDirectory.absolutePath
 
-                ByteArrayOutputStream().use {
-                    val exec = project.exec {
-                        workingDir(tmpDir)
-                        commandLine(
-                            "meson", inputDir.parent,
-                            "--reconfigure",
-                            "--cross-file", inputDir.resolve("build.txt").absolutePath, // TODO: Change for cross compilation
-                            "--buildtype=release",
-                            "-Dplatform=$platform",
-                            "-Dversion=${project.version}",
-                            "\"-Dinclude_dirs=${includePaths.joinToString("', '", prefix = "['", postfix = "']").replace("\\", "\\\\")}\""
-                        )
-                        standardOutput = it
-                    }
-                    println(it.toString())
-                    exec.assertNormalExitValue()
-                }
+                project.exec {
+                    workingDir(tmpDir)
+                    commandLine(
+                        "meson",
+                        inputDir.parent,
+                        "--cross-file",
+                        inputDir.resolve("build.txt").absolutePath, // TODO: Change for cross compilation
+                        "--buildtype=release",
+                        "-Dplatform=$platform",
+                        "-Dversion=${project.version}",
+                        "\"-Dinclude_dirs=${includePaths.joinToString("', '", prefix = "['", postfix = "']").replace("\\", "\\\\")}\""
+                    )
+                    standardOutput = System.out
+                    errorOutput = System.out
+                }.assertNormalExitValue()
 
-                ByteArrayOutputStream().use {
-                    val exec = project.exec {
-                        workingDir(tmpDir)
-                        commandLine("meson", "compile")
-                        standardOutput = it
-                    }
-                    println(it.toString())
-                    exec.assertNormalExitValue()
-                }
+                project.exec {
+                    println("starting2")
+                    workingDir(tmpDir)
+                    commandLine("meson", "compile")
+                    standardOutput = System.out
+                    errorOutput = System.out
+                }.assertNormalExitValue()
 
                 copy {
                     val regex = "^libKeyboardKt\\.(?:dll|so|dylib)$".toRegex()
-                    from(tmpDir.walk().maxDepth(1).first { regex.matches(it.name) }).into(outputDir)
+                    from(tmpDir.walk().maxDepth(1).first { regex.matches(it.name) }).into(jniBuildDir)
                 }
             }
         }
