@@ -1,9 +1,0 @@
-[host_machine]
-system = 'windows'
-cpu_family = 'x86_64'
-cpu = 'x86_64'
-endian = 'little'
-
-[binaries]
-c   = 'C:\Applications\TDM-GCC-64\bin\gcc'
-cpp = 'C:\Applications\TDM-GCC-64\bin\g++'

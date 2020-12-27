@@ -108,7 +108,7 @@ fun KotlinMultiplatformExtension.configureJvm() {
         }
 
         doLast {
-            println("Trying to install meson and ninja in python3 (no effect if it already exist)")
+            println("Checking installation of meson and ninja in python3 (no effect if it already exist)")
 
             project.exec {
                 commandLine("python3", "-m", "pip", "install", "meson", "ninja")
@@ -124,14 +124,28 @@ fun KotlinMultiplatformExtension.configureJvm() {
 
     for (platform in listOf("windows", "linux")) {
         tasks.create("compileJni${platform.capitalize()}") {
+            group = "build"
             dependsOn(generateJniHeaders)
             tasks.getByName("jvmJar").dependsOn(this)
 
-            val inputDir = file("src/jvmMain/jni/$platform")
-            val tmpDir = file("build/tmp/compileJni${platform.capitalize()}").apply { delete() }.apply { mkdirs() }
+            val inputDir = file("src/jvmMain/jni")
+            val tmpDir = file("build/tmp/compileJni${platform.capitalize()}")
             inputs.dir(inputDir.absolutePath)
             outputs.dir(jniBuildDir.absolutePath)
 
+            doFirst {
+                project.delete(tmpDir.absolutePath)
+                tmpDir.mkdirs()
+
+                project.exec {
+                    workingDir(tmpDir)
+                    commandLine(
+                        "python3",
+                        inputDir.resolve("generate_cross_file.py").absolutePath,
+                        "--system=$platform"
+                    )
+                }
+            }
             doLast {
                 val includePaths = Jvm.current()
                     .javaHome
@@ -145,12 +159,11 @@ fun KotlinMultiplatformExtension.configureJvm() {
                     workingDir(tmpDir)
                     commandLine(
                         "meson",
-                        inputDir.parent,
+                        inputDir.absolutePath,
                         "--cross-file",
-                        inputDir.resolve("build.txt").absolutePath, // TODO: Change for cross compilation
+                        tmpDir.resolve("build.txt").absolutePath,
                         "--buildtype=release",
                         "-Dplatform=$platform",
-                        "-Dversion=${project.version}",
                         "\"-Dinclude_dirs=${includePaths.joinToString("', '", prefix = "['", postfix = "']").replace("\\", "\\\\")}\""
                     )
                     standardOutput = System.out
