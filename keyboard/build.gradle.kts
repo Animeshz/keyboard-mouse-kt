@@ -3,9 +3,10 @@
 import org.gradle.internal.jvm.Jvm
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.io.ByteArrayOutputStream
+import kotlin.system.exitProcess
 
 plugins {
-    id("cpp-library")
     id("org.jlleitschuh.gradle.ktlint") version "9.4.1"
 }
 
@@ -29,53 +30,114 @@ fun KotlinMultiplatformExtension.configureJvm() {
 
     // JNI-C++ configuration
     val jniImplementation by configurations.creating
+    val jniHeaderDirectory = file("src/jvmMain/generated/jni").apply { mkdirs() }
 
-    configurations.matching {
-        it.name.startsWith("cppCompile") || it.name.startsWith("nativeLink") || it.name.startsWith("nativeRuntime")
-    }.all { extendsFrom(jniImplementation) }
-
-    val jniHeaderDirectory = layout.buildDirectory.dir("jniHeaders")
-
-    val generateJniHeaders by tasks.creating(Exec::class) {
+    // Generating Jni headers
+    val generateJniHeaders by tasks.creating {
         group = "build"
+        dependsOn(tasks.getByName("jvmMainClasses"))
 
-        //        if (HostManager.hostIsMingw) {
-        //            commandLine(
-        //                    "cmd", "/c", "'${Jvm.current().javaHome.canonicalPath}\\bin\\javah'",
-        //                    "-d", "src/jvmMain/jni/generated",
-        //                    "-classpath", "src/jvmMain/kotlin",
-        //                    "com.github.animeshz.keyboard.jni.TestKt"
-        //            )
-        //        } else {
-        //            commandLine(
-        //                    "sh", "-c", "${Jvm.current().javaHome.canonicalPath}/bin/javah",
-        //                    "-d", "src/jvmMain/jni/generated",
-        //                    "-classpath", "src/jvmMain/kotlin",
-        //                    "com.github.animeshz.keyboard.jni.TestKt"
-        //            )
-        //        }
-    }
+        // For caching
+        inputs.dir("src/jvmMain/kotlin")
+        outputs.dir("src/jvmMain/generated/jni")
 
-    library {
-        binaries.configureEach {
-            val compileTask = compileTask.get()
+        doLast {
+            val javaHome = Jvm.current().javaHome
+            val javap = javaHome.resolve("bin").walk().firstOrNull { it.name.startsWith("javap") }?.absolutePath ?: error("javap not found")
+            val javac = javaHome.resolve("bin").walk().firstOrNull { it.name.startsWith("javac") }?.absolutePath ?: error("javac not found")
+            val buildDir = file("build/classes/kotlin/jvm/main")
+            val tmpDir = file("build/tmp/jvmJni").apply { mkdirs() }
 
-            compileTask.dependsOn(generateJniHeaders)
-            compileTask.compilerArgs.addAll(jniHeaderDirectory.map { listOf("-I", it.asFile.canonicalPath) })
-            compileTask.compilerArgs.addAll(compileTask.targetPlatform.map {
-                listOf("-I", "${Jvm.current().javaHome.canonicalPath}/include") + when {
-                    it.operatingSystem.isMacOsX ->
-                        listOf("-I", "${Jvm.current().javaHome.canonicalPath}/include/darwin")
-                    it.operatingSystem.isLinux ->
-                        listOf("-I", "${Jvm.current().javaHome.canonicalPath}/include/linux")
-                    it.operatingSystem.isWindows ->
-                        listOf("/I", "${Jvm.current().javaHome.canonicalPath}/include/win32")
-                    else -> emptyList()
+            buildDir.walkTopDown()
+                .filter { "META" !in it.absolutePath }
+                .forEach { file ->
+                    if (!file.isFile) return@forEach
+
+                    val output = ByteArrayOutputStream().use {
+                        project.exec {
+                            commandLine(javap, "-cp", buildDir.absolutePath, file.absolutePath)
+                            standardOutput = it
+                        }
+                        it.toString()
+                    }
+
+                    val (packageName, className, methodInfo) =
+                        """public \w*\s*class (.+)\.(\w+) \{\R([^\}]*)\}""".toRegex().find(output)?.destructured ?: return@forEach
+                    val nativeMethods =
+                        """.*\bnative\b.*""".toRegex().findAll(methodInfo).mapNotNull { it.groups }.flatMap { it.asSequence().mapNotNull { group -> group?.value } }.toList()
+                    if (nativeMethods.isEmpty()) return@forEach
+
+                    val source = buildString {
+                        appendln("package $packageName;")
+                        appendln("public class $className {")
+                        for (method in nativeMethods) {
+                            val updatedMethod = StringBuilder(method).apply {
+                                var count = 0
+                                for (i in indices) if (this[i] == ',' || this[i] == ')') insert(i, " arg${count++}")
+                            }
+                            appendln(updatedMethod)
+                        }
+                        appendln("}")
+                    }
+                    val outputFile = tmpDir.resolve(packageName.replace(".", "/")).apply { mkdirs() }.resolve("$className.java").apply { createNewFile() }
+                    outputFile.writeText(source)
+
+                    project.exec {
+                        commandLine(javac, "-h", jniHeaderDirectory.absolutePath, outputFile.absolutePath)
+                    }
                 }
-            })
         }
     }
 
+    // For building shared libraries out of C/C++ sources
+
+    val compileJni by tasks.creating {
+        group = "build"
+        dependsOn(generateJniHeaders)
+
+        // For caching
+        inputs.dir("src/jvmMain/cpp")
+        outputs.dir("build/jni")
+
+        doFirst {
+            println("Checking docker installation")
+
+            val exit = project.exec { commandLine("where", "docker") }.exitValue
+            if (exit != 0) {
+                println("Please install docker before running this task")
+                exitProcess(1)
+            }
+        }
+
+        doLast {
+            class Target(val name: String, val dockerImage: String, val outputExtension: String)
+            val systems = listOf(
+                Target("windows-x64", "animeshz/keyboard-mouse-kt:jni-build-windows-x64", "dll"),
+                Target("linux-x64",  "animeshz/keyboard-mouse-kt:jni-build-linux-x64", "so")
+            )
+
+
+            for (system in systems) {
+                // Integrate with CMake
+                project.exec {
+                    commandLine(
+                        "docker",
+                        "run",
+                        "-it",
+                        "-v='${file(".").absolutePath}:/mnt/project'",
+                        "--rm",
+                        system.dockerImage,
+                        "bash",
+                        "-c",
+                        "cmake  && cmake {dir} --build --config Release"
+                    )
+                    standardOutput = System.out
+                    errorOutput = System.out
+                }
+            }
+
+        }
+    }
     //    tasks.getByName<Test>("jvmTest") {
     //        val sharedLib = library.developmentBinary.get() as CppSharedLibrary
     //        dependsOn(sharedLib.linkTask)
