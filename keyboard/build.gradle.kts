@@ -1,5 +1,6 @@
 @file:Suppress("UNUSED_VARIABLE")
 
+import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.internal.jvm.Jvm
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -22,20 +23,30 @@ fun KotlinMultiplatformExtension.configureJvm() {
     tasks.withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"
     }
+    tasks.getByName<Test>("jvmTest") {
+        useJUnitPlatform()
+    }
 
     val jvmMain by sourceSets.getting
-    val jvmTest by sourceSets.getting { dependsOn(jvmMain) }
+    val jvmTest by sourceSets.getting {
+        dependsOn(jvmMain)
+        dependencies {
+            implementation("io.kotest:kotest-runner-junit5:4.3.2")
+            implementation("io.kotest:kotest-assertions-core:4.3.2")
+        }
+    }
     mainSourceSets.add(jvmMain)
     testSourceSets.add(jvmTest)
 
     // JNI-C++ configuration
-    val jniImplementation by configurations.creating
     val jniHeaderDirectory = file("src/jvmMain/generated/jni").apply { mkdirs() }
+    jvmMain.resources.srcDir("build/jni")
+    jvmTest.resources.srcDir("build/jni")
 
     // Generating Jni headers
     val generateJniHeaders by tasks.creating {
         group = "build"
-        dependsOn(tasks.getByName("jvmMainClasses"))
+        dependsOn(tasks.getByName("compileKotlinJvm"))
 
         // For caching
         inputs.dir("src/jvmMain/kotlin")
@@ -57,12 +68,12 @@ fun KotlinMultiplatformExtension.configureJvm() {
                         project.exec {
                             commandLine(javap, "-cp", buildDir.absolutePath, file.absolutePath)
                             standardOutput = it
-                        }
+                        }.assertNormalExitValue()
                         it.toString()
                     }
 
                     val (packageName, className, methodInfo) =
-                        """public \w*\s*class (.+)\.(\w+) \{\R([^\}]*)\}""".toRegex().find(output)?.destructured ?: return@forEach
+                        """public \w*\s*class (.+)\.(\w+) (?:implements.*)\{\R([^\}]*)\}""".toRegex().find(output)?.destructured ?: return@forEach
                     val nativeMethods =
                         """.*\bnative\b.*""".toRegex().findAll(methodInfo).mapNotNull { it.groups }.flatMap { it.asSequence().mapNotNull { group -> group?.value } }.toList()
                     if (nativeMethods.isEmpty()) return@forEach
@@ -71,11 +82,14 @@ fun KotlinMultiplatformExtension.configureJvm() {
                         appendln("package $packageName;")
                         appendln("public class $className {")
                         for (method in nativeMethods) {
-                            val updatedMethod = StringBuilder(method).apply {
-                                var count = 0
-                                for (i in indices) if (this[i] == ',' || this[i] == ')') insert(i, " arg${count++}")
+                            if ("()" in method) appendln(method)
+                            else {
+                                val updatedMethod = StringBuilder(method).apply {
+                                    var count = 0
+                                    for (i in indices) if (this[i] == ',' || this[i] == ')') insert(i, " arg${count++}")
+                                }
+                                appendln(updatedMethod)
                             }
-                            appendln(updatedMethod)
                         }
                         appendln("}")
                     }
@@ -84,7 +98,7 @@ fun KotlinMultiplatformExtension.configureJvm() {
 
                     project.exec {
                         commandLine(javac, "-h", jniHeaderDirectory.absolutePath, outputFile.absolutePath)
-                    }
+                    }.assertNormalExitValue()
                 }
         }
     }
@@ -94,9 +108,10 @@ fun KotlinMultiplatformExtension.configureJvm() {
     val compileJni by tasks.creating {
         group = "build"
         dependsOn(generateJniHeaders)
+        tasks.getByName("jvmProcessResources").dependsOn(this)
 
         // For caching
-        inputs.dir("src/jvmMain/cpp")
+        inputs.dir("src/jvmMain/jni")
         outputs.dir("build/jni")
 
         doFirst {
@@ -110,43 +125,63 @@ fun KotlinMultiplatformExtension.configureJvm() {
         }
 
         doLast {
-            class Target(val name: String, val dockerImage: String, val outputExtension: String)
-            val systems = listOf(
-                Target("windows-x64", "animeshz/keyboard-mouse-kt:jni-build-windows-x64", "dll"),
-                Target("linux-x64",  "animeshz/keyboard-mouse-kt:jni-build-linux-x64", "so")
+            class Target(val os: String, val arch: String, val dockerImage: String)
+
+            val targets = listOf(
+                Target("windows", "x64", "animeshz/keyboard-mouse-kt:jni-build-windows-x64"),
+                Target("linux", "x64", "animeshz/keyboard-mouse-kt:jni-build-linux-x64")
             )
 
-
-            for (system in systems) {
+            for (target in targets) {
                 // Integrate with CMake
-                project.exec {
-                    commandLine(
-                        "docker",
-                        "run",
-                        "-it",
-                        "-v='${file(".").absolutePath}:/mnt/project'",
-                        "--rm",
-                        system.dockerImage,
-                        "bash",
-                        "-c",
-                        "cmake  && cmake {dir} --build --config Release"
-                    )
-                    standardOutput = System.out
-                    errorOutput = System.out
-                }
-            }
+                val tmpVar = file(".").absolutePath
+                val path = if (Os.isFamily(Os.FAMILY_WINDOWS)) "/run/desktop/mnt/host/${tmpVar[0].toLowerCase()}${tmpVar.substring(2 until tmpVar.length).replace('\\', '/')}"
+                else tmpVar
 
+                val work: () -> String = {
+                    ByteArrayOutputStream().use {
+                        project.exec {
+                            val args = arrayOf(
+                                "docker",
+                                "run",
+                                "--rm",
+                                "-v",
+                                "$path:/work/project",
+                                target.dockerImage,
+                                "bash",
+                                "-c",
+                                "mkdir -p \$WORK_DIR/project/build/jni && " +
+                                    "mkdir -p \$WORK_DIR/project/build/tmp/compile-jni-${target.os}-${target.arch} && " +
+                                    "cd \$WORK_DIR/project/build/tmp/compile-jni-${target.os}-${target.arch} && " +
+                                    "cmake \$WORK_DIR/project/src/jvmMain/jni/${target.os}-${target.arch} && " +
+                                    "cmake --build . --config Release && " +
+                                    "cp -rf libKeyboardKt${target.arch}.{dll,so,dylib} \$WORK_DIR/project/build/jni 2>/dev/null || :"
+                            )
+                            println(args.joinToString(" "))
+                            commandLine(*args)
+
+                            isIgnoreExitValue = true
+                            standardOutput = System.out
+                            errorOutput = it
+                        }
+                        it.toString()
+                    }
+                }
+                var output = work()
+                val nonDaemonError = "docker: error during connect: This error may indicate that the docker daemon is not running."
+                if (Os.isFamily(Os.FAMILY_WINDOWS) && output.startsWith(nonDaemonError)) {
+                    project.exec { commandLine("C:\\Program Files\\Docker\\Docker\\DockerCli.exe", "-SwitchDaemon") }.assertNormalExitValue()
+
+                    do {
+                        Thread.sleep(500)
+                        output = work()
+                    } while (output.startsWith(nonDaemonError))
+                }
+
+                println(output)
+            }
         }
     }
-    //    tasks.getByName<Test>("jvmTest") {
-    //        val sharedLib = library.developmentBinary.get() as CppSharedLibrary
-    //        dependsOn(sharedLib.linkTask)
-    //        systemProperty("java.library.path", sharedLib.linkFile.get().asFile.parentFile)
-    //    }
-    //
-    //    tasks.getByName<Jar>("jvmJar") {
-    //        from(library.developmentBinary.flatMap { (it as CppSharedLibrary).linkFile })
-    //    }
 }
 
 fun KotlinMultiplatformExtension.configureLinux() {
