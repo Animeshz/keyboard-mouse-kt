@@ -17,11 +17,9 @@ import kotlinx.cinterop.alloc
 import kotlinx.cinterop.allocArray
 import kotlinx.cinterop.asStableRef
 import kotlinx.cinterop.cstr
-import kotlinx.cinterop.free
 import kotlinx.cinterop.get
 import kotlinx.cinterop.invoke
 import kotlinx.cinterop.memScoped
-import kotlinx.cinterop.nativeHeap
 import kotlinx.cinterop.pointed
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.reinterpret
@@ -29,16 +27,7 @@ import kotlinx.cinterop.set
 import kotlinx.cinterop.staticCFunction
 import kotlinx.cinterop.value
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import platform.posix.RTLD_GLOBAL
 import platform.posix.RTLD_LAZY
 import platform.posix.SIGINT
@@ -62,19 +51,7 @@ import kotlin.native.concurrent.Worker
 @Suppress("PrivatePropertyName")
 @ExperimentalUnsignedTypes
 @ExperimentalKeyIO
-internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) : NativeKeyboardHandler {
-
-    private val worker: Worker = Worker.start(errorReporting = true, name = "X11KeyboardHandler")
-    private val display: CPointer<DisplayVar>
-    private val xiOpcode: Int
-    private val eventsInternal: MutableSharedFlow<KeyEvent> = MutableSharedFlow(extraBufferCapacity = 8)
-
-    /**
-     * A [SharedFlow] of [KeyEvent] for receiving Key events from the target platform.
-     */
-    override val events: SharedFlow<KeyEvent>
-        get() = eventsInternal.asSharedFlow()
-
+internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) : NativeKeyboardHandlerBase() {
     override fun sendEvent(keyEvent: KeyEvent) {
         if (keyEvent.key == Key.Unknown) return
 
@@ -133,29 +110,19 @@ internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) 
     private val XGetKeyboardControl = resolveDlFun<(CValuesRef<DisplayVar>, CValuesRef<XKeyboardState>) -> Int>(x11, "XGetKeyboardControl")
     private val XISelectEvents = resolveDlFun<(CValuesRef<DisplayVar>, ULong, CValuesRef<XIEventMask>, Int) -> Int>(xInput2, "XISelectEvents")
 
+    private val worker: Worker = Worker.start(errorReporting = true, name = "X11KeyboardHandler")
+    private val display: CPointer<DisplayVar> = XOpenDisplay(null) ?: throw RuntimeException("X11 connection can't be established")
+
+    private val xiOpcode: Int = memScoped {
+        val xiOpcodeVar = alloc<IntVar>()
+        val queryEventVar = alloc<IntVar>()
+        val queryErrorVar = alloc<IntVar>()
+
+        XQueryExtension(display, "XInputExtension".cstr, xiOpcodeVar.ptr, queryEventVar.ptr, queryErrorVar.ptr)
+        xiOpcodeVar.value
+    }
+
     init {
-        val unconfinedScope = CoroutineScope(Dispatchers.Unconfined)
-        // When subscriptionCount increments from 0 to 1, setup the native hook.
-        eventsInternal.subscriptionCount
-            .map { it > 0 }
-            .distinctUntilChanged()
-            .filter { it }
-            .onEach {
-                worker.execute(mode = TransferMode.SAFE, { this }) { handler -> handler.readEvents() }
-            }
-            .launchIn(unconfinedScope)
-
-        display = XOpenDisplay(null) ?: throw RuntimeException("X11 connection can't be established")
-
-        val xiOpcode = nativeHeap.alloc<IntVar>()
-        val queryEvent = nativeHeap.alloc<IntVar>()
-        val queryError = nativeHeap.alloc<IntVar>()
-        XQueryExtension(display, "XInputExtension".cstr, xiOpcode.ptr, queryEvent.ptr, queryError.ptr)
-        this.xiOpcode = xiOpcode.value
-        nativeHeap.free(xiOpcode)
-        nativeHeap.free(queryEvent)
-        nativeHeap.free(queryError)
-
         memScoped<Unit> {
             val root = XDefaultRootWindow(display)
             val xiMask = alloc<XIEventMask>().apply {
@@ -194,26 +161,28 @@ internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) 
         )
     }
 
-    private fun readEvents() {
-        memScoped {
-            val event = alloc<XEvent>()
+    override fun readEvents() {
+        worker.execute(mode = TransferMode.SAFE, { this }) { handler ->
+            memScoped {
+                val event = alloc<XEvent>()
 
-            while (eventsInternal.subscriptionCount.value != 0) {
-                XNextEvent(display, event.ptr)
-                val cookie = event.xcookie
-                if (cookie.type != GENERIC_EVENT || cookie.extension != xiOpcode) continue
+                while (handler.eventsInternal.subscriptionCount.value != 0) {
+                    XNextEvent(handler.display, event.ptr)
+                    val cookie = event.xcookie
+                    if (cookie.type != GENERIC_EVENT || cookie.extension != handler.xiOpcode) continue
 
-                if (XGetEventData(display, cookie.ptr) != 0) {
-                    val keyEventType = when (cookie.evtype) {
-                        XI_RAW_KEY_PRESS -> KeyState.KeyDown
-                        XI_RAW_KEY_RELEASE -> KeyState.KeyUp
-                        else -> continue
+                    if (XGetEventData(handler.display, cookie.ptr) != 0) {
+                        val keyEventType = when (cookie.evtype) {
+                            XI_RAW_KEY_PRESS -> KeyState.KeyDown
+                            XI_RAW_KEY_RELEASE -> KeyState.KeyUp
+                            else -> continue
+                        }
+                        val cookieData = cookie.data!!.reinterpret<XIRawEvent>().pointed
+                        handler.process(keyEventType, cookieData.detail - 8)
                     }
-                    val cookieData = cookie.data!!.reinterpret<XIRawEvent>().pointed
-                    process(keyEventType, cookieData.detail - 8)
-                }
 
-                XFreeEventData(display, cookie.ptr)
+                    XFreeEventData(handler.display, cookie.ptr)
+                }
             }
         }
     }
@@ -261,12 +230,19 @@ internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) 
             if (getenv("DISPLAY") == null) return null
 
             val x11 = dlopen("libX11.so.6", RTLD_GLOBAL or RTLD_LAZY) ?: return null
-            val xInput2 = dlopen("libXi.so.6", RTLD_GLOBAL or RTLD_LAZY) ?: return null
+            val xInput2 = dlopen("libXi.so.6", RTLD_GLOBAL or RTLD_LAZY) ?: return close(listOf(x11))
 
             // Check XInput2 functions are present, since libXi may contain XInput or XInput2.
-            dlsym(xInput2, "XISelectEvents") ?: return null
+            dlsym(xInput2, "XISelectEvents") ?: return close(listOf(x11, xInput2))
 
             return X11KeyboardHandler(x11, xInput2)
+        }
+
+        private inline fun close(pointers: List<COpaquePointer?>): Nothing? {
+            for (ptr in pointers) {
+                dlclose(ptr)
+            }
+            return null
         }
 
         private inline fun <T : Function<*>> resolveDlFun(handle: COpaquePointer, name: String): CPointer<CFunction<T>> =

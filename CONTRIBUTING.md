@@ -54,4 +54,6 @@ Following are the future plans for the project:
 To build and publish to mavenLocal:
 `$ ./gradlew build publishToMavenLocal`
 
+The only dependency is to install Docker when building for JVM due to cross-compilation requirement of JNI native libs to be able to pack the full Jar from any platform that is supported cross-platform.
+
 [1]: https://github.com/Animeshz/keyboard-mouse-kt/issues/1
