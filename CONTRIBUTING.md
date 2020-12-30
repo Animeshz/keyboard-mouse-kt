@@ -4,7 +4,10 @@
 
 When contributing to this repository, please first discuss the change you wish to make via issue or github discussions.
 
-__NOTICE: ~~This project is on hold~~ Edit: I may work slowly if I get time, I'm busy on my own (I have my entrance exams in few months, so I won't be able to manage this). I've created a CONTRIBUTING.md if somebody wants to keep it alive, along with future plans (which I'm going to do when I come back). Feel free to create issues or PRs, if issues are small I'll try to solve them.__
+__NOTICE: ~~This project is on hold~~ Edit: I may work slowly if I get time, I'm busy on my own (I have my entrance
+exams in few months, so I won't be able to manage this). I've created a CONTRIBUTING.md if somebody wants to keep it
+alive, along with future plans (which I'm going to do when I come back). Feel free to create issues or PRs, if issues
+are small I'll try to solve them.__
 
 ### How is the project organized?
 
@@ -36,10 +39,12 @@ Following are the future plans for the project:
   compile-task and jar packaging task.
   References: [Kotlin replacement for javah](https://stackoverflow.com/q/48816188/11377112)
   , [How to solve missing javah in Java 10 – ugly way](https://www.owsiak.org/how-to-solve-missing-javah-ugly-way)
-- Implement JNI each for different platforms, and compile the sources ~~using cpp-library plugin~ (already setup in ~
-  jvm~ jni-setup-meson branch), and then package it up in the resulting Jar by editing the source sets. I've considered
-  it to do via C++ instead of reusing Kotlin/Native because it will result in low performance and maybe huge sizes (if
-  K/N becomes stable and performance wise equivalent we can directly reuse the sources we've written).
+- [X] Implement way to cross compile the C/C++ library from any OS to any OS and then package it up in the resulting
+  Jar. Done with PR [#4](https://github.com/Animeshz/keyboard-mouse-kt/pull/4)
+  on [jvm branch](https://github.com/Animeshz/keyboard-mouse-kt/tree/jvm)
+- Implement JNI each for different platforms. I've considered it to do via C++ instead of reusing Kotlin/Native because
+  it will result in low performance and maybe huge sizes (if K/N becomes stable and performance wise equivalent we can
+  directly reuse the sources we've written).
 - Add Linux Device (`/dev/uinput` | `/dev/input/xxx`) based implementation of interaction of Keyboard/Mouse as a
   fallback when X11 is not present (after resolving [#1][1]).
 - Implement Mouse API in similar way keyboard is implemented.

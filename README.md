@@ -31,14 +31,15 @@ We aim to provide high-level as well as high-performant low-level access to such
     - [X] Windows <sup>1</sup>
     - [X] Linux <sup>1</sup>
     - [ ] MacOS
-    - [ ] JVM
+    - [ ] JVM <sup>2</sup>
   - [ ] Mouse
     - [ ] Windows
     - [ ] Linux
     - [ ] MacOS
     - [ ] JVM
 
-<sub>1. Tests are remaining (tests are on hold due to MockK does not support K/N).</sub>
+<sub>1. Tests are remaining (tests are on hold due to MockK does not support K/N).</sub><br>
+<sub>2. Setup of cross compilation which was the main thing in automated build has been done, code should be written in the same way as we do in the Kotlin/Native part, which is not so far away :) See [CONTRIBUTING.md](https://github.com/Animeshz/keyboard-mouse-kt/blob/master/CONTRIBUTING.md) for the roadmap</sub>
 
 
 ## Installation
