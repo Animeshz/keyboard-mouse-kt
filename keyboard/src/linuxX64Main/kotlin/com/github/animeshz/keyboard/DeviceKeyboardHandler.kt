@@ -3,15 +3,11 @@ package com.github.animeshz.keyboard
 import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyState
-import kotlinx.coroutines.flow.SharedFlow
 import platform.posix.geteuid
 
 @ExperimentalKeyIO
 @ExperimentalUnsignedTypes
-internal class DeviceKeyboardHandler : NativeKeyboardHandler {
-    override val events: SharedFlow<KeyEvent>
-        get() = TODO("Not yet implemented")
-
+internal class DeviceKeyboardHandler : NativeKeyboardHandlerBase() {
     override fun sendEvent(keyEvent: KeyEvent) {
         TODO("Not yet implemented")
     }
@@ -32,11 +28,15 @@ internal class DeviceKeyboardHandler : NativeKeyboardHandler {
         TODO("Not yet implemented")
     }
 
+    override fun readEvents() {
+        TODO("Not yet implemented")
+    }
+
     companion object {
         internal fun create(): DeviceKeyboardHandler? {
             if (geteuid() != 0U) return null
 
-            TODO()
+            TODO("Not yet implemented")
         }
     }
 }

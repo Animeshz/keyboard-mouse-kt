@@ -3,7 +3,16 @@ package com.github.animeshz.keyboard
 import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 
 /**
  * A low-level implementation for handling [KeyEvent]s (sending and receiving).
@@ -49,3 +58,24 @@ public interface NativeKeyboardHandler {
  */
 @ExperimentalKeyIO
 public expect fun nativeKbHandlerForPlatform(): NativeKeyboardHandler
+
+@ExperimentalKeyIO
+internal abstract class NativeKeyboardHandlerBase : NativeKeyboardHandler {
+    protected val eventsInternal: MutableSharedFlow<KeyEvent> = MutableSharedFlow(extraBufferCapacity = 8)
+    protected val unconfinedScope = CoroutineScope(Dispatchers.Unconfined)
+
+    override val events: SharedFlow<KeyEvent>
+        get() = eventsInternal.asSharedFlow()
+
+    init {
+        // When subscriptionCount increments from 0 to 1, setup the native hook.
+        eventsInternal.subscriptionCount
+            .map { it > 0 }
+            .distinctUntilChanged()
+            .filter { it }
+            .onEach { readEvents() }
+            .launchIn(unconfinedScope)
+    }
+
+    protected abstract fun readEvents()
+}
