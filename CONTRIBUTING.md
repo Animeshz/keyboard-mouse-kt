@@ -42,7 +42,7 @@ Following are the future plans for the project:
 - [X] Implement way to cross compile the C/C++ library from any OS to any OS and then package it up in the resulting
   Jar. Done with PR [#4](https://github.com/Animeshz/keyboard-mouse-kt/pull/4)
   on [jvm branch](https://github.com/Animeshz/keyboard-mouse-kt/tree/jvm)
-- Implement JNI each for different platforms. I've considered it to do via C++ instead of reusing Kotlin/Native because
+- [X] (Complete for Windows x64 currently) Implement JNI each for different platforms. I've considered it to do via C++ instead of reusing Kotlin/Native because
   it will result in low performance and maybe huge sizes (if K/N becomes stable and performance wise equivalent we can
   directly reuse the sources we've written).
 - Add Linux Device (`/dev/uinput` | `/dev/input/xxx`) based implementation of interaction of Keyboard/Mouse as a
@@ -54,6 +54,6 @@ Following are the future plans for the project:
 To build and publish to mavenLocal:
 `$ ./gradlew build publishToMavenLocal`
 
-The only dependency is to install Docker when building for JVM due to cross-compilation requirement of JNI native libs to be able to pack the full Jar from any platform that is supported cross-platform.
+The only requirement is to install Docker when building for JVM due to cross-compilation requirement of JNI native libs to be able to pack the full Jar from any platform that is supported cross-platform.
 
 [1]: https://github.com/Animeshz/keyboard-mouse-kt/issues/1

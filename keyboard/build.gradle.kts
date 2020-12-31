@@ -44,7 +44,6 @@ fun KotlinMultiplatformExtension.configureJvm() {
     jvmMain.resources.srcDir("build/jni")
     jvmTest.resources.srcDir("build/jni")
 
-    // Generating Jni headers
     val generateJniHeaders by tasks.creating {
         group = "build"
         dependsOn(tasks.getByName("compileKotlinJvm"))
@@ -172,6 +171,8 @@ fun KotlinMultiplatformExtension.configureJvm() {
                     }
                 }
                 var output = work()
+
+                // Fix non-daemon docker on Docker for Windows
                 val nonDaemonError = "docker: error during connect: This error may indicate that the docker daemon is not running."
                 if (Os.isFamily(Os.FAMILY_WINDOWS) && output.startsWith(nonDaemonError)) {
                     project.exec { commandLine("C:\\Program Files\\Docker\\Docker\\DockerCli.exe", "-SwitchDaemon") }.assertNormalExitValue()

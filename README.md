@@ -28,18 +28,23 @@ We aim to provide high-level as well as high-performant low-level access to such
 ## Status of KeyboardMouse.kt
 
   - [ ] Keyboard
-    - [X] Windows <sup>1</sup>
-    - [X] Linux <sup>1</sup>
+    - [X] Windows
+      - [X] x86_64 (64 bit)
+      - [ ] x86    (32 bit)
+    - [X] Linux
+      - [X] x86_64 (64 bit)
+      - [ ] x86    (32 bit)
     - [ ] MacOS
-    - [ ] JVM <sup>2</sup>
+    - [ ] JVM
+      - [X] Windows x86_64
+      - [ ] Windows x86
+      - [ ] Linux x86_64
+      - [ ] Linux x86
   - [ ] Mouse
     - [ ] Windows
     - [ ] Linux
     - [ ] MacOS
     - [ ] JVM
-
-<sub>1. Tests are remaining (tests are on hold due to MockK does not support K/N).</sub><br>
-<sub>2. Setup of cross compilation which was the main thing in automated build has been done, code should be written in the same way as we do in the Kotlin/Native part, which is not so far away :) See [CONTRIBUTING.md](https://github.com/Animeshz/keyboard-mouse-kt/blob/master/CONTRIBUTING.md) for the roadmap</sub>
 
 
 ## Installation
@@ -53,6 +58,7 @@ repositories {
 
 kotlin {
     // Your targets
+    jvm()
     mingwX64 {
         binaries { executable { entryPoint = "main" } }
     }
@@ -60,21 +66,13 @@ kotlin {
         binaries { executable { entryPoint = "main" } }
     }
 
+    // Dependency to the library
     sourceSets {
-        // Either in common:
         val commonMain by getting {
             dependencies {
                 implementation(kotlin("stdlib-common"))
                 implementation("com.github.animeshz:keyboard-kt:<version>")
                 implementation("com.github.animeshz:mouse-kt:<version>")
-            }
-        }
-
-        // Or configuring per platform:
-        val mingwX64Main by getting {
-            dependencies {
-                implementation("com.github.animeshz:keyboard-kt-mingwX64:<version>")
-                implementation("com.github.animeshz:mouse-kt-mingwX64:<version>")
             }
         }
     }
@@ -90,9 +88,9 @@ Low Level API depends on [NativeKeyboardHandler][1] that can be obtained via [na
 - Listening to events using Flow.
   ```kotlin
   handler.events
-          .filter { it.state == KeyState.KeyDown }
-          .map { it.key }
-          .collect { println(it) }
+      .filter { it.state == KeyState.KeyDown }
+      .map { it.key }
+      .collect { println(it) }
   ```
 - Sending a [Key][3] event.
   ```kotlin
@@ -151,6 +149,6 @@ High Level API depends on [Keyboard][4] which is a wrapper around the [NativeKey
 
 [5]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/KeySet.kt
 
-[6]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/Keyboard.kt#L31
+[6]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/Keyboard.kt#L33
 
 [7]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/events/KeyEvent.kt
