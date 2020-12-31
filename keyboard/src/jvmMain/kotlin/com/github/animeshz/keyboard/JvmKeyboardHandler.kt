@@ -4,13 +4,11 @@ import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyState
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.newSingleThreadContext
 import java.util.function.IntSupplier
-import kotlin.reflect.KFunction
 
 @ExperimentalCoroutinesApi
 @ExperimentalKeyIO
@@ -25,11 +23,13 @@ internal object JvmKeyboardHandler : NativeKeyboardHandlerBase() {
             error("Unable to set native hook. Error code: $code")
         }
 
-        Runtime.getRuntime().addShutdownHook(Thread {
-            unconfinedScope.cancel()
-            ioScope.cancel()
-            nativeShutdown()
-        })
+        Runtime.getRuntime().addShutdownHook(
+            Thread {
+                unconfinedScope.cancel()
+                ioScope.cancel()
+                nativeShutdown()
+            }
+        )
     }
 
     override fun sendEvent(keyEvent: KeyEvent) {

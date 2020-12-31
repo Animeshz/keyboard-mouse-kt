@@ -5,7 +5,6 @@ import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyState
 import io.kotest.matchers.comparables.shouldNotBeEqualComparingTo
 import kotlin.test.Test
-import kotlin.test.assertNotEquals
 
 @ExperimentalKeyIO
 class NativeKeyboardHandlerTest {
