@@ -10,17 +10,8 @@ import kotlinx.cinterop.ptr
 import kotlinx.cinterop.sizeOf
 import kotlinx.cinterop.staticCFunction
 import kotlinx.cinterop.toCPointer
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import platform.posix.SIGINT
 import platform.posix.atexit
 import platform.posix.exit
@@ -54,18 +45,7 @@ import kotlin.native.concurrent.Worker
 
 @ExperimentalKeyIO
 @ExperimentalUnsignedTypes
-internal object WindowsKeyboardHandler : NativeKeyboardHandler {
-    private val worker = Worker.start(errorReporting = true, name = "WindowsKeyboardHandler")
-    private val eventsInternal = MutableSharedFlow<KeyEvent>(extraBufferCapacity = 8)
-
-    /**
-     * A [SharedFlow] of [KeyEvent] for receiving Key events from the target platform.
-     */
-    override val events: SharedFlow<KeyEvent> = eventsInternal.asSharedFlow()
-
-    /**
-     * Sends the [keyEvent] to the platform.
-     */
+internal object WindowsKeyboardHandler : NativeKeyboardHandlerBase() {
     override fun sendEvent(keyEvent: KeyEvent) {
         if (keyEvent.key == Key.Unknown) return
 
@@ -119,30 +99,18 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandler {
         0x5B to Key.LeftSuper
     )
 
-    // Static variables to properly close resources at exit.
-    private val unconfinedScope = CoroutineScope(Dispatchers.Unconfined)
-    private val hook: HHOOK
+    private val worker = Worker.start(errorReporting = true, name = "WindowsKeyboardHandler")
+    private val hook: HHOOK = worker.execute(mode = TransferMode.SAFE, {}) {
+        SetWindowsHookExW(
+            WH_KEYBOARD_LL,
+            staticCFunction(::lowLevelKeyboardProc),
+            GetModuleHandleW(null),
+            0U
+        )
+        // TODO: Convert to error("")
+    }.result ?: throw RuntimeException("Unable to set native hook. Error code: ${GetLastError()}")
 
     init {
-        // When subscriptionCount increments from 0 to 1, setup the native hook.
-        eventsInternal.subscriptionCount
-            .map { it > 0 }
-            .distinctUntilChanged()
-            .filter { it }
-            .onEach {
-                worker.execute(mode = TransferMode.SAFE, { this }) { handler -> handler.startMessagePumping() }
-            }
-            .launchIn(unconfinedScope)
-
-        hook = worker.execute(mode = TransferMode.SAFE, {}) {
-            SetWindowsHookExW(
-                WH_KEYBOARD_LL,
-                staticCFunction(::lowLevelKeyboardProc),
-                GetModuleHandleW(null),
-                0U
-            )
-        }.result ?: throw RuntimeException("Unable to set native hook. Error code: ${GetLastError()}")
-
         // Force execute cleanup handlers on SIGINT (Ctrl + C)
         signal(SIGINT, staticCFunction { _ -> exit(0) })
 
@@ -159,13 +127,15 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandler {
      * Polls the message queue in Windows to receive events in [lowLevelKeyboardProc].
      * When [MutableSharedFlow.subscriptionCount] of [eventsInternal] reduces to 0, breaks the procedure and exits.
      */
-    private fun startMessagePumping() {
-        memScoped {
-            val msg = alloc<MSG>().ptr
-            while (eventsInternal.subscriptionCount.value != 0) {
-                if (GetMessageW(msg, null, 0, 0) == 0) break
-                TranslateMessage(msg)
-                DispatchMessageA(msg)
+    override fun readEvents() {
+        worker.execute(mode = TransferMode.SAFE, {}) {
+            memScoped {
+                val msg = alloc<MSG>().ptr
+                while (eventsInternal.subscriptionCount.value != 0) {
+                    if (GetMessageW(msg, null, 0, 0) == 0) break
+                    TranslateMessage(msg)
+                    DispatchMessageA(msg)
+                }
             }
         }
     }
