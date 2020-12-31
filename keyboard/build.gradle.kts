@@ -32,6 +32,7 @@ fun KotlinMultiplatformExtension.configureJvm() {
         dependsOn(jvmMain)
         dependencies {
             implementation(kotlin("test-junit5"))
+            runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
             implementation("io.kotest:kotest-assertions-core:4.3.2")
         }
     }
