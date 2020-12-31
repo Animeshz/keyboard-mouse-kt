@@ -5,7 +5,7 @@ plugins {
 
 allprojects {
     this.group = "com.github.animeshz"
-    this.version = "0.0.2"
+    this.version = "0.1.0"
 
     repositories {
         mavenCentral()
@@ -34,9 +34,9 @@ subprojects {
             publications.withType<MavenPublication> {
                 pom {
                     name.set("${project.name}-kt")
+                    version = project.version as String
                     description.set("A multiplatform kotlin library for interacting with global keyboard and mouse events.")
                     url.set(projectUrl)
-//                    version = this@afterEvaluate.version as String
 
                     licenses {
                         license {

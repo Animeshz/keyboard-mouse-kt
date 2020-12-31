@@ -13,39 +13,39 @@
     </a>
 </p>
 
-__NOTICE: ~~This project is on hold~~ Edit: I may work slowly if I get time, I'm busy on my own (I have my entrance exams in few months, so I won't be able to manage this). I've created a [CONTRIBUTING.md](https://github.com/Animeshz/keyboard-mouse-kt/blob/master/CONTRIBUTING.md) if somebody wants to keep it alive, along with future plans (which I'm going to do when I come back). Feel free to create issues or PRs, if issues are small I'll try to solve them.__
+A lightweight multiplatform kotlin library for interacting with global keyboard and mouse events.
 
-A multiplatform kotlin library for listening to global keyboard and mouse events.
-
-__KeyboardMouse.kt is still in an experimental stage, as such we can't guarantee API stability between releases. While we'd love for you to try out our library, we don't recommend you use this in production just yet.__
+__KeyboardMouse.kt is still in an experimental stage, as such we can't guarantee API stability between releases. While
+we'd love for you to try out our library, we don't recommend you use this in production just yet.__
 
 ## What is KeyboardMouse.kt
 
-KeyboardMouse.kt is a coroutine-based cross-platform implementation of Global Keyboard and Mouse interactions, written 100% in Kotlin.
+KeyboardMouse.kt is a lightweight, coroutine-based multiplatform kotlin library for idiomatically interacting with Keyboard and
+Mouse (receiving and sending global events).
 
-We aim to provide high-level as well as high-performant low-level access to such APIs. Sometimes you have to do some unconventional things, and we want to allow you to do those in concise, safe and supported way.
+We aim to provide high-level as well as high-performant low-level access to such APIs. See the usage section below to
+know more!
 
 ## Status of KeyboardMouse.kt
 
-  - [ ] Keyboard
+- [ ] Keyboard
     - [X] Windows
-      - [X] x86_64 (64 bit)
-      - [ ] x86    (32 bit)
+        - [X] x86_64 (64 bit)
+        - [ ] x86    (32 bit)
     - [X] Linux
-      - [X] x86_64 (64 bit)
-      - [ ] x86    (32 bit)
+        - [X] x86_64 (64 bit)
+        - [ ] x86    (32 bit)
     - [ ] MacOS
     - [ ] JVM
-      - [X] Windows x86_64
-      - [ ] Windows x86
-      - [ ] Linux x86_64
-      - [ ] Linux x86
-  - [ ] Mouse
+        - [X] Windows x86_64 (64 bit)
+        - [ ] Windows x86    (32 bit)
+        - [ ] Linux x86_64 (64 bit)
+        - [ ] Linux x86    (32 bit)
+- [ ] Mouse
     - [ ] Windows
     - [ ] Linux
     - [ ] MacOS
     - [ ] JVM
-
 
 ## Installation
 
@@ -68,11 +68,21 @@ kotlin {
 
     // Dependency to the library
     sourceSets {
+        // Either as common
         val commonMain by getting {
             dependencies {
                 implementation(kotlin("stdlib-common"))
                 implementation("com.github.animeshz:keyboard-kt:<version>")
                 implementation("com.github.animeshz:mouse-kt:<version>")
+            }
+        }
+        
+        // Or configure each-platform by the suffix
+        val jvmMain by getting {
+            dependsOn(commonMain)
+            dependencies {
+                implementation("com.github.animeshz:keyboard-kt-jvm:<version>")
+                implementation("com.github.animeshz:mouse-kt-jvm:<version>")
             }
         }
     }
@@ -107,7 +117,7 @@ Low Level API depends on [NativeKeyboardHandler][1] that can be obtained via [na
   handler.isNumLockOn()
   handler.isScrollLockOn()
   ```
-    
+
 ### High level API:
 
 High Level API depends on [Keyboard][4] which is a wrapper around the [NativeKeyboardHandler][1].
@@ -138,6 +148,15 @@ High Level API depends on [Keyboard][4] which is a wrapper around the [NativeKey
   ```kotlin
   keyboard.play(records, speedFactor = 1.25)
   ```
+
+## Contributing and future plans
+
+The Github dicussions are open! Be sure to show your existence, say hi! and share if you have any upcoming ideas :)
+
+Issues and PRs are always welcome!
+
+For future plans and contributing to the project please checkout [CONTRIBUTING.md](https://github.com/Animeshz/keyboard-mouse-kt/blob/master/CONTRIBUTING.md)
+
 
 [1]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/NativeKeyboardHandler.kt
 

@@ -4,13 +4,13 @@ import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyState
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.newSingleThreadContext
+import kotlinx.coroutines.runBlocking
 import java.util.function.IntSupplier
-import kotlin.reflect.KFunction
 
 @ExperimentalCoroutinesApi
 @ExperimentalKeyIO
@@ -20,16 +20,19 @@ internal object JvmKeyboardHandler : NativeKeyboardHandlerBase() {
     init {
         NativeUtils.loadLibraryFromJar("KeyboardKt")
 
-        val code = nativeInit()
+        val code = runBlocking(ioScope.coroutineContext) { nativeInit() }
         if (code != 0) {
             error("Unable to set native hook. Error code: $code")
         }
 
-        Runtime.getRuntime().addShutdownHook(Thread {
-            unconfinedScope.cancel()
-            ioScope.cancel()
-            nativeShutdown()
-        })
+        Runtime.getRuntime().addShutdownHook(
+            Thread {
+                unconfinedScope.cancel()
+                ioScope.coroutineContext.cancelChildren()
+                runBlocking(ioScope.coroutineContext) { nativeShutdown() }
+                ioScope.cancel()
+            }
+        )
     }
 
     override fun sendEvent(keyEvent: KeyEvent) {

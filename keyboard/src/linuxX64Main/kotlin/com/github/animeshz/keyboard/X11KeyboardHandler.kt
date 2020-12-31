@@ -244,7 +244,7 @@ internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) 
             return X11KeyboardHandler(x11, xInput2)
         }
 
-        private inline fun close(pointers: List<COpaquePointer?>): Nothing? {
+        private inline fun close(pointers: List<COpaquePointer>): Nothing? {
             for (ptr in pointers) {
                 dlclose(ptr)
             }
