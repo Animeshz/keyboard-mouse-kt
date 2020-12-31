@@ -1,42 +1,29 @@
 package com.github.animeshz.keyboard
 
-/**
- * Tests can be tried out after enabling granular source-set metadata in gradle.properties
-
 import com.github.animeshz.keyboard.entity.Key
+import com.github.animeshz.keyboard.events.KeyEvent
+import com.github.animeshz.keyboard.events.KeyState
+import io.kotest.matchers.comparables.shouldNotBeEqualComparingTo
 import kotlin.test.Test
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.take
-import kotlinx.coroutines.runBlocking
+import kotlin.test.assertNotEquals
 
-/**
- * This is not really a Unit Test (since mocking is not available in Native),
- * but rather a real-time test (in other words you have to interact :p).
-*/
 @ExperimentalKeyIO
 class NativeKeyboardHandlerTest {
-@Test
-fun `get state of Key`() = runBlocking {
-val handler = nativeKbHandlerForPlatform()
+    @Test
+    fun `Caps lock key should be toggled when KeyDown event is triggered`() {
+        val handler = nativeKbHandlerForPlatform()
 
-delay(3000)  // To have a delay to check if KeyDown comes :P
-println("State of Key A: ${handler.getKeyState(Key.A)}")
+        val initialState = handler.isCapsLockOn()
+
+        handler.sendEvent(KeyEvent(Key.CapsLock, KeyState.KeyDown))
+        handler.sendEvent(KeyEvent(Key.CapsLock, KeyState.KeyUp))
+
+        val finalState = handler.isCapsLockOn()
+
+        // Set the state back to initialState
+        handler.sendEvent(KeyEvent(Key.CapsLock, KeyState.KeyDown))
+        handler.sendEvent(KeyEvent(Key.CapsLock, KeyState.KeyUp))
+
+        finalState shouldNotBeEqualComparingTo initialState
+    }
 }
-
-@Test
-fun `get state of Caps Lock`() = runBlocking {
-val handler = nativeKbHandlerForPlatform()
-
-println("Toggle state of CapsLock: ${if (handler.isCapsLockOn()) "On" else "Off"}")
-}
-
-@Test
-fun `listening to events`() = runBlocking {
-val handler = nativeKbHandlerForPlatform()
-
-println("Listening for first 5 events")
-handler.events.take(5).collect { println(it) }
-}
-}
- */

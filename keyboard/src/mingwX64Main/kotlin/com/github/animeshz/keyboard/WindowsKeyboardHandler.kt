@@ -107,6 +107,7 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandlerBase() {
             GetModuleHandleW(null),
             0U
         )
+        // TODO: Convert to error("")
     }.result ?: throw RuntimeException("Unable to set native hook. Error code: ${GetLastError()}")
 
     init {
