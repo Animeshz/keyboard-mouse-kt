@@ -161,8 +161,14 @@ internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) 
         )
     }
 
+    @Suppress("UNCHECKED_CAST", "LocalVariableName")
     override fun readEvents() {
-        worker.execute(mode = TransferMode.SAFE, { this }) { handler ->
+        worker.execute(mode = TransferMode.SAFE, { listOf(this, XNextEvent, XGetEventData, XFreeEventData) }) { args ->
+            val handler = args[0] as X11KeyboardHandler
+            val XNextEvent = args[1] as CPointer<CFunction<(CValuesRef<DisplayVar>, CValuesRef<XEvent>) -> Int>>
+            val XGetEventData = args[2] as CPointer<CFunction<(CValuesRef<DisplayVar>, CValuesRef<XGenericEventCookie>) -> Int>>
+            val XFreeEventData = args[3] as CPointer<CFunction<(CValuesRef<DisplayVar>, CValuesRef<XGenericEventCookie>) -> Unit>>
+
             memScoped {
                 val event = alloc<XEvent>()
 

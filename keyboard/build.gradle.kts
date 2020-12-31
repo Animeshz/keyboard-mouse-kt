@@ -31,7 +31,7 @@ fun KotlinMultiplatformExtension.configureJvm() {
     val jvmTest by sourceSets.getting {
         dependsOn(jvmMain)
         dependencies {
-            implementation("io.kotest:kotest-runner-junit5:4.3.2")
+            implementation(kotlin("test-junit5"))
             implementation("io.kotest:kotest-assertions-core:4.3.2")
         }
     }
@@ -66,14 +66,14 @@ fun KotlinMultiplatformExtension.configureJvm() {
 
                     val output = ByteArrayOutputStream().use {
                         project.exec {
-                            commandLine(javap, "-cp", buildDir.absolutePath, file.absolutePath)
+                            commandLine(javap, "-private", "-cp", buildDir.absolutePath, file.absolutePath)
                             standardOutput = it
                         }.assertNormalExitValue()
                         it.toString()
                     }
 
                     val (packageName, className, methodInfo) =
-                        """public \w*\s*class (.+)\.(\w+) (?:implements.*)\{\R([^\}]*)\}""".toRegex().find(output)?.destructured ?: return@forEach
+                        """public \w*\s*class (.+)\.(\w+) (?:implements|extends).*\{\R([^\}]*)\}""".toRegex().find(output)?.destructured ?: return@forEach
                     val nativeMethods =
                         """.*\bnative\b.*""".toRegex().findAll(methodInfo).mapNotNull { it.groups }.flatMap { it.asSequence().mapNotNull { group -> group?.value } }.toList()
                     if (nativeMethods.isEmpty()) return@forEach
@@ -86,14 +86,18 @@ fun KotlinMultiplatformExtension.configureJvm() {
                             else {
                                 val updatedMethod = StringBuilder(method).apply {
                                     var count = 0
-                                    for (i in indices) if (this[i] == ',' || this[i] == ')') insert(i, " arg${count++}")
+                                    var i = 0
+                                    while (i < length) {
+                                        if (this[i] == ',' || this[i] == ')') insert(i, " arg${count++}".also { i += it.length + 1 })
+                                        else i++
+                                    }
                                 }
                                 appendln(updatedMethod)
                             }
                         }
                         appendln("}")
                     }
-                    val outputFile = tmpDir.resolve(packageName.replace(".", "/")).apply { mkdirs() }.resolve("$className.java").apply { createNewFile() }
+                    val outputFile = tmpDir.resolve(packageName.replace(".", "/")).apply { mkdirs() }.resolve("$className.java").apply { delete() }.apply { createNewFile() }
                     outputFile.writeText(source)
 
                     project.exec {
@@ -104,7 +108,6 @@ fun KotlinMultiplatformExtension.configureJvm() {
     }
 
     // For building shared libraries out of C/C++ sources
-
     val compileJni by tasks.creating {
         group = "build"
         dependsOn(generateJniHeaders)
