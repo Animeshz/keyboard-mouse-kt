@@ -23,7 +23,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(_In_ int nCode, _In_ WPARAM wParam, _In_ L
 
     if (vk != VK_PACKET && keyInfo->flags & FAKE_ALT != FAKE_ALT) {
         jboolean isPressed = wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN;
-        jboolean extended = keyInfo->flags and 1;
+        jboolean extended = keyInfo->flags & 1;
 
         JNIEnv *env;
         if (jvm->AttachCurrentThread((void **)&env, NULL) >= JNI_OK) {

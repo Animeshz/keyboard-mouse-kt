@@ -66,10 +66,10 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandlerBase() {
                 // Send Windows/Super key with virtual code, because there's no particular scan code for that.
                 if (keyEvent.key == Key.LeftSuper) {
                     ki.wVk = 0x5B.toUShort()
-                    ki.dwFlags = extended or if (keyEvent.state == KeyState.KeyUp) 2U else 0U
+                    ki.dwFlags = extended or if (keyEvent.state == KeyState.KeyDown) 0U else 2U
                 } else {
                     ki.wScan = keyEvent.key.keyCode.toUShort()
-                    ki.dwFlags = 8U or extended or if (keyEvent.state == KeyState.KeyUp) 2U else 0U
+                    ki.dwFlags = 8U or extended or if (keyEvent.state == KeyState.KeyUp) 0U else 2U
                 }
             }
 
