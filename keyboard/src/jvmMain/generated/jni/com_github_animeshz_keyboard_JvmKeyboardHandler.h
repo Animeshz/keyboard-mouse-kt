@@ -33,22 +33,6 @@ JNIEXPORT jboolean JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_
 
 /*
  * Class:     com_github_animeshz_keyboard_JvmKeyboardHandler
- * Method:    nativeInit
- * Signature: ()I
- */
-JNIEXPORT jint JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeInit
-  (JNIEnv *, jobject);
-
-/*
- * Class:     com_github_animeshz_keyboard_JvmKeyboardHandler
- * Method:    nativeShutdown
- * Signature: ()V
- */
-JNIEXPORT void JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeShutdown
-  (JNIEnv *, jobject);
-
-/*
- * Class:     com_github_animeshz_keyboard_JvmKeyboardHandler
  * Method:    nativeSendEvent
  * Signature: (IZ)V
  */
@@ -57,19 +41,27 @@ JNIEXPORT void JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nati
 
 /*
  * Class:     com_github_animeshz_keyboard_JvmKeyboardHandler
- * Method:    nativeReadEvent
- * Signature: (Ljava/util/function/IntSupplier;)V
- */
-JNIEXPORT void JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeReadEvent
-  (JNIEnv *, jobject, jobject);
-
-/*
- * Class:     com_github_animeshz_keyboard_JvmKeyboardHandler
  * Method:    nativeIsPressed
  * Signature: (I)Z
  */
 JNIEXPORT jboolean JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeIsPressed
   (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     com_github_animeshz_keyboard_JvmKeyboardHandler
+ * Method:    nativeStartReadingEvents
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeStartReadingEvents
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_github_animeshz_keyboard_JvmKeyboardHandler
+ * Method:    nativeStopReadingEvents
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeStopReadingEvents
+  (JNIEnv *, jobject);
 
 #ifdef __cplusplus
 }

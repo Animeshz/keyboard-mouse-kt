@@ -3,6 +3,7 @@ package com.github.animeshz.keyboard
 import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyState
+import kotlinx.atomicfu.atomic
 import kotlinx.cinterop.ByteVar
 import kotlinx.cinterop.CFunction
 import kotlinx.cinterop.COpaquePointer
@@ -122,6 +123,8 @@ internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) 
         xiOpcodeVar.value
     }
 
+    private val active = atomic(true)
+
     init {
         memScoped<Unit> {
             val root = XDefaultRootWindow(display)
@@ -162,7 +165,7 @@ internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) 
     }
 
     @Suppress("UNCHECKED_CAST", "LocalVariableName")
-    override fun readEvents() {
+    override fun startReadingEvents() {
         worker.execute(mode = TransferMode.SAFE, { listOf(this, XNextEvent, XGetEventData, XFreeEventData) }) { args ->
             val handler = args[0] as X11KeyboardHandler
             val XNextEvent = args[1] as CPointer<CFunction<(CValuesRef<DisplayVar>, CValuesRef<XEvent>) -> Int>>
@@ -172,8 +175,10 @@ internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) 
             memScoped {
                 val event = alloc<XEvent>()
 
-                while (handler.eventsInternal.subscriptionCount.value != 0) {
+                while (true) {
                     XNextEvent(handler.display, event.ptr)
+                    if (!handler.active.value) break
+
                     val cookie = event.xcookie
                     if (cookie.type != GENERIC_EVENT || cookie.extension != handler.xiOpcode) continue
 
@@ -191,6 +196,14 @@ internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) 
                 }
             }
         }
+    }
+
+    override fun stopReadingEvents() {
+        active.value = true
+
+        // Send dummy event, so that event loop exits
+        sendEvent(KeyEvent(Key.LeftCtrl, KeyState.KeyDown))
+        sendEvent(KeyEvent(Key.LeftCtrl, KeyState.KeyUp))
     }
 
     /**

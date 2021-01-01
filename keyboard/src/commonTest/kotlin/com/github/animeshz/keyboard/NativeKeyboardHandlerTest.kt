@@ -4,6 +4,11 @@ import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyState
 import io.kotest.matchers.comparables.shouldNotBeEqualComparingTo
+import io.kotest.matchers.should
+import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
 import kotlin.test.Test
 
 @ExperimentalKeyIO
@@ -24,5 +29,26 @@ class NativeKeyboardHandlerTest {
         handler.sendEvent(KeyEvent(Key.CapsLock, KeyState.KeyUp))
 
         finalState shouldNotBeEqualComparingTo initialState
+    }
+
+    @Test
+    fun `Test send and receive event`() = runBlockingTest {
+        val handler = nativeKbHandlerForPlatform()
+
+        launch {
+            handler.sendEvent(KeyEvent(Key.LeftCtrl, KeyState.KeyDown))
+            handler.sendEvent(KeyEvent(Key.LeftCtrl, KeyState.KeyUp))
+        }
+
+        val events = handler.events.take(2).toList()
+
+        events[0] should {
+            it.key shouldBe Key.LeftCtrl
+            it.state shouldBe KeyState.KeyDown
+        }
+        events[1] should {
+            it.key shouldBe Key.LeftCtrl
+            it.state shouldBe KeyState.KeyUp
+        }
     }
 }

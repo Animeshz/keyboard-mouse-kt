@@ -5,12 +5,11 @@ import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.cancelChildren
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.runBlocking
-import java.util.function.IntSupplier
 
 @ExperimentalCoroutinesApi
 @ExperimentalKeyIO
@@ -20,17 +19,13 @@ internal object JvmKeyboardHandler : NativeKeyboardHandlerBase() {
     init {
         NativeUtils.loadLibraryFromJar("KeyboardKt")
 
-        val code = runBlocking(ioScope.coroutineContext) { nativeInit() }
-        if (code != 0) {
-            error("Unable to set native hook. Error code: $code")
-        }
-
         Runtime.getRuntime().addShutdownHook(
             Thread {
                 unconfinedScope.cancel()
-                ioScope.coroutineContext.cancelChildren()
-                runBlocking(ioScope.coroutineContext) { nativeShutdown() }
-                ioScope.cancel()
+                stopReadingEvents()
+                runBlocking {
+                    ioScope.coroutineContext[Job]?.children?.forEach { it.join() }
+                }
             }
         )
     }
@@ -47,19 +42,28 @@ internal object JvmKeyboardHandler : NativeKeyboardHandlerBase() {
         return if (nativeIsPressed(key.keyCode)) KeyState.KeyDown else KeyState.KeyUp
     }
 
-    override fun readEvents() {
-        ioScope.launch { nativeReadEvent { eventsInternal.subscriptionCount.value } }
-    }
-
     external override fun isCapsLockOn(): Boolean
     external override fun isNumLockOn(): Boolean
     external override fun isScrollLockOn(): Boolean
 
-    private external fun nativeInit(): Int
-    private external fun nativeShutdown()
+    override fun startReadingEvents() {
+        ioScope.launch {
+            val code = nativeStartReadingEvents()
+            if (code != 0) {
+                // Cannot throw, launch will consume it
+                IllegalStateException("Unable to set native hook. Error code: $code").printStackTrace()
+            }
+        }
+    }
+
+    override fun stopReadingEvents() {
+        nativeStopReadingEvents()
+    }
+
     private external fun nativeSendEvent(scanCode: Int, isDown: Boolean)
-    private external fun nativeReadEvent(a: IntSupplier)
     private external fun nativeIsPressed(scanCode: Int): Boolean
+    private external fun nativeStartReadingEvents(): Int
+    private external fun nativeStopReadingEvents(): Int
 
     private fun emitEvent(scanCode: Int, pressed: Boolean) {
         eventsInternal.tryEmit(KeyEvent(Key.fromKeyCode(scanCode), if (pressed) KeyState.KeyDown else KeyState.KeyUp))
