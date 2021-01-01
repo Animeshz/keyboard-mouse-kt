@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -72,10 +72,11 @@ internal abstract class NativeKeyboardHandlerBase : NativeKeyboardHandler {
         eventsInternal.subscriptionCount
             .map { it > 0 }
             .distinctUntilChanged()
-            .filter { it }
-            .onEach { readEvents() }
+            .drop(1) // Drop first false event
+            .onEach { if (it) startReadingEvents() else stopReadingEvents() }
             .launchIn(unconfinedScope)
     }
 
-    protected abstract fun readEvents()
+    protected abstract fun startReadingEvents()
+    protected abstract fun stopReadingEvents()
 }
