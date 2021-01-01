@@ -72,7 +72,7 @@ internal abstract class NativeKeyboardHandlerBase : NativeKeyboardHandler {
         eventsInternal.subscriptionCount
             .map { it > 0 }
             .distinctUntilChanged()
-            .drop(1)  // Drop first false event
+            .drop(1) // Drop first false event
             .onEach { if (it) startReadingEvents() else stopReadingEvents() }
             .launchIn(unconfinedScope)
     }
