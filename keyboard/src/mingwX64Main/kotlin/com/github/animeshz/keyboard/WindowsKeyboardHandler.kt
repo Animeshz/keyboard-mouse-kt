@@ -58,13 +58,18 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandlerBase() {
                 ki.time = 0U
                 ki.dwExtraInfo = 0U
 
+                val extended = when(keyEvent.key) {
+                    Key.RightCtrl, Key.RightAlt, Key.RightSuper, Key.RightShift -> 1U
+                    else -> 0U
+                }
+
                 // Send Windows/Super key with virtual code, because there's no particular scan code for that.
                 if (keyEvent.key == Key.LeftSuper) {
                     ki.wVk = 0x5B.toUShort()
-                    ki.dwFlags = if (keyEvent.state == KeyState.KeyUp) 2U else 0U
+                    ki.dwFlags = extended or if (keyEvent.state == KeyState.KeyUp) 2U else 0U
                 } else {
                     ki.wScan = keyEvent.key.keyCode.toUShort()
-                    ki.dwFlags = 8U or if (keyEvent.state == KeyState.KeyUp) 2U else 0U
+                    ki.dwFlags = 8U or extended or if (keyEvent.state == KeyState.KeyUp) 2U else 0U
                 }
             }
 

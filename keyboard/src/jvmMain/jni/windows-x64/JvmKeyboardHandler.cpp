@@ -86,12 +86,22 @@ JNIEXPORT void JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nati
     input.ki.dwExtraInfo = 0;
 
     // Send Windows/Super key with virtual code, because there's no particular scan code for that.
+    jint extended = 0;
+    switch(scanCode) {
+        case 54:
+        case 97:
+        case 100:
+        case 126:
+            extended = 1;
+            break;
+    }
+
     if (scanCode == 125) {
         input.ki.wVk = 0x5B;
-        input.ki.dwFlags = !isDown ? 2 : 0;
+        input.ki.dwFlags = (isDown ? 0 : 2) | extended;
     } else {
         input.ki.wScan = scanCode;
-        input.ki.dwFlags = 8U | (!isDown ? 2 : 0);
+        input.ki.dwFlags = 8U | (isDown ? 0 : 2) | extended;
     }
 
     SendInput(1, &input, sizeof(input));
