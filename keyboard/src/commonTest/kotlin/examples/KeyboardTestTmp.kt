@@ -1,4 +1,4 @@
-package com.github.animeshz.keyboard
+package examples
 
 /**
  * Tests can be tried out after enabling granular source-set metadata in gradle.properties

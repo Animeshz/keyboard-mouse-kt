@@ -18,6 +18,7 @@ import platform.posix.exit
 import platform.posix.signal
 import platform.windows.CallNextHookEx
 import platform.windows.DispatchMessageA
+import platform.windows.GetCurrentThreadId
 import platform.windows.GetKeyState
 import platform.windows.GetLastError
 import platform.windows.GetMessageW
@@ -30,6 +31,7 @@ import platform.windows.LRESULT
 import platform.windows.MAPVK_VSC_TO_VK_EX
 import platform.windows.MSG
 import platform.windows.MapVirtualKeyA
+import platform.windows.PostThreadMessageW
 import platform.windows.SendInput
 import platform.windows.SetWindowsHookExW
 import platform.windows.TranslateMessage
@@ -37,6 +39,7 @@ import platform.windows.UnhookWindowsHookEx
 import platform.windows.VK_PACKET
 import platform.windows.WH_KEYBOARD_LL
 import platform.windows.WM_KEYDOWN
+import platform.windows.WM_QUIT
 import platform.windows.WM_SYSKEYDOWN
 import platform.windows.WPARAM
 import platform.windows.tagKBDLLHOOKSTRUCT
@@ -100,15 +103,7 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandlerBase() {
     )
 
     private val worker = Worker.start(errorReporting = true, name = "WindowsKeyboardHandler")
-    private val hook: HHOOK = worker.execute(mode = TransferMode.SAFE, {}) {
-        SetWindowsHookExW(
-            WH_KEYBOARD_LL,
-            staticCFunction(::lowLevelKeyboardProc),
-            GetModuleHandleW(null),
-            0U
-        )
-        // TODO: Convert to error("")
-    }.result ?: throw RuntimeException("Unable to set native hook. Error code: ${GetLastError()}")
+    private val threadId = worker.execute(mode = TransferMode.SAFE, {}) { GetCurrentThreadId() }.result
 
     init {
         // Force execute cleanup handlers on SIGINT (Ctrl + C)
@@ -117,8 +112,8 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandlerBase() {
         atexit(
             staticCFunction { ->
                 unconfinedScope.cancel()
-                worker.execute(mode = TransferMode.SAFE, {}) { UnhookWindowsHookEx(hook) }.consume {}
-                worker.requestTermination().consume {}
+                stopReadingEvents()
+                worker.requestTermination(true).consume {}
             }
         )
     }
@@ -127,17 +122,30 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandlerBase() {
      * Polls the message queue in Windows to receive events in [lowLevelKeyboardProc].
      * When [MutableSharedFlow.subscriptionCount] of [eventsInternal] reduces to 0, breaks the procedure and exits.
      */
-    override fun readEvents() {
+    override fun startReadingEvents() {
         worker.execute(mode = TransferMode.SAFE, {}) {
+            val hook: HHOOK =
+                SetWindowsHookExW(
+                    WH_KEYBOARD_LL,
+                    staticCFunction(::lowLevelKeyboardProc),
+                    GetModuleHandleW(null),
+                    0U
+                ) ?: error("Unable to set native hook. Error code: ${GetLastError()}")
+
             memScoped {
                 val msg = alloc<MSG>().ptr
-                while (eventsInternal.subscriptionCount.value != 0) {
-                    if (GetMessageW(msg, null, 0, 0) == 0) break
+                while (GetMessageW(msg, null, 0, 0) != 0) {
                     TranslateMessage(msg)
                     DispatchMessageA(msg)
                 }
             }
+
+            UnhookWindowsHookEx(hook)
         }
+    }
+
+    override fun stopReadingEvents() {
+        PostThreadMessageW(threadId, WM_QUIT, 0, 0L)
     }
 
     /**

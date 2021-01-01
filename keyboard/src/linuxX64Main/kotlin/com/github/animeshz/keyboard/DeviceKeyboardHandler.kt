@@ -28,7 +28,11 @@ internal class DeviceKeyboardHandler : NativeKeyboardHandlerBase() {
         TODO("Not yet implemented")
     }
 
-    override fun readEvents() {
+    override fun startReadingEvents() {
+        TODO("Not yet implemented")
+    }
+
+    override fun stopReadingEvents() {
         TODO("Not yet implemented")
     }
 

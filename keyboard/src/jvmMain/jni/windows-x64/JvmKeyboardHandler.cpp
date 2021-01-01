@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <windows.h>
 #include <winuser.h>
 
@@ -11,11 +12,10 @@ extern "C" {
 
 #define FAKE_ALT LLKHF_INJECTED | 0x20
 
-HHOOK hook;
-
-JavaVM *jvm;
-jobject JvmKeyboardHandler;
-jmethodID emitEvent;
+DWORD threadId = 0;
+JavaVM *jvm = NULL;
+jobject JvmKeyboardHandler = NULL;
+jmethodID emitEvent = NULL;
 
 LRESULT CALLBACK LowLevelKeyboardProc(_In_ int nCode, _In_ WPARAM wParam, _In_ LPARAM lParam) {
     tagKBDLLHOOKSTRUCT *keyInfo = (tagKBDLLHOOKSTRUCT *)lParam;
@@ -26,8 +26,8 @@ LRESULT CALLBACK LowLevelKeyboardProc(_In_ int nCode, _In_ WPARAM wParam, _In_ L
         jboolean extended = keyInfo->flags and 1;
 
         JNIEnv *env;
-        if (jvm->AttachCurrentThread((void **)&env, nullptr) >= JNI_OK) {
-            int scanCode = keyInfo->scanCode;
+        if (jvm->AttachCurrentThread((void **)&env, NULL) >= JNI_OK) {
+            jint scanCode = keyInfo->scanCode;
             switch (vk) {
                 case 0x21:
                     scanCode = 104;
@@ -70,23 +70,7 @@ LRESULT CALLBACK LowLevelKeyboardProc(_In_ int nCode, _In_ WPARAM wParam, _In_ L
         }
     }
 
-    return CallNextHookEx(nullptr, nCode, wParam, lParam);
-}
-
-JNIEXPORT jint JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeInit(JNIEnv *env, jobject obj) {
-    env->GetJavaVM(&jvm);
-    JvmKeyboardHandler = env->NewGlobalRef(obj);
-    emitEvent = env->GetMethodID(env->GetObjectClass(obj), "emitEvent", "(IZ)V");
-
-    hook = SetWindowsHookExW(WH_KEYBOARD_LL, LowLevelKeyboardProc, GetModuleHandleW(nullptr), 0);
-
-    if (hook == nullptr) return GetLastError();
-    return 0;
-}
-
-JNIEXPORT void JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeShutdown(JNIEnv *env, jobject obj) {
-    UnhookWindowsHookEx(hook);
-    env->DeleteGlobalRef(JvmKeyboardHandler);    
+    return CallNextHookEx(NULL, nCode, wParam, lParam);
 }
 
 JNIEXPORT jboolean JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_isCapsLockOn(JNIEnv *env, jobject obj) { return GetKeyState(0x14) & 1; }
@@ -113,17 +97,6 @@ JNIEXPORT void JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nati
     SendInput(1, &input, sizeof(input));
 }
 
-JNIEXPORT void JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeReadEvent(JNIEnv *env, jobject obj, jobject subscriptionCountSupplier) {
-    MSG msg;
-
-    jmethodID supplier_method = env->GetMethodID(env->GetObjectClass(subscriptionCountSupplier), "getAsInt", "()I)");
-    while (env->CallIntMethod(subscriptionCountSupplier, supplier_method)) {
-        if (GetMessageW(&msg, nullptr, 0, 0) == 0) break;
-        TranslateMessage(&msg);
-        DispatchMessageA(&msg);
-    }
-}
-
 JNIEXPORT jboolean JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeIsPressed(JNIEnv *env, jobject obj, jint scanCode) {
     int vk;
     if (scanCode == 125)
@@ -132,6 +105,38 @@ JNIEXPORT jboolean JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_
         vk = MapVirtualKeyA(scanCode, MAPVK_VSC_TO_VK_EX);
 
     return GetKeyState(vk) < 0;
+}
+
+JNIEXPORT jint JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeStartReadingEvents(JNIEnv *env, jobject obj) {
+    HHOOK hook = SetWindowsHookExW(WH_KEYBOARD_LL, LowLevelKeyboardProc, GetModuleHandleW(NULL), 0);
+    if (hook == NULL) return GetLastError();
+
+    env->GetJavaVM(&jvm);
+    threadId = GetCurrentThreadId();
+    JvmKeyboardHandler = env->NewGlobalRef(obj);
+    emitEvent = env->GetMethodID(env->GetObjectClass(obj), "emitEvent", "(IZ)V");
+
+    MSG msg;
+    while (GetMessageW(&msg, NULL, 0, 0)) {
+        TranslateMessage(&msg);
+        DispatchMessageA(&msg);
+    }
+
+    UnhookWindowsHookEx(hook);
+
+    return 0;
+}
+
+JNIEXPORT jint JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeStopReadingEvents(JNIEnv *env, jobject obj) {
+    if (JvmKeyboardHandler != NULL) {
+        PostThreadMessage(threadId, WM_QUIT, 0, 0L);
+        emitEvent = NULL;
+        jvm = NULL;
+        env->DeleteGlobalRef(JvmKeyboardHandler);
+        JvmKeyboardHandler = NULL;
+    }
+
+    return 0;
 }
 
 #ifdef __cplusplus
