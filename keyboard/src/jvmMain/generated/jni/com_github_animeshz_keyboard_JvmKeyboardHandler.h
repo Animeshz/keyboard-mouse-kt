@@ -33,6 +33,14 @@ JNIEXPORT jboolean JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_
 
 /*
  * Class:     com_github_animeshz_keyboard_JvmKeyboardHandler
+ * Method:    nativeInit
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeInit
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     com_github_animeshz_keyboard_JvmKeyboardHandler
  * Method:    nativeSendEvent
  * Signature: (IZ)V
  */
@@ -58,9 +66,9 @@ JNIEXPORT jint JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nati
 /*
  * Class:     com_github_animeshz_keyboard_JvmKeyboardHandler
  * Method:    nativeStopReadingEvents
- * Signature: ()I
+ * Signature: ()V
  */
-JNIEXPORT jint JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeStopReadingEvents
+JNIEXPORT void JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeStopReadingEvents
   (JNIEnv *, jobject);
 
 #ifdef __cplusplus
