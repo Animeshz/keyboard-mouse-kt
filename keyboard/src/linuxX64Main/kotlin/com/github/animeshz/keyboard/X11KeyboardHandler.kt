@@ -25,6 +25,7 @@ import kotlinx.cinterop.pointed
 import kotlinx.cinterop.ptr
 import kotlinx.cinterop.reinterpret
 import kotlinx.cinterop.set
+import kotlinx.cinterop.sizeOf
 import kotlinx.cinterop.staticCFunction
 import kotlinx.cinterop.value
 import kotlinx.coroutines.CoroutineScope
@@ -37,9 +38,11 @@ import platform.posix.dlopen
 import platform.posix.dlsym
 import platform.posix.exit
 import platform.posix.getenv
+import platform.posix.memset
 import platform.posix.on_exit
 import platform.posix.signal
 import x11.DisplayVar
+import x11.XClientMessageEvent
 import x11.XEvent
 import x11.XGenericEventCookie
 import x11.XIEventMask
@@ -70,6 +73,7 @@ internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) 
             }
 
             XSendEvent(display, focusedWindow.value, 1, mask, event.ptr.reinterpret())
+            XFlush(display)
         }
     }
 
@@ -99,6 +103,7 @@ internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) 
     private val XOpenDisplay = resolveDlFun<(CValuesRef<ByteVar>?) -> CPointer<DisplayVar>?>(x11, "XOpenDisplay")
     private val XDefaultRootWindow = resolveDlFun<(CValuesRef<DisplayVar>) -> ULong>(x11, "XDefaultRootWindow")
     private val XQueryExtension = resolveDlFun<(CValuesRef<DisplayVar>, CValuesRef<ByteVar>, CValuesRef<IntVar>, CValuesRef<IntVar>, CValuesRef<IntVar>) -> Int>(x11, "XQueryExtension")
+    private val XFlush = resolveDlFun<(CValuesRef<DisplayVar>) -> Int>(x11, "XFlush")
 
     private val XSync = resolveDlFun<(CValuesRef<DisplayVar>, Int) -> Int>(x11, "XSync")
     private val XQueryKeymap = resolveDlFun<(CValuesRef<DisplayVar>, CValuesRef<ByteVar>) -> Int>(x11, "XQueryKeymap")
@@ -202,8 +207,14 @@ internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) 
         active.value = true
 
         // Send dummy event, so that event loop exits
-        sendEvent(KeyEvent(Key.LeftCtrl, KeyState.KeyDown))
-        sendEvent(KeyEvent(Key.LeftCtrl, KeyState.KeyUp))
+        memScoped {
+            val dummyEvent = alloc<XClientMessageEvent>()
+            memset(dummyEvent.ptr, 0, sizeOf<XClientMessageEvent>().toULong())
+            dummyEvent.apply { type = 33; format = 32 }
+
+            XSendEvent(display, XDefaultRootWindow(display), 0, 0, dummyEvent.ptr.reinterpret())
+            XFlush(display)
+        }
     }
 
     /**

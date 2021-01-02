@@ -116,3 +116,18 @@ typedef struct {
     XIValuatorState valuators;
     double *raw_values;
 } XIRawEvent;
+
+typedef struct {
+    int type;    /* ClientMessage */
+    unsigned long serial;        /* # of last request processed by server */
+    int send_event;        /* true if this came from a SendEvent request */
+    Display *display;        /* Display the event was read from */
+    unsigned long window;
+    unsigned long message_type;
+    int format;
+    union {
+        char b[20];
+        short s[10];
+        long l[5];
+    } data;
+} XClientMessageEvent;
