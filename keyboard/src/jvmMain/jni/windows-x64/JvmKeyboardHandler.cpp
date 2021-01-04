@@ -79,6 +79,8 @@ JNIEXPORT jboolean JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_
 
 JNIEXPORT jboolean JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_isScrollLockOn(JNIEnv *env, jobject obj) { return GetKeyState(0x91) & 1; }
 
+JNIEXPORT jint JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeInit(JNIEnv *env, jobject obj) { return 0; }
+
 JNIEXPORT void JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeSendEvent(JNIEnv *env, jobject obj, jint scanCode, jboolean isDown) {
     INPUT input;
     input.type = INPUT_KEYBOARD;
@@ -87,7 +89,7 @@ JNIEXPORT void JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nati
 
     // Send Windows/Super key with virtual code, because there's no particular scan code for that.
     jint extended = 0;
-    switch(scanCode) {
+    switch (scanCode) {
         case 54:
         case 97:
         case 100:
@@ -133,20 +135,15 @@ JNIEXPORT jint JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nati
     }
 
     UnhookWindowsHookEx(hook);
+    env->DeleteGlobalRef(JvmKeyboardHandler);
 
     return 0;
 }
 
-JNIEXPORT jint JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeStopReadingEvents(JNIEnv *env, jobject obj) {
-    if (JvmKeyboardHandler != NULL) {
-        PostThreadMessage(threadId, WM_QUIT, 0, 0L);
-        emitEvent = NULL;
-        jvm = NULL;
-        env->DeleteGlobalRef(JvmKeyboardHandler);
-        JvmKeyboardHandler = NULL;
-    }
+JNIEXPORT void JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeStopReadingEvents(JNIEnv *env, jobject obj) {
+    if (JvmKeyboardHandler == NULL) return;
 
-    return 0;
+    PostThreadMessage(threadId, WM_QUIT, 0, 0L);
 }
 
 #ifdef __cplusplus

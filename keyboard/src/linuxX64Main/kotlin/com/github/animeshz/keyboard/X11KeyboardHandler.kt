@@ -11,12 +11,10 @@ import kotlinx.cinterop.CPointed
 import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.CValuesRef
 import kotlinx.cinterop.IntVar
-import kotlinx.cinterop.StableRef
 import kotlinx.cinterop.UByteVar
 import kotlinx.cinterop.ULongVar
 import kotlinx.cinterop.alloc
 import kotlinx.cinterop.allocArray
-import kotlinx.cinterop.asStableRef
 import kotlinx.cinterop.cstr
 import kotlinx.cinterop.get
 import kotlinx.cinterop.invoke
@@ -26,21 +24,14 @@ import kotlinx.cinterop.ptr
 import kotlinx.cinterop.reinterpret
 import kotlinx.cinterop.set
 import kotlinx.cinterop.sizeOf
-import kotlinx.cinterop.staticCFunction
 import kotlinx.cinterop.value
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.cancel
 import platform.posix.RTLD_GLOBAL
 import platform.posix.RTLD_LAZY
-import platform.posix.SIGINT
 import platform.posix.dlclose
 import platform.posix.dlopen
 import platform.posix.dlsym
-import platform.posix.exit
 import platform.posix.getenv
 import platform.posix.memset
-import platform.posix.on_exit
-import platform.posix.signal
 import x11.DisplayVar
 import x11.XClientMessageEvent
 import x11.XEvent
@@ -128,7 +119,7 @@ internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) 
         xiOpcodeVar.value
     }
 
-    private val active = atomic(true)
+    private val stopReading = atomic(false)
 
     init {
         memScoped<Unit> {
@@ -143,30 +134,6 @@ internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) 
             XISelectEvents(display, root, xiMask.ptr, 1)
             XSync(display, 0)
         }
-
-        // Force execute cleanup handlers on SIGINT (Ctrl + C)
-        signal(SIGINT, staticCFunction { _ -> exit(0) })
-
-        on_exit(
-            staticCFunction { _, argsPtr ->
-                val argsStableRef = argsPtr!!.asStableRef<List<Any>>()
-                val args = argsStableRef.get()
-                (args[3] as CoroutineScope).cancel()
-                (args[4] as Worker).requestTermination()
-
-                @Suppress("LocalVariableName")
-                val XCloseDisplay =
-                    resolveDlFun<(CValuesRef<DisplayVar>) -> Int>(args[0] as COpaquePointer, "XCloseDisplay")
-
-                @Suppress("UNCHECKED_CAST")
-                XCloseDisplay(args[2] as CValuesRef<DisplayVar>)
-                dlclose(args[0] as COpaquePointer)
-                dlclose(args[1] as COpaquePointer)
-
-                argsStableRef.dispose()
-            },
-            StableRef.create(listOf(x11, xInput2, display, unconfinedScope, worker)).asCPointer()
-        )
     }
 
     @Suppress("UNCHECKED_CAST", "LocalVariableName")
@@ -177,12 +144,13 @@ internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) 
             val XGetEventData = args[2] as CPointer<CFunction<(CValuesRef<DisplayVar>, CValuesRef<XGenericEventCookie>) -> Int>>
             val XFreeEventData = args[3] as CPointer<CFunction<(CValuesRef<DisplayVar>, CValuesRef<XGenericEventCookie>) -> Unit>>
 
+            handler.stopReading.value = false
             memScoped {
                 val event = alloc<XEvent>()
 
                 while (true) {
                     XNextEvent(handler.display, event.ptr)
-                    if (!handler.active.value) break
+                    if (handler.stopReading.value) break
 
                     val cookie = event.xcookie
                     if (cookie.type != GENERIC_EVENT || cookie.extension != handler.xiOpcode) continue
@@ -194,7 +162,7 @@ internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) 
                             else -> continue
                         }
                         val cookieData = cookie.data!!.reinterpret<XIRawEvent>().pointed
-                        handler.process(keyEventType, cookieData.detail - 8)
+                        handler.emitEvent(keyEventType, cookieData.detail - 8)
                     }
 
                     XFreeEventData(handler.display, cookie.ptr)
@@ -204,7 +172,7 @@ internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) 
     }
 
     override fun stopReadingEvents() {
-        active.value = true
+        stopReading.value = true
 
         // Send dummy event, so that event loop exits
         memScoped {
@@ -220,7 +188,7 @@ internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) 
     /**
      * Processes the event.
      */
-    private fun process(keyState: KeyState, code: Int) {
+    private fun emitEvent(keyState: KeyState, code: Int) {
         val key = Key.fromKeyCode(code)
         eventsInternal.tryEmit(KeyEvent(key, keyState))
     }

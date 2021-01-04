@@ -5,11 +5,8 @@ import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.newSingleThreadContext
-import kotlinx.coroutines.runBlocking
 
 @ExperimentalCoroutinesApi
 @ExperimentalKeyIO
@@ -18,16 +15,9 @@ internal object JvmKeyboardHandler : NativeKeyboardHandlerBase() {
 
     init {
         NativeUtils.loadLibraryFromJar("KeyboardKt")
-
-        Runtime.getRuntime().addShutdownHook(
-            Thread {
-                unconfinedScope.cancel()
-                stopReadingEvents()
-                runBlocking {
-                    ioScope.coroutineContext[Job]?.children?.forEach { it.join() }
-                }
-            }
-        )
+        if (nativeInit() != 0) {
+            error("Native initialization failed")
+        }
     }
 
     override fun sendEvent(keyEvent: KeyEvent) {
@@ -60,10 +50,11 @@ internal object JvmKeyboardHandler : NativeKeyboardHandlerBase() {
         nativeStopReadingEvents()
     }
 
+    private external fun nativeInit(): Int
     private external fun nativeSendEvent(scanCode: Int, isDown: Boolean)
     private external fun nativeIsPressed(scanCode: Int): Boolean
     private external fun nativeStartReadingEvents(): Int
-    private external fun nativeStopReadingEvents(): Int
+    private external fun nativeStopReadingEvents()
 
     private fun emitEvent(scanCode: Int, pressed: Boolean) {
         eventsInternal.tryEmit(KeyEvent(Key.fromKeyCode(scanCode), if (pressed) KeyState.KeyDown else KeyState.KeyUp))
