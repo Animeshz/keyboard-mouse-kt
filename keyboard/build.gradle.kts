@@ -120,7 +120,10 @@ fun KotlinMultiplatformExtension.configureJvm() {
         doFirst {
             println("Checking docker installation")
 
-            val exit = project.exec { commandLine("where", "docker") }.exitValue
+            val exit = project.exec {
+                commandLine(if (Os.isFamily(Os.FAMILY_WINDOWS)) listOf("cmd", "/c", "where", "docker") else listOf("which", "docker"))
+                isIgnoreExitValue = true
+            }.exitValue
             if (exit != 0) {
                 println("Please install docker before running this task")
                 exitProcess(1)
@@ -132,6 +135,7 @@ fun KotlinMultiplatformExtension.configureJvm() {
 
             val targets = listOf(
                 Target("windows", "x64", "animeshz/keyboard-mouse-kt:jni-build-windows-x64"),
+                Target("windows", "x86", "animeshz/keyboard-mouse-kt:jni-build-windows-x86"),
                 Target("linux", "x64", "animeshz/keyboard-mouse-kt:jni-build-linux-x64")
             )
 
