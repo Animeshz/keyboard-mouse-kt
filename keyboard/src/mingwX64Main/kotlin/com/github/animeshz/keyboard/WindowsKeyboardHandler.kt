@@ -58,7 +58,7 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandlerBase() {
                 ki.time = 0U
                 ki.dwExtraInfo = 0U
 
-                val extended = when(keyEvent.key) {
+                val extended = when (keyEvent.key) {
                     Key.RightCtrl, Key.RightAlt, Key.RightSuper, Key.RightShift -> 1U
                     else -> 0U
                 }

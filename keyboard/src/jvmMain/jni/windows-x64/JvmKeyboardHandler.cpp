@@ -106,7 +106,7 @@ JNIEXPORT void JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nati
         input.ki.dwFlags = 8U | (isDown ? 0 : 2) | extended;
     }
 
-    SendInput(1, &input, sizeof(input));
+    SendInput(1, &input, sizeof(INPUT));
 }
 
 JNIEXPORT jboolean JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeIsPressed(JNIEnv *env, jobject obj, jint scanCode) {
