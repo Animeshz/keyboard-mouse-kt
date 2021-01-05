@@ -103,14 +103,16 @@ class X11KeyboardHandler : BaseKeyboardHandler {
         int mask = isPressed ? KeyPressMask : KeyReleaseMask;
 
         XGetInputFocus(display, &focusedWindow, &focusRevert);
+
         XKeyEvent event;
+        memset(&event, 0, sizeof(XKeyEvent));
         event.keycode = scanCode + 8;
         event.type = isPressed ? KeyPress : KeyRelease;
         event.root = focusedWindow;
         event.display = display;
 
         XSendEvent(display, focusedWindow, 1, mask, (XEvent *)&event);
-        XFlush(display);
+        XSync(display, 0);
     }
 
     bool isPressed(int scanCode) {

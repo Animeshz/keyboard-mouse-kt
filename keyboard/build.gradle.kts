@@ -162,7 +162,7 @@ fun KotlinMultiplatformExtension.configureJvm() {
                                     "cd \$WORK_DIR/project/build/tmp/compile-jni-${target.os}-${target.arch} && " +
                                     "cmake \$WORK_DIR/project/src/jvmMain/jni/${target.os}-${target.arch} && " +
                                     "cmake --build . --config Release && " +
-                                    "cp -rf libKeyboardKt${target.arch}.{dll,so,dylib} \$WORK_DIR/project/build/jni 2>/dev/null || : &&" +
+                                    "cp -rf libKeyboardKt${target.arch}.{dll,so,dylib} \$WORK_DIR/project/build/jni 2>/dev/null || : && " +
                                     "cd .. && rm -rf compile-jni-${target.os}-${target.arch}"
                             )
                             println(args.joinToString(" "))

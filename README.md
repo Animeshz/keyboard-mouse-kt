@@ -38,9 +38,11 @@ know more!
     - [ ] MacOS
     - [ ] JVM
         - [X] Windows x86_64 (64 bit)
-        - [ ] Windows x86    (32 bit)
-        - [ ] Linux x86_64 (64 bit)
+        - [X] Windows x86    (32 bit)
+        - [X] Linux x86_64 (64 bit)
         - [ ] Linux x86    (32 bit)
+        - [ ] Linux Arm32
+        - [ ] Linux Arm64
 - [ ] Mouse
     - [ ] Windows
     - [ ] Linux

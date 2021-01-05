@@ -66,7 +66,7 @@ internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) 
             }
 
             XSendEvent(display, focusedWindow.value, 1, mask, event.ptr.reinterpret())
-            XFlush(display)
+            XSync(display, 0)
         }
     }
 

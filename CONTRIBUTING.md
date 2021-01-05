@@ -37,7 +37,7 @@ Following are the future plans for the project:
   , [How to solve missing javah in Java 10 – ugly way](https://www.owsiak.org/how-to-solve-missing-javah-ugly-way)
 - [X] Implement way to cross compile the C/C++ library from any OS to any OS and then package it up in the resulting
   Jar. Done with PR [#4](https://github.com/Animeshz/keyboard-mouse-kt/pull/4).
-- [X] (Complete for Windows x64 currently) Implement JNI each for different platforms. I've considered it to do via C++ instead of reusing Kotlin/Native because
+- [X] (Complete for Windows x64 and Linux x64 currently) Implement JNI each for different platforms. I've considered it to do via C++ instead of reusing Kotlin/Native because
   it will result in low performance and maybe huge sizes (if K/N becomes stable and performance wise equivalent we can
   directly reuse the sources we've written).
 - Add Linux Device (`/dev/uinput` | `/dev/input/xxx`) based implementation of interaction of Keyboard/Mouse as a
