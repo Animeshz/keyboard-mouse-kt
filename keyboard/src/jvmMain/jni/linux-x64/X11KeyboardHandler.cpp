@@ -34,12 +34,12 @@ class X11KeyboardHandler : BaseKeyboardHandler {
             return NULL;
         }
 
-        void *x11 = dlopen("libX11.so.6", RTLD_GLOBAL or RTLD_LAZY);
+        void *x11 = dlopen("libX11.so.6", RTLD_GLOBAL | RTLD_LAZY);
         if (x11 == NULL) {
             return NULL;
         }
 
-        void *xInput2 = dlopen("libXi.so.6", RTLD_GLOBAL or RTLD_LAZY);
+        void *xInput2 = dlopen("libXi.so.6", RTLD_GLOBAL | RTLD_LAZY);
         if (xInput2 == NULL) {
             dlclose(x11);
             return NULL;

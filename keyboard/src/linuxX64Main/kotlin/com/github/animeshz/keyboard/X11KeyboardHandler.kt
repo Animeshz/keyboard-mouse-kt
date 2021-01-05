@@ -56,7 +56,9 @@ internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) 
             val mask = if (keyEvent.state == KeyState.KeyDown) KEY_PRESS_MASK else KEY_RELEASE_MASK
 
             XGetInputFocus(display, focusedWindow.ptr, focusRevert.ptr)
-            val event = alloc<XKeyEvent>().apply {
+            val event = alloc<XKeyEvent>()
+            memset(event.ptr, 0, sizeOf<XKeyEvent>().toULong())
+            event.apply {
                 keycode = (keyEvent.key.keyCode + 8).toUInt()
                 type = if (keyEvent.state == KeyState.KeyDown) KEY_PRESS else KEY_RELEASE
                 root = focusedWindow.value
@@ -138,24 +140,19 @@ internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) 
 
     @Suppress("UNCHECKED_CAST", "LocalVariableName")
     override fun startReadingEvents() {
-        worker.execute(mode = TransferMode.SAFE, { listOf(this, XNextEvent, XGetEventData, XFreeEventData) }) { args ->
-            val handler = args[0] as X11KeyboardHandler
-            val XNextEvent = args[1] as CPointer<CFunction<(CValuesRef<DisplayVar>, CValuesRef<XEvent>) -> Int>>
-            val XGetEventData = args[2] as CPointer<CFunction<(CValuesRef<DisplayVar>, CValuesRef<XGenericEventCookie>) -> Int>>
-            val XFreeEventData = args[3] as CPointer<CFunction<(CValuesRef<DisplayVar>, CValuesRef<XGenericEventCookie>) -> Unit>>
-
+        worker.execute(mode = TransferMode.SAFE, { this }) { handler ->
             handler.stopReading.value = false
             memScoped {
                 val event = alloc<XEvent>()
 
                 while (true) {
-                    XNextEvent(handler.display, event.ptr)
+                    handler.XNextEvent(handler.display, event.ptr)
                     if (handler.stopReading.value) break
 
                     val cookie = event.xcookie
                     if (cookie.type != GENERIC_EVENT || cookie.extension != handler.xiOpcode) continue
 
-                    if (XGetEventData(handler.display, cookie.ptr) != 0) {
+                    if (handler.XGetEventData(handler.display, cookie.ptr) != 0) {
                         val keyEventType = when (cookie.evtype) {
                             XI_RAW_KEY_PRESS -> KeyState.KeyDown
                             XI_RAW_KEY_RELEASE -> KeyState.KeyUp
@@ -165,7 +162,7 @@ internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) 
                         handler.emitEvent(keyEventType, cookieData.detail - 8)
                     }
 
-                    XFreeEventData(handler.display, cookie.ptr)
+                    handler.XFreeEventData(handler.display, cookie.ptr)
                 }
             }
         }

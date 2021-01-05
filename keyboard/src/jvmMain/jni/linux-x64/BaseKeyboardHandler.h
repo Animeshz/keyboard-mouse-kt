@@ -2,15 +2,15 @@
 
 class BaseKeyboardHandler {
    public:
-    virtual bool isCapsLockOn();
+    virtual bool isCapsLockOn() = 0;
 
-    virtual bool isNumLockOn();
+    virtual bool isNumLockOn() = 0;
 
-    virtual void sendEvent(int scanCode, bool isPressed);
+    virtual void sendEvent(int scanCode, bool isPressed) = 0;
 
-    virtual bool isPressed(int scanCode);
+    virtual bool isPressed(int scanCode) = 0;
 
-    virtual void startReadingEvents(JNIEnv *env, jobject obj, jmethodID emitEvent);
+    virtual void startReadingEvents(JNIEnv *env, jobject obj, jmethodID emitEvent) = 0;
 
-    virtual void stopReadingEvents();
+    virtual void stopReadingEvents() = 0;
 };
