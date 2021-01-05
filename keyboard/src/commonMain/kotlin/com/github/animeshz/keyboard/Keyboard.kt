@@ -9,7 +9,6 @@ import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyState
 import kotlinx.atomicfu.AtomicRef
 import kotlinx.atomicfu.atomic
-import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +17,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.CoroutineContext
@@ -161,11 +161,7 @@ public class Keyboard(
 
         val handlers = if (trigger == KeyState.KeyDown) keyDownHandlers else keyUpHandlers
 
-        val recJob = scope.launch {
-            handler.events.collect {
-                record.add(mark.elapsedNow() to it)
-            }
-        }
+        val recJob = handler.events.onEach { record.add(mark.elapsedNow() to it) }.launchIn(scope)
         handlers[keySet] = {
             handlers.remove(keySet)
             recJob.cancel()
@@ -197,10 +193,10 @@ public class Keyboard(
     }
 
     /**
-     * Cancels all the [Job]s running under this Keyboard instance.
+     * Disposes this [Keyboard] instance.
      */
-    public fun cancel(cause: CancellationException? = null) {
-        scope.cancel(cause)
+    public fun dispose() {
+        scope.cancel(null)
         job.value = null
 
         keyUpHandlers.dispose()
@@ -212,20 +208,15 @@ public class Keyboard(
         val jobCopy = job.value
         if (jobCopy != null && jobCopy.isActive) return
 
-        job.value = scope.launch {
-            handler.events.collect {
-                when (it.state) {
-                    KeyState.KeyDown -> {
-                        pressedKeys.add(it.key)
-                        handleKeyDown()
-                    }
-                    else -> {
-                        handleKeyUp()
-                        pressedKeys.remove(it.key)
-                    }
-                }
+        job.value = handler.events.onEach {
+            if (it.state == KeyState.KeyDown) {
+                pressedKeys.add(it.key)
+                handleKeyDown()
+            } else {
+                handleKeyUp()
+                pressedKeys.remove(it.key)
             }
-        }
+        }.launchIn(scope)
     }
 
     private fun stopIfNeeded() {

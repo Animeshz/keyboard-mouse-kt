@@ -38,9 +38,11 @@ know more!
     - [ ] MacOS
     - [ ] JVM
         - [X] Windows x86_64 (64 bit)
-        - [ ] Windows x86    (32 bit)
-        - [ ] Linux x86_64 (64 bit)
+        - [X] Windows x86    (32 bit)
+        - [X] Linux x86_64 (64 bit)
         - [ ] Linux x86    (32 bit)
+        - [ ] Linux Arm32
+        - [ ] Linux Arm64
 - [ ] Mouse
     - [ ] Windows
     - [ ] Linux
@@ -148,6 +150,8 @@ High Level API depends on [Keyboard][4] which is a wrapper around the [NativeKey
   ```kotlin
   keyboard.play(records, speedFactor = 1.25)
   ```
+
+Note: The Keyboard instance must be `Keyboard.dispose()` in order to avoid memory leaks (when process is alive, but the Keyboard instance is no longer referenced).
 
 ## Contributing and future plans
 

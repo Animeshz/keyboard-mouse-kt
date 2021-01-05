@@ -3,15 +3,13 @@ package com.github.animeshz.keyboard
 import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyState
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.newSingleThreadContext
+import java.util.concurrent.Executors
 
 @ExperimentalCoroutinesApi
 @ExperimentalKeyIO
 internal object JvmKeyboardHandler : NativeKeyboardHandlerBase() {
-    private val ioScope = CoroutineScope(newSingleThreadContext("JvmKeyboardHandler"))
+    private val ioExecutor = Executors.newSingleThreadExecutor()
 
     init {
         NativeUtils.loadLibraryFromJar("KeyboardKt")
@@ -37,10 +35,10 @@ internal object JvmKeyboardHandler : NativeKeyboardHandlerBase() {
     external override fun isScrollLockOn(): Boolean
 
     override fun startReadingEvents() {
-        ioScope.launch {
+        ioExecutor.execute {
             val code = nativeStartReadingEvents()
             if (code != 0) {
-                // Cannot throw, launch will consume it
+                // Cannot throw, execute will consume it
                 IllegalStateException("Unable to set native hook. Error code: $code").printStackTrace()
             }
         }

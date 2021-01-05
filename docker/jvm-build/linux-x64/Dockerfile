@@ -8,11 +8,12 @@ ENV JNI_HEADERS_DIR=${WORK_DIR}/support-files/headers/jni
 ENV X11_HEADERS_DIR=/usr/include/X11/
 
 RUN \
-    apt-get update && \
-    apt-get install --no-install-recommends --yes \
+    apt update && \
+    apt install --no-install-recommends --yes \
     curl \
     libx11-dev \
-    libxi-dev && \
+    libxi-dev \
+    libxtst-dev && \
     mkdir -p ${JNI_HEADERS_DIR} && \
     cd ${JNI_HEADERS_DIR} && \
     curl 'https://raw.githubusercontent.com/openjdk/jdk/master/src/java.base/share/native/include/jni.h' > jni.h && \

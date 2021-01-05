@@ -1,5 +1,6 @@
 #include <X11/Xlib.h>
 #include <X11/extensions/XInput2.h>
+#include <X11/extensions/XTest.h>
 #include <dlfcn.h>
 #include <jni.h>
 #include <stdlib.h>
@@ -11,13 +12,15 @@ class X11KeyboardHandler : BaseKeyboardHandler {
    private:
     void *x11;
     void *xInput2;
+    void *xTest;
     Display *display;
     int xiOpcode;
     volatile bool stopReading = false;
 
-    X11KeyboardHandler(void *x11, void *xInput2, Display *display, int xiOpcode) {
+    X11KeyboardHandler(void *x11, void *xInput2, void *xTest, Display *display, int xiOpcode) {
         this->x11 = x11;
         this->xInput2 = xInput2;
+        this->xTest = xTest;
         this->display = display;
         this->xiOpcode = xiOpcode;
     }
@@ -34,14 +37,21 @@ class X11KeyboardHandler : BaseKeyboardHandler {
             return NULL;
         }
 
-        void *x11 = dlopen("libX11.so.6", RTLD_GLOBAL or RTLD_LAZY);
+        void *x11 = dlopen("libX11.so.6", RTLD_GLOBAL | RTLD_LAZY);
         if (x11 == NULL) {
             return NULL;
         }
 
-        void *xInput2 = dlopen("libXi.so.6", RTLD_GLOBAL or RTLD_LAZY);
+        void *xInput2 = dlopen("libXi.so.6", RTLD_GLOBAL | RTLD_LAZY);
         if (xInput2 == NULL) {
             dlclose(x11);
+            return NULL;
+        }
+
+        void *xTest = dlopen("libXtst.so.6", RTLD_GLOBAL | RTLD_LAZY);
+        if (xTest == NULL) {
+            dlclose(x11);
+            dlclose(xInput2);
             return NULL;
         }
 
@@ -50,6 +60,7 @@ class X11KeyboardHandler : BaseKeyboardHandler {
         if (f == NULL) {
             dlclose(x11);
             dlclose(xInput2);
+            dlclose(xTest);
             return NULL;
         }
 
@@ -70,6 +81,8 @@ class X11KeyboardHandler : BaseKeyboardHandler {
         dlsym(x11, "XGetKeyboardControl");
         dlsym(xInput2, "XISelectEvents");
 
+        dlsym(xTest, "XTestFakeKeyEvent");
+
         Display *display = XOpenDisplay(NULL);
         if (display == NULL) {
             dlclose(x11);
@@ -82,7 +95,7 @@ class X11KeyboardHandler : BaseKeyboardHandler {
         int queryError;
         XQueryExtension(display, "XInputExtension", &xiOpcode, &queryEvent, &queryError);
 
-        return new X11KeyboardHandler(x11, xInput2, display, xiOpcode);
+        return new X11KeyboardHandler(x11, xInput2, xTest, display, xiOpcode);
     }
 
     ~X11KeyboardHandler() {
@@ -90,6 +103,7 @@ class X11KeyboardHandler : BaseKeyboardHandler {
         XCloseDisplay(display);
         dlclose(x11);
         dlclose(xInput2);
+        dlclose(xTest);
     }
 
     bool isCapsLockOn() { return toggleStates() & 1; }
@@ -98,19 +112,7 @@ class X11KeyboardHandler : BaseKeyboardHandler {
 
     // Setup display
     void sendEvent(int scanCode, bool isPressed) {
-        unsigned long focusedWindow;
-        int focusRevert;
-        int mask = isPressed ? KeyPressMask : KeyReleaseMask;
-
-        XGetInputFocus(display, &focusedWindow, &focusRevert);
-        XKeyEvent event;
-        event.keycode = scanCode + 8;
-        event.type = isPressed ? KeyPress : KeyRelease;
-        event.root = focusedWindow;
-        event.display = display;
-
-        XSendEvent(display, focusedWindow, 1, mask, (XEvent *)&event);
-        XFlush(display);
+        XTestFakeKeyEvent(display, scanCode + 8, isPressed, 0);
     }
 
     bool isPressed(int scanCode) {

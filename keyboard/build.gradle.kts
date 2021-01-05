@@ -1,6 +1,7 @@
 @file:Suppress("UNUSED_VARIABLE")
 
 import org.apache.tools.ant.taskdefs.condition.Os
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.gradle.internal.jvm.Jvm
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -10,8 +11,6 @@ import kotlin.system.exitProcess
 plugins {
     id("org.jlleitschuh.gradle.ktlint") version "9.4.1"
 }
-
-val ideaActive = System.getProperty("idea.active") == "true"
 
 val mainSourceSets = mutableListOf<org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet>()
 val testSourceSets = mutableListOf<org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet>()
@@ -42,7 +41,6 @@ fun KotlinMultiplatformExtension.configureJvm() {
     // JNI-C++ configuration
     val jniHeaderDirectory = file("src/jvmMain/generated/jni").apply { mkdirs() }
     jvmMain.resources.srcDir("build/jni")
-    jvmTest.resources.srcDir("build/jni")
 
     val generateJniHeaders by tasks.creating {
         group = "build"
@@ -162,7 +160,8 @@ fun KotlinMultiplatformExtension.configureJvm() {
                                     "cd \$WORK_DIR/project/build/tmp/compile-jni-${target.os}-${target.arch} && " +
                                     "cmake \$WORK_DIR/project/src/jvmMain/jni/${target.os}-${target.arch} && " +
                                     "cmake --build . --config Release && " +
-                                    "cp -rf libKeyboardKt${target.arch}.{dll,so,dylib} \$WORK_DIR/project/build/jni 2>/dev/null || :"
+                                    "cp -rf libKeyboardKt${target.arch}.{dll,so,dylib} \$WORK_DIR/project/build/jni 2>/dev/null || : && " +
+                                    "cd .. && rm -rf compile-jni-${target.os}-${target.arch}"
                             )
                             println(args.joinToString(" "))
                             commandLine(*args)
@@ -254,6 +253,14 @@ kotlin {
     }
 
     explicitApi()
+}
+
+tasks.withType<AbstractTestTask> {
+    testLogging {
+        showStackTraces = true
+        showStandardStreams = true
+        exceptionFormat = TestExceptionFormat.FULL
+    }
 }
 
 ktlint {
