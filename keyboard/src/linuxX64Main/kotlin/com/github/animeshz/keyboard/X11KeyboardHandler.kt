@@ -38,7 +38,6 @@ import x11.XEvent
 import x11.XGenericEventCookie
 import x11.XIEventMask
 import x11.XIRawEvent
-import x11.XKeyEvent
 import x11.XKeyboardState
 import kotlin.native.concurrent.TransferMode
 import kotlin.native.concurrent.Worker
@@ -46,28 +45,11 @@ import kotlin.native.concurrent.Worker
 @Suppress("PrivatePropertyName")
 @ExperimentalUnsignedTypes
 @ExperimentalKeyIO
-internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) : NativeKeyboardHandlerBase() {
+internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer, xTest: COpaquePointer) : NativeKeyboardHandlerBase() {
     override fun sendEvent(keyEvent: KeyEvent) {
         if (keyEvent.key == Key.Unknown) return
 
-        memScoped {
-            val focusedWindow = alloc<ULongVar>()
-            val focusRevert = alloc<IntVar>()
-            val mask = if (keyEvent.state == KeyState.KeyDown) KEY_PRESS_MASK else KEY_RELEASE_MASK
-
-            XGetInputFocus(display, focusedWindow.ptr, focusRevert.ptr)
-            val event = alloc<XKeyEvent>()
-            memset(event.ptr, 0, sizeOf<XKeyEvent>().toULong())
-            event.apply {
-                keycode = (keyEvent.key.keyCode + 8).toUInt()
-                type = if (keyEvent.state == KeyState.KeyDown) KEY_PRESS else KEY_RELEASE
-                root = focusedWindow.value
-                this.display = display
-            }
-
-            XSendEvent(display, focusedWindow.value, 1, mask, event.ptr.reinterpret())
-            XSync(display, 0)
-        }
+        XTestFakeKeyEvent(display, (keyEvent.key.keyCode + 8).toUInt(), if (keyEvent.state == KeyState.KeyDown) 1 else 0, 0UL)
     }
 
     override fun getKeyState(key: Key): KeyState {
@@ -102,6 +84,7 @@ internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) 
     private val XQueryKeymap = resolveDlFun<(CValuesRef<DisplayVar>, CValuesRef<ByteVar>) -> Int>(x11, "XQueryKeymap")
     private val XNextEvent = resolveDlFun<(CValuesRef<DisplayVar>, CValuesRef<XEvent>) -> Int>(x11, "XNextEvent")
     private val XSendEvent = resolveDlFun<(CValuesRef<DisplayVar>, ULong, Int, Long, CValuesRef<XEvent>) -> Int>(x11, "XSendEvent")
+    private val XTestFakeKeyEvent = resolveDlFun<(CValuesRef<DisplayVar>, UInt, Int, ULong) -> Int>(xTest, "XTestFakeKeyEvent")
 
     private val XFreeEventData = resolveDlFun<(CValuesRef<DisplayVar>, CValuesRef<XGenericEventCookie>) -> Unit>(x11, "XFreeEventData")
     private val XGetEventData = resolveDlFun<(CValuesRef<DisplayVar>, CValuesRef<XGenericEventCookie>) -> Int>(x11, "XGetEventData")
@@ -226,11 +209,12 @@ internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer) 
 
             val x11 = dlopen("libX11.so.6", RTLD_GLOBAL or RTLD_LAZY) ?: return null
             val xInput2 = dlopen("libXi.so.6", RTLD_GLOBAL or RTLD_LAZY) ?: return close(listOf(x11))
+            val xTest = dlopen("libXtst.so.6", RTLD_GLOBAL or RTLD_LAZY) ?: return close(listOf(x11, xInput2))
 
             // Check XInput2 functions are present, since libXi may contain XInput or XInput2.
-            dlsym(xInput2, "XISelectEvents") ?: return close(listOf(x11, xInput2))
+            dlsym(xInput2, "XISelectEvents") ?: return close(listOf(x11, xInput2, xTest))
 
-            return X11KeyboardHandler(x11, xInput2)
+            return X11KeyboardHandler(x11, xInput2, xTest)
         }
 
         private inline fun close(pointers: List<COpaquePointer>): Nothing? {
