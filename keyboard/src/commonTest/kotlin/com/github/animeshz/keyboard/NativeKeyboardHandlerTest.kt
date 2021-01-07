@@ -6,9 +6,11 @@ import com.github.animeshz.keyboard.events.KeyState
 import io.kotest.matchers.comparables.shouldNotBeEqualComparingTo
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.flow.dropWhile
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import kotlin.test.Test
 
 @ExperimentalKeyIO
@@ -40,7 +42,7 @@ class NativeKeyboardHandlerTest {
             handler.sendEvent(KeyEvent(Key.LeftCtrl, KeyState.KeyUp))
         }
 
-        val events = handler.events.take(2).toList()
+        val events = withTimeout(100) { handler.events.dropWhile { it.key != Key.LeftCtrl }.take(2).toList() }
 
         events[0] should {
             it.key shouldBe Key.LeftCtrl
