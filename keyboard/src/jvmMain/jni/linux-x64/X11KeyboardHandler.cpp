@@ -87,8 +87,23 @@ class X11KeyboardHandler : BaseKeyboardHandler {
         if (display == NULL) {
             dlclose(x11);
             dlclose(xInput2);
+            dlclose(xTest);
             return NULL;
         }
+
+        Window root = XDefaultRootWindow(display);
+        XIEventMask *xiMask = new XIEventMask;
+        xiMask->deviceid = XIAllMasterDevices;
+        xiMask->mask_len = XIMaskLen(XI_LASTEVENT);
+        xiMask->mask = new unsigned char[xiMask->mask_len]();
+
+        XISetMask(xiMask->mask, XI_RawKeyPress);
+        XISetMask(xiMask->mask, XI_RawKeyRelease);
+        XISelectEvents(display, root, xiMask, 1);
+        XSync(display, 0);
+
+        delete [] xiMask->mask;
+        delete xiMask;
 
         int xiOpcode;
         int queryEvent;
@@ -110,8 +125,8 @@ class X11KeyboardHandler : BaseKeyboardHandler {
 
     bool isNumLockOn() { return toggleStates() & 2; }
 
-    // Setup display
     void sendEvent(int scanCode, bool isPressed) {
+        // https://stackoverflow.com/a/42020068/11377112
         XTestFakeKeyEvent(display, scanCode + 8, isPressed, 0);
     }
 
@@ -120,11 +135,7 @@ class X11KeyboardHandler : BaseKeyboardHandler {
         XQueryKeymap(display, keyStates);
         int xKeyCode = scanCode + 8;
 
-        if (keyStates[xKeyCode / 8] and (1 << (xKeyCode % 8))) {
-            return 1;
-        } else {
-            return 0;
-        }
+        return keyStates[xKeyCode / 8] & (1 << (xKeyCode % 8));
     }
 
     void startReadingEvents(JNIEnv *env, jobject obj, jmethodID emitEvent) {
@@ -138,8 +149,8 @@ class X11KeyboardHandler : BaseKeyboardHandler {
             XGenericEventCookie cookie = event.xcookie;
             if (cookie.type != GenericEvent || cookie.extension != xiOpcode) continue;
 
-            if (XGetEventData(display, &cookie) != 0) {
-                bool keyEventType;
+            if (XGetEventData(display, &cookie)) {
+                jboolean keyEventType;
                 if (cookie.evtype == XI_RawKeyPress)
                     keyEventType = 1;
                 else if (cookie.evtype == XI_RawKeyRelease)
@@ -147,8 +158,8 @@ class X11KeyboardHandler : BaseKeyboardHandler {
                 else
                     continue;
 
-                XIRawEvent cookieData = *(XIRawEvent *)cookie.data;
-                env->CallVoidMethod(obj, emitEvent, cookieData.detail - 8, keyEventType);
+                XIRawEvent *cookieData = (XIRawEvent *)cookie.data;
+                env->CallVoidMethod(obj, emitEvent, cookieData->detail - 8, keyEventType);
             }
 
             XFreeEventData(display, &cookie);

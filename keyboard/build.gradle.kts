@@ -134,7 +134,8 @@ fun KotlinMultiplatformExtension.configureJvm() {
             val targets = listOf(
                 Target("windows", "x64", "animeshz/keyboard-mouse-kt:jni-build-windows-x64"),
                 Target("windows", "x86", "animeshz/keyboard-mouse-kt:jni-build-windows-x86"),
-                Target("linux", "x64", "animeshz/keyboard-mouse-kt:jni-build-linux-x64")
+                Target("linux", "x64", "animeshz/keyboard-mouse-kt:jni-build-linux-x64"),
+                Target("linux", "x86", "animeshz/keyboard-mouse-kt:jni-build-linux-x86")
             )
 
             for (target in targets) {
@@ -143,10 +144,10 @@ fun KotlinMultiplatformExtension.configureJvm() {
                 val path = if (Os.isFamily(Os.FAMILY_WINDOWS)) "/run/desktop/mnt/host/${tmpVar[0].toLowerCase()}${tmpVar.substring(2 until tmpVar.length).replace('\\', '/')}"
                 else tmpVar
 
-                val work: () -> String = {
+                val work: () -> Pair<Int, String> = {
                     ByteArrayOutputStream().use {
                         project.exec {
-                            val args = arrayOf(
+                            commandLine(
                                 "docker",
                                 "run",
                                 "--rm",
@@ -163,30 +164,29 @@ fun KotlinMultiplatformExtension.configureJvm() {
                                     "cp -rf libKeyboardKt${target.arch}.{dll,so,dylib} \$WORK_DIR/project/build/jni 2>/dev/null || : && " +
                                     "cd .. && rm -rf compile-jni-${target.os}-${target.arch}"
                             )
-                            println(args.joinToString(" "))
-                            commandLine(*args)
 
                             isIgnoreExitValue = true
                             standardOutput = System.out
                             errorOutput = it
-                        }
-                        it.toString()
+                        }.exitValue to it.toString()
                     }
                 }
-                var output = work()
+                var (exit, error) = work()
 
                 // Fix non-daemon docker on Docker for Windows
                 val nonDaemonError = "docker: error during connect: This error may indicate that the docker daemon is not running."
-                if (Os.isFamily(Os.FAMILY_WINDOWS) && output.startsWith(nonDaemonError)) {
+                if (Os.isFamily(Os.FAMILY_WINDOWS) && error.startsWith(nonDaemonError)) {
                     project.exec { commandLine("C:\\Program Files\\Docker\\Docker\\DockerCli.exe", "-SwitchDaemon") }.assertNormalExitValue()
 
                     do {
                         Thread.sleep(500)
-                        output = work()
-                    } while (output.startsWith(nonDaemonError))
+                        val result = work()
+                        exit = result.first
+                        error = result.second
+                    } while (error.startsWith(nonDaemonError))
                 }
 
-                println(output)
+                if (exit != 0) throw GradleException(error)
             }
         }
     }
