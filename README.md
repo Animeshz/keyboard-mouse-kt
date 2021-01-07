@@ -151,6 +151,8 @@ High Level API depends on [Keyboard][4] which is a wrapper around the [NativeKey
   keyboard.play(records, speedFactor = 1.25)
   ```
 
+Note: The Keyboard instance must be `Keyboard.dispose()` in order to avoid memory leaks (when process is alive, but the Keyboard instance is no longer referenced).
+
 ## Contributing and future plans
 
 The Github dicussions are open! Be sure to show your existence, say hi! and share if you have any upcoming ideas :)
