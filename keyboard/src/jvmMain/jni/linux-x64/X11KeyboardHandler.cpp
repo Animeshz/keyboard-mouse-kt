@@ -95,8 +95,7 @@ class X11KeyboardHandler : BaseKeyboardHandler {
         XIEventMask *xiMask = new XIEventMask;
         xiMask->deviceid = XIAllMasterDevices;
         xiMask->mask_len = XIMaskLen(XI_LASTEVENT);
-        xiMask->mask = new unsigned char[xiMask->mask_len];
-        memset(xiMask->mask, 0, xiMask->mask_len);
+        xiMask->mask = new unsigned char[xiMask->mask_len]();
 
         XISetMask(xiMask->mask, XI_RawKeyPress);
         XISetMask(xiMask->mask, XI_RawKeyRelease);
