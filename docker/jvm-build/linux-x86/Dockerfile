@@ -8,7 +8,7 @@ ENV JNI_HEADERS_DIR=${WORK_DIR}/support-files/headers/jni
 ENV X11_HEADERS_DIR=/usr/include/X11/
 
 RUN \
-    dpkg --add-architecture i386 \
+    dpkg --add-architecture i386 && \
     apt update && \
     apt install --no-install-recommends --yes \
     curl \

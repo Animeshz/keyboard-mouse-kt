@@ -55,7 +55,6 @@ internal object JvmKeyboardHandler : NativeKeyboardHandlerBase() {
     private external fun nativeStopReadingEvents()
 
     private fun emitEvent(scanCode: Int, pressed: Boolean) {
-        println("emitting")
         eventsInternal.tryEmit(KeyEvent(Key.fromKeyCode(scanCode), if (pressed) KeyState.KeyDown else KeyState.KeyUp))
     }
 }

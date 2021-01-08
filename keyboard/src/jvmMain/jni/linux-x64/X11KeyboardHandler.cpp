@@ -102,12 +102,8 @@ class X11KeyboardHandler : BaseKeyboardHandler {
         XISelectEvents(display, root, xiMask, 1);
         XSync(display, 0);
 
-        delete [] xiMask.mask;
-
-        XISetMask(xiMask.mask, XI_RawKeyPress);
-        XISetMask(xiMask.mask, XI_RawKeyRelease);
-        XISelectEvents(display, root, &xiMask, 1);
-        XSync(display, 0);
+        delete [] xiMask->mask;
+        delete xiMask;
 
         int xiOpcode;
         int queryEvent;
@@ -129,8 +125,8 @@ class X11KeyboardHandler : BaseKeyboardHandler {
 
     bool isNumLockOn() { return toggleStates() & 2; }
 
-    // Setup display
     void sendEvent(int scanCode, bool isPressed) {
+        // https://stackoverflow.com/a/42020068/11377112
         XTestFakeKeyEvent(display, scanCode + 8, isPressed, 0);
     }
 

@@ -6,6 +6,7 @@ import com.github.animeshz.keyboard.events.KeyState
 import io.kotest.matchers.comparables.shouldNotBeEqualComparingTo
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.dropWhile
 import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
@@ -38,11 +39,12 @@ class NativeKeyboardHandlerTest {
         val handler = nativeKbHandlerForPlatform()
 
         launch {
+            delay(5) // Make sure we didn't missed any event
             handler.sendEvent(KeyEvent(Key.LeftCtrl, KeyState.KeyDown))
             handler.sendEvent(KeyEvent(Key.LeftCtrl, KeyState.KeyUp))
         }
 
-        val events = withTimeout(100) { handler.events.dropWhile { it.key != Key.LeftCtrl }.take(2).toList() }
+        val events = withTimeout(200) { handler.events.dropWhile { it.key != Key.LeftCtrl }.take(2).toList() }
 
         events[0] should {
             it.key shouldBe Key.LeftCtrl

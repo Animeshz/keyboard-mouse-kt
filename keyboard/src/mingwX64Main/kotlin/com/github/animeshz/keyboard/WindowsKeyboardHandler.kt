@@ -69,7 +69,7 @@ internal object WindowsKeyboardHandler : NativeKeyboardHandlerBase() {
                     ki.dwFlags = extended or if (keyEvent.state == KeyState.KeyDown) 0U else 2U
                 } else {
                     ki.wScan = keyEvent.key.keyCode.toUShort()
-                    ki.dwFlags = 8U or extended or if (keyEvent.state == KeyState.KeyUp) 0U else 2U
+                    ki.dwFlags = 8U or extended or if (keyEvent.state == KeyState.KeyDown) 0U else 2U
                 }
             }
 
