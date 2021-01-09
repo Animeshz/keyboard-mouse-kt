@@ -227,8 +227,6 @@ kotlin {
                 api(kotlin("stdlib-common"))
                 api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2-native-mt")
                 implementation("org.jetbrains.kotlinx:atomicfu:0.14.4")
-                implementation("co.touchlab:stately-isolate:1.1.1-a1")
-                implementation("co.touchlab:stately-iso-collections:1.1.1-a1")
             }
         }
         val commonTest by getting {
