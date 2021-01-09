@@ -17,7 +17,7 @@ module where you can find a few more examples, etc)
 
 While the other modules are platform specific implementation.
 
-The JVM one is implemented through JNI which requies Docker to build cross-platform the shared libraries. The implementation of K/Native and K/JVM are same.
+The JVM one is implemented through JNI which requires Docker to build the cross-platform shared libraries. The implementation of K/Native and K/JVM are same.
 
 LinuxX64 is implemented utilizing the XLib and XInput2, and linked dynamically (no need to install any headers for build). There is a plan to use the `/dev/uinput` or `/dev/input/eventX` devices as a fallback, see [#6](https://github.com/Animeshz/keyboard-mouse-kt/issues/6).
 
