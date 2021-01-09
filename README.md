@@ -151,7 +151,7 @@ High Level API depends on [Keyboard][4] which is a wrapper around the [NativeKey
   keyboard.play(records, speedFactor = 1.25)
   ```
 
-__Note: In Kotlin/Native environment, the `Keyboard.dispose()` must be called in order to avoid memory leaks (when process is alive, but the Keyboard instance is no longer referenced).__
+A few more examples can be found at [keyboard/src/commonTest/examples](https://github.com/Animeshz/keyboard-mouse-kt/tree/master/keyboard/src/commonTest/kotlin/examples)
 
 ## Contributing and future plans
 
