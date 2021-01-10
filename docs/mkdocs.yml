@@ -1,0 +1,45 @@
+site_name: KeyboardMouse.kt
+site_url: https://animeshz.github.io/keyboard-mouse-kt
+
+repo_url: https://github.com/Animeshz/keyboard-mouse-kt
+repo_name: Animeshz/KeyboardMouse.kt
+copyright: Copyright 2020-2021 Animeshz
+
+theme:
+  name: material
+
+  icon:
+    repo: fontawesome/brands/github
+
+  palette:
+    scheme: preference
+
+plugins:
+  - search
+
+markdown_extensions:
+  - pymdownx.tabbed
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.highlight:
+      linenums: true
+
+nav:
+  - index.md
+  - status-and-installation.md
+
+  - Keyboard:
+      - keyboard/low-level-api.md
+      - keyboard/high-level-api.md
+      - keyboard/key.md
+
+  - contributing.md
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Animeshz/keyboard-mouse-kt
+    
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/bBN9vZgcCk

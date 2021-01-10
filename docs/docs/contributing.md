@@ -1,30 +1,30 @@
-# Contributing to KeyboardMouse.kt
+# Contributing and future plans
 
 👍🎉 First off, thanks for taking the time to contribute! 🎉👍
 
 When contributing to this repository, please first discuss the change you wish to make via issue or github discussions.
 
 
-### How is the project organized
+## How is the project organized
+
+### Keyboard
 
 The project (keyboard) is divided into 4 modules: common, jvm, linuxX64, and mingwX64.
 
-The commonMain is where all the public interfaces and classes are defined and almost everything about it is documented in
-the [README.md](https://github.com/Animeshz/keyboard-mouse-kt/blob/master/README.md) under the Usages section and
-there's
-a [commonTest](https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonTest/kotlin/com/github/animeshz/keyboard)
-module where you can find a few more examples, etc)
+=== "commonMain"
+    The commonMain is where all the public interfaces and classes are defined and almost everything about it is documented in the [README.md](https://github.com/Animeshz/keyboard-mouse-kt/blob/master/README.md) under the Usages section and there's a [commonTest](https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonTest/kotlin/com/github/animeshz/keyboard) module where you can find a few more examples, etc)
 
-While the other modules are platform specific implementation.
+=== "jvmMain"
+    The JVM one is implemented through JNI which requies Docker to build cross-platform the shared libraries. The implementation of K/Native and K/JVM are same.
 
-The JVM one is implemented through JNI which requires Docker to build the cross-platform shared libraries. The implementation of K/Native and K/JVM are same.
+=== "linuxX64Main"
+    LinuxX64 is implemented utilizing the XLib and XInput2, and linked dynamically (no need to install any headers for build). There is a plan to use the `/dev/uinput` or `/dev/input/eventX` devices as a fallback, see [#6](https://github.com/Animeshz/keyboard-mouse-kt/issues/6).
 
-LinuxX64 is implemented utilizing the XLib and XInput2, and linked dynamically (no need to install any headers for build). There is a plan to use the `/dev/uinput` or `/dev/input/eventX` devices as a fallback, see [#6](https://github.com/Animeshz/keyboard-mouse-kt/issues/6).
-
-And lastly, MingwX64 is done through Win32 API.
+=== "mingwX64Main"
+    And lastly, MingwX64 is done through Win32 API.
 
 
-### Future Plans
+## Future Plans
 
 Following are the future plans for the project:
 
@@ -40,11 +40,11 @@ Following are the future plans for the project:
 - [X] Implement JNI each for different platforms. I've considered it to do via C++ instead of reusing Kotlin/Native because
   it will result in low performance and maybe huge sizes (if K/N becomes stable and performance wise equivalent we can
   directly reuse the sources we've written).
-- Add Linux Device (`/dev/uinput` | `/dev/input/xxx`) based implementation of interaction of Keyboard/Mouse as a
+- [ ] Add Linux Device (`/dev/uinput` | `/dev/input/xxx`) based implementation of interaction of Keyboard/Mouse as a
   fallback when X11 is not present (after resolving [#1][1]).
-- Implement Mouse API in similar way keyboard is implemented.
+- [ ] Implement Mouse API in similar way keyboard is implemented.
 
-### Testing and building
+## Testing and building
 
 To build and publish to mavenLocal:
 `$ ./gradlew build publishToMavenLocal`
