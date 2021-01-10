@@ -19,19 +19,19 @@ __KeyboardMouse.kt is still in an experimental stage, as such we can't guarantee
 
 KeyboardMouse.kt is a lightweight (~60Kb per native platform, and ~70Kb on JVM), coroutine-based multiplatform kotlin library for idiomatically interacting with Keyboard and Mouse (receiving and sending global events).
 
-We aim to provide high-level as well as high-performant low-level access to such APIs. See the [usage]() section below to know more!
+We aim to provide high-level as well as high-performant low-level access to such APIs. See the usage (Keyboard/Mouse) section below to know more!
 
 ## Motivation
 
-The most basic motivation (or usecase) comes from trying to make our GUI app to hide on background and pop it back. Since most GUI frameworks only allow you to listen to events that are happening on the the current window and when focus losts you don't get any, we've designed this lightweight library to easily control that.
+The most basic motivation (or use case) comes from trying to make our GUI app to hide on background and pop it back. Since most GUI frameworks only allow you to listen to events that are happening on the current window and when focus lost you don't get any, we've designed this lightweight library to easily control that.
 
 Another not quite good but a use-case is to simulate key-presses.
 
-We can integrate the Mouse and Keyboard API together, to for example simulate a click or something, it really depends on the personal usecase.
+We can integrate the Mouse and Keyboard API together, to for example simulate a click or something, it really depends on the personal use case.
 
 ## Contributing and future plans
 
-The Github dicussions are open! Be sure to show your existence, say hi! and share if you have any upcoming ideas :)
+The Github discussions are open! Be sure to show your existence, say hi! and share if you have any upcoming ideas :)
 
 Issues and PRs are always welcome!
 
