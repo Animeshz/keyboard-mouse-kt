@@ -32,7 +32,8 @@ nav:
   - Keyboard:
       - keyboard/low-level-api.md
       - keyboard/high-level-api.md
-  
+      - keyboard/key.md
+
   - contributing.md
 
 extra:
@@ -41,4 +42,4 @@ extra:
       link: https://github.com/Animeshz/keyboard-mouse-kt
     
     - icon: fontawesome/brands/discord
-      link: https://discord.gg/-------
+      link: https://discord.gg/bBN9vZgcCk

@@ -1,6 +1,11 @@
 # Home
 
 <p>
+    <a href="https://animeshz.github.io/keyboard-mouse-kt">
+        <img src="https://img.shields.io/badge/Docs-You%20are%20Here-blue?style=flat-square&logo=read-the-docs" alt="Docs: Click Here" />
+    </a>
+    <a href="https://discord.gg/bBN9vZgcCk">
+        <img src="https://img.shields.io/static/v1?label=Discord&message=Chat%20here&color=7289DA&style=flat-square&logo=discord" alt="Discord: Chat here" />
     <a href="https://github.com/Animeshz/keyboard-mouse-kt/releases">
         <img src="https://img.shields.io/github/release-date/Animeshz/keyboard-mouse-kt?style=flat-square&label=Latest%20Release" alt="Latest Release" />
     </a>
@@ -35,4 +40,4 @@ The Github discussions are open! Be sure to show your existence, say hi! and sha
 
 Issues and PRs are always welcome!
 
-For future plans and contributing to the project please checkout Contributing section.
+For future plans and contributing to the project please checkout [Contributing](contributing.md) section.

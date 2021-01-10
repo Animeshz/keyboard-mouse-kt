@@ -8,7 +8,7 @@
 
 ## Kotlin (Multiplatform / JVM)
 
-Low Level API depends on [NativeKeyboardHandler][1] that can be obtained via [nativeKbHandlerForPlatform][2].
+Low Level API depends on [NativeKeyboardHandler][1] that can be obtained via `nativeKbHandlerForPlatform()`.
 
 - Listening to events using Flow.
 
@@ -20,14 +20,14 @@ Low Level API depends on [NativeKeyboardHandler][1] that can be obtained via [na
             .collect { println(it) }
         ```
 
-- Sending a [Key][3] event.
+- Sending a [Key][2] event.
     
     === "Kotlin"
         ```kotlin
         handler.sendEvent(KeyEvent(Key.A, KeyState.KeyDown))
         ```
 
-- Get [KeyState][7] (KeyDown or KeyUp) of the [Key][3].
+- Get [KeyState][3] (KeyDown or KeyUp) of the [Key][2].
 
     === "Kotlin"
         ```kotlin
@@ -46,7 +46,7 @@ Low Level API depends on [NativeKeyboardHandler][1] that can be obtained via [na
 
 ## Java (JVM)
 
-Low Level API depends on [JNativeKeyboardHandler][1] that can be obtained via [JNativeKeyboardHandler.INSTANCE][2].
+Low Level API depends on [JNativeKeyboardHandler][4] that can be obtained via `JNativeKeyboardHandler.INSTANCE`.
 
 - Listening to events using a callback.
 
@@ -58,20 +58,20 @@ Low Level API depends on [JNativeKeyboardHandler][1] that can be obtained via [J
             }
         });
         ```
-- Sending a [Key][3] event.
+- Sending a [Key][2] event.
 
     === "Java 8 or above"
         ```java
         handler.sendEvent(new KeyEvent(Key.A, KeyState.KeyDown));
         ```
-- Get [KeyState][7] (KeyDown or KeyUp) of the [Key][3].
+- Get [KeyState][3] (KeyDown or KeyUp) of the [Key][2].
 
     === "Java 8 or above"
         ```java
         handler.getKeyState(Key.A);
         handler.getKeyState(Key.RightAlt);
         ```
-- Get States of Toggleable Keys (returns a Boolean).
+- Get States of Toggleable Keys (returns a boolean).
 
     === "Java 8 or above"
         ```java
@@ -80,16 +80,10 @@ Low Level API depends on [JNativeKeyboardHandler][1] that can be obtained via [J
         handler.isScrollLockOn();
         ```
 
-[1]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/NativeKeyboardHandler.kt
+[1]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard-kt/src/commonMain/kotlin/com/github/animeshz/keyboard/NativeKeyboardHandler.kt
 
-[2]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/NativeKeyboardHandler.kt
+[2]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard-kt/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/Key.kt
 
-[3]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/Key.kt
+[3]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard-kt/src/commonMain/kotlin/com/github/animeshz/keyboard/events/KeyEvent.kt
 
-[4]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/Keyboard.kt
-
-[5]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/KeySet.kt
-
-[6]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/Keyboard.kt#L33
-
-[7]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/events/KeyEvent.kt
+[4]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/integration/keyboard-kt-jdk8/src/main/kotlin/com/github/animeshz/keyboard/JNativeKeyboardHandler.kt

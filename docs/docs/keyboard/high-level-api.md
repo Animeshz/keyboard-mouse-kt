@@ -8,7 +8,7 @@
 
 ## Kotlin (Multiplatform / JVM)
 
-High Level API depends on [Keyboard][4] which is a wrapper around the [NativeKeyboardHandler][1].
+High Level API depends on [Keyboard][1] which is a wrapper around the [NativeKeyboardHandler][2].
 
 - Adding a shortcut (Hotkey).
 
@@ -20,7 +20,7 @@ High Level API depends on [Keyboard][4] which is a wrapper around the [NativeKey
         ```
     <sup>**Note: `trigger` defaults to KeyState.KeyDown when not provided.**</sup>
 
-- Send a [KeySet][5] to the host machine.
+- Send a [KeySet][3] to the host machine.
 
     === "Kotlin"
         ```kotlin
@@ -34,7 +34,7 @@ High Level API depends on [Keyboard][4] which is a wrapper around the [NativeKey
         keyboard.write("Hello Keyboard!")
         ```
 
-- Suspensive wait till a [KeySet][5] is pressed.
+- Suspensive wait till a [KeySet][3] is pressed.
 
     === "Kotlin"
         ```kotlin
@@ -42,7 +42,7 @@ High Level API depends on [Keyboard][4] which is a wrapper around the [NativeKey
         ```
     <sup>**Note: `trigger` defaults to KeyState.KeyDown when not provided.**</sup>
 
-- Record Key presses till specific [KeySet][5] is pressed into a [KeyPressSequence][6] (A list of pair of Duration and KeyEvent).
+- Record Key presses till specific [KeySet][3] is pressed into a [KeyPressSequence][1] (Type alias to a list of pair of Duration and KeyEvent).
 
     === "Kotlin"
         ```kotlin
@@ -59,7 +59,7 @@ High Level API depends on [Keyboard][4] which is a wrapper around the [NativeKey
 
 ## Java (JVM)
 
-High Level API depends on [JKeyboard][9].
+High Level API depends on [JKeyboard][4].
 
 - Adding a shortcut (Hotkey).
 
@@ -82,7 +82,7 @@ High Level API depends on [JKeyboard][9].
         ```
     <sup>**Note: `trigger` defaults to KeyState.KeyDown when not provided.**</sup>
 
-- Send a [KeySet][5] to the host machine.
+- Send a [KeySet][3] to the host machine.
 
     === "Java 8"
         ```java
@@ -105,7 +105,7 @@ High Level API depends on [JKeyboard][9].
         keyboard.write("Hello Keyboard!");
         ```
 
-- Asynchronous wait till a [KeySet][5] is pressed.
+- Asynchronous wait till a [KeySet][3] is pressed.
 
     === "Java 8"
         ```java
@@ -125,7 +125,7 @@ High Level API depends on [JKeyboard][9].
     <sup>**Note: `trigger` defaults to KeyState.KeyDown when not provided.**</sup><br>
     <sup>**Note: Unit is similar to java.lang.Void, a singleton object which has nothing to do for us.**</sup>
 
-- Record Key presses till specific [KeySet][5] is pressed into a list of pair of Duration and KeyEvent.
+- Record Key presses till specific [KeySet][3] is pressed into a list of pair of Duration and KeyEvent.
 
     === "Java 8"
         ```java
@@ -152,16 +152,10 @@ High Level API depends on [JKeyboard][9].
         ```
     <sup>**Note: `speedFactor` defaults to 1.0 when not provided.**</sup>
 
-[1]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/NativeKeyboardHandler.kt
+[1]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/Keyboard.kt
 
 [2]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/NativeKeyboardHandler.kt
 
-[3]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/Key.kt
+[3]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/KeySet.kt
 
-[4]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/Keyboard.kt
-
-[5]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/KeySet.kt
-
-[6]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/Keyboard.kt#L33
-
-[7]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/events/KeyEvent.kt
+[4]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/integration/keyboard-kt-jdk8/src/main/kotlin/com/github/animeshz/keyboard/JNativeKeyboardHandler.kt

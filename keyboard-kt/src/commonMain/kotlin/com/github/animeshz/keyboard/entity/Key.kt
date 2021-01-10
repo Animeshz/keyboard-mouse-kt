@@ -3,7 +3,7 @@ package com.github.animeshz.keyboard.entity
 import com.github.animeshz.keyboard.ExperimentalKeyIO
 
 /**
- * Represents key of the keyboard.
+ * Represents corresponding key of the keyboard.
  *
  * [keyCode] matches with hardware scan codes.
  */
@@ -204,21 +204,35 @@ public enum class Key(public val keyCode: Int) {
             '?' to Pair(Slash, true),
         )
 
+        private val alphabetOrdinalRange = 16..50
+
         /**
          * Resolves [Key] and should the Shift Key be pressed for sending the [char] to the host.
          */
         public fun fromChar(char: Char): Pair<Key, Boolean> {
             if (char == '0') return Number0 to false
             if (char in '1'..'9') return values()[char - '0' + 2] to false
-            return SYMBOL_MAPPING[char] ?: run {
-                when (char) {
-                    in 'A'..'Z' -> values().first { it.name.length == 1 && it.name[0] == char } to true
-                    in 'a'..'z' ->
-                        char.toUpperCase()
-                            .let { c -> values().first { it.name.length == 1 && it.name[0] == c } to false }
-                    else -> Unknown to false
+
+            val symbolKey = SYMBOL_MAPPING[char]
+            if (symbolKey != null) return symbolKey
+
+            when (char) {
+                in 'A'..'Z' -> {
+                    val values = values()
+                    for (i in alphabetOrdinalRange) {
+                        if (values[i].name.length == 1 && values[i].name[0] == char) return values[i] to true
+                    }
+                }
+                in 'a'..'z' -> {
+                    val c = char.toUpperCase()
+                    val values = values()
+                    for (i in alphabetOrdinalRange) {
+                        if (values[i].name.length == 1 && values[i].name[0] == c) return values[i] to true
+                    }
                 }
             }
+
+            return Unknown to false
         }
 
         /**

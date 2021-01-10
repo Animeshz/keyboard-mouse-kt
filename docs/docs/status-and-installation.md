@@ -27,13 +27,14 @@
 <p>
     <a href="https://github.com/Animeshz/keyboard-mouse-kt/releases">
         <img src="https://img.shields.io/github/release-date/Animeshz/keyboard-mouse-kt?style=flat-square&label=Latest%20Release" alt="Latest Release" />
+    </a>
     <a href="https://bintray.com/animeshz/maven/keyboard-kt">
         <img src="https://img.shields.io/bintray/v/animeshz/maven/keyboard-kt?color=blue&style=flat-square" alt="Bintray Version">
     </a>
     <img src="https://img.shields.io/github/languages/code-size/Animeshz/keyboard-mouse-kt?style=flat-square" alt="Code Size"/>
     <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/LICENSE">
         <img src="https://img.shields.io/github/license/Animeshz/keyboard-mouse-kt?style=flat-square" alt="License" />
-    </a>    
+    </a>
 </p>
 
 === "build.gradle.kts"
