@@ -9,7 +9,7 @@ import java.io.ByteArrayOutputStream
 import kotlin.system.exitProcess
 
 plugins {
-    kotlin("multiplatform") version "1.4.21"
+    kotlin("multiplatform")
     id("maven-publish")
     id("org.jlleitschuh.gradle.ktlint") version "9.4.1"
 }
