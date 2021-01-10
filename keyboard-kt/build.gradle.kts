@@ -9,6 +9,8 @@ import java.io.ByteArrayOutputStream
 import kotlin.system.exitProcess
 
 plugins {
+    kotlin("multiplatform")
+    id("maven-publish")
     id("org.jlleitschuh.gradle.ktlint") version "9.4.1"
 }
 
@@ -16,9 +18,7 @@ val mainSourceSets = mutableListOf<org.jetbrains.kotlin.gradle.plugin.KotlinSour
 val testSourceSets = mutableListOf<org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet>()
 
 fun KotlinMultiplatformExtension.configureJvm() {
-    jvm {
-        mavenPublication { artifactId = "${project.name}-kt-jvm" }
-    }
+    jvm()
     tasks.withType<KotlinCompile> {
         kotlinOptions.jvmTarget = "1.8"
     }
@@ -198,7 +198,6 @@ fun KotlinMultiplatformExtension.configureLinux() {
 
         main.cinterops.create("device") { defFile("src/linuxX64Main/cinterop/device.def") }
         main.cinterops.create("x11") { defFile("src/linuxX64Main/cinterop/x11.def") }
-        mavenPublication { artifactId = "${project.name}-kt-linuxX64" }
     }
 
     val linuxX64Main by sourceSets.getting
@@ -208,7 +207,7 @@ fun KotlinMultiplatformExtension.configureLinux() {
 }
 
 fun KotlinMultiplatformExtension.configureMingw() {
-    mingwX64 { mavenPublication { artifactId = "${project.name}-kt-mingwX64" } }
+    mingwX64()
 
     val mingwX64Main by sourceSets.getting
     val mingwX64Test by sourceSets.getting { dependsOn(mingwX64Main) }
@@ -252,6 +251,60 @@ kotlin {
     }
 
     explicitApi()
+}
+
+afterEvaluate {
+    publishing {
+        val projectUrl = "https://github.com/Animeshz/keyboard-mouse-kt"
+
+        repositories {
+            maven {
+                setUrl("https://api.bintray.com/maven/animeshz/maven/keyboard-kt/;publish=1;override=1")
+                credentials {
+                    username = System.getenv("BINTRAY_USER")
+                    password = System.getenv("BINTRAY_KEY")
+                }
+            }
+        }
+
+        publications.withType<MavenPublication> {
+            pom {
+                name.set(project.name)
+                version = project.version as String
+                description.set("A multiplatform kotlin library for interacting with global keyboard and mouse events.")
+                url.set(projectUrl)
+
+                licenses {
+                    license {
+                        name.set("MIT License")
+                        url.set("$projectUrl/blob/master/LICENSE")
+                        distribution.set("repo")
+                    }
+                }
+
+                developers {
+                    developer {
+                        id.set("Animeshz")
+                        name.set("Animesh Sahu")
+                        email.set("animeshsahu19@yahoo.com")
+                    }
+                }
+
+                scm {
+                    url.set(projectUrl)
+                    connection.set("scm:git:$projectUrl.git")
+                    developerConnection.set("scm:git:git@github.com:Animeshz/keyboard-mouse-kt.git")
+                }
+            }
+
+            val publication = this@withType
+            if (publication.name == "kotlinMultiplatform") {
+                publication.artifactId = project.name
+            } else {
+                publication.artifactId = "${project.name}-${publication.name}"
+            }
+        }
+    }
 }
 
 tasks.withType<AbstractTestTask> {

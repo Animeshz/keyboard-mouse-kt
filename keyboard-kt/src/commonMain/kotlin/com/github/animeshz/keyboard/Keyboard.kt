@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.CoroutineContext
+import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.resume
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
@@ -29,7 +30,7 @@ import kotlin.time.TimeSource
 /**
  * A typealias of lambda returned from [Keyboard.addShortcut] for better readability.
  */
-public typealias Cancellable = () -> Unit
+public fun interface Cancellable : () -> Unit
 
 /**
  * Represents a keypress sequence with each element in ascending order of duration from the start time.
@@ -79,7 +80,7 @@ public class Keyboard(
         handlers.value += keySet to handler
         startIfNeeded()
 
-        return {
+        return Cancellable {
             handlers.value -= keySet
             stopIfNeeded()
         }
