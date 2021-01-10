@@ -1,7 +1,8 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.4.21"
+    kotlin("jvm")
+    `java-library`
     id("maven-publish")
 }
 
@@ -17,6 +18,10 @@ dependencies {
 
 kotlin {
     explicitApi()
+}
+
+java {
+    withSourcesJar()
 }
 
 tasks.withType<KotlinCompile> {
@@ -39,8 +44,7 @@ afterEvaluate {
             }
         }
 
-        publications.withType<MavenPublication> {
-            artifactId = project.name
+        publications.create<MavenPublication>(project.name) {
             pom {
                 name.set(project.name)
                 version = project.version as String
@@ -69,6 +73,10 @@ afterEvaluate {
                     developerConnection.set("scm:git:git@github.com:Animeshz/keyboard-mouse-kt.git")
                 }
             }
+
+            artifactId = project.name
+            artifact(file("$buildDir/libs/keyboard-kt-jdk8-$version.jar"))
+            artifact(file("$buildDir/libs/keyboard-kt-jdk8-$version-sources.jar")) { classifier = "sources" }
         }
     }
 }

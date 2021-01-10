@@ -65,8 +65,7 @@ public class JKeyboard {
     @JvmOverloads
     public fun completeWhenPressed(
         keySet: KeySet,
-        trigger: KeyState = KeyState.KeyDown,
-        context: CoroutineContext = EmptyCoroutineContext
+        trigger: KeyState = KeyState.KeyDown
     ): CompletableFuture<Unit> =
         GlobalScope.launch { delegate.awaitTill(keySet, trigger) }.asCompletableFuture()
 

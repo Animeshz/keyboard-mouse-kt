@@ -69,7 +69,10 @@
 
         dependencies {
             // Using from Java 8 or above (with complete Java support)
+            implementation("com.github.animeshz:keyboard-kt-jvm:<version>")
             implementation("com.github.animeshz:keyboard-kt-jdk8:<version>")
+
+            implementation("com.github.animeshz:mouse-kt-jvm:<version>")
             implementation("com.github.animeshz:mouse-kt-jdk8:<version>")
         }   
         ```
@@ -150,7 +153,10 @@
 
         dependencies {
             // Using from Java 8 or above (with complete Java support)
+            implementation("com.github.animeshz:keyboard-kt-jvm:<version>")
             implementation("com.github.animeshz:keyboard-kt-jdk8:<version>")
+
+            implementation("com.github.animeshz:mouse-kt-jvm:<version>")
             implementation("com.github.animeshz:mouse-kt-jdk8:<version>")
         }   
         ```
