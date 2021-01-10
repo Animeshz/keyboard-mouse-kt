@@ -315,6 +315,19 @@
   </li>
 
         
+          
+          
+          
+
+
+
+  <li class="md-nav__item">
+    <a href="../key/" class="md-nav__link">
+      Key Enum
+    </a>
+  </li>
+
+        
       </ul>
     </nav>
   </li>
@@ -441,7 +454,7 @@
 <p><sup><strong>Note: <code>trigger</code> defaults to KeyState.KeyDown when not provided.</strong></sup></p>
 </li>
 <li>
-<p>Record Key presses till specific <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/KeySet.kt">KeySet</a> is pressed into a <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/Keyboard.kt#L33">KeyPressSequence</a> (A list of pair of Duration and KeyEvent).</p>
+<p>Record Key presses till specific <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/KeySet.kt">KeySet</a> is pressed into a <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/Keyboard.kt">KeyPressSequence</a> (Type alias to a list of pair of Duration and KeyEvent).</p>
 <div class="tabbed-set" data-tabs="5:1"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><label for="__tabbed_5_1">Kotlin</label><div class="tabbed-content">
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">records</span><span class="p">:</span> <span class="n">KeyPressSequence</span> <span class="p">=</span> <span class="n">keyboard</span><span class="p">.</span><span class="n">recordTill</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="n">LeftAlt</span> <span class="p">+</span> <span class="n">Key</span><span class="p">.</span><span class="n">A</span><span class="p">)</span>
 </code></pre></div>
@@ -461,7 +474,7 @@
 </li>
 </ul>
 <h2 id="java-jvm">Java (JVM)</h2>
-<p>High Level API depends on [JKeyboard][9].</p>
+<p>High Level API depends on <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/integration/keyboard-kt-jdk8/src/main/kotlin/com/github/animeshz/keyboard/JNativeKeyboardHandler.kt">JKeyboard</a>.</p>
 <ul>
 <li>
 <p>Adding a shortcut (Hotkey).</p>
@@ -633,13 +646,13 @@
           </a>
         
         
-          <a href="../../contributing/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+          <a href="../key/" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
             <div class="md-footer-nav__title">
               <div class="md-ellipsis">
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Contributing and future plans
+                Key Enum
               </div>
             </div>
             <div class="md-footer-nav__button md-icon">
@@ -680,7 +693,7 @@
         
         
       
-      <a href="https://discord.gg/-------" target="_blank" rel="noopener" title="discord.gg" class="md-footer-social__link">
+      <a href="https://discord.gg/bBN9vZgcCk" target="_blank" rel="noopener" title="discord.gg" class="md-footer-social__link">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M297.216 243.2c0 15.616-11.52 28.416-26.112 28.416-14.336 0-26.112-12.8-26.112-28.416s11.52-28.416 26.112-28.416c14.592 0 26.112 12.8 26.112 28.416zm-119.552-28.416c-14.592 0-26.112 12.8-26.112 28.416s11.776 28.416 26.112 28.416c14.592 0 26.112-12.8 26.112-28.416.256-15.616-11.52-28.416-26.112-28.416zM448 52.736V512c-64.494-56.994-43.868-38.128-118.784-107.776l13.568 47.36H52.48C23.552 451.584 0 428.032 0 398.848V52.736C0 23.552 23.552 0 52.48 0h343.04C424.448 0 448 23.552 448 52.736zm-72.96 242.688c0-82.432-36.864-149.248-36.864-149.248-36.864-27.648-71.936-26.88-71.936-26.88l-3.584 4.096c43.52 13.312 63.744 32.512 63.744 32.512-60.811-33.329-132.244-33.335-191.232-7.424-9.472 4.352-15.104 7.424-15.104 7.424s21.248-20.224 67.328-33.536l-2.56-3.072s-35.072-.768-71.936 26.88c0 0-36.864 66.816-36.864 149.248 0 0 21.504 37.12 78.08 38.912 0 0 9.472-11.52 17.152-21.248-32.512-9.728-44.8-30.208-44.8-30.208 3.766 2.636 9.976 6.053 10.496 6.4 43.21 24.198 104.588 32.126 159.744 8.96 8.96-3.328 18.944-8.192 29.44-15.104 0 0-12.8 20.992-46.336 30.464 7.68 9.728 16.896 20.736 16.896 20.736 56.576-1.792 78.336-38.912 78.336-38.912z"/></svg>
       </a>
     
