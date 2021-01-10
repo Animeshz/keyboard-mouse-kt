@@ -13,8 +13,6 @@
     </a>
 </p>
 
-A lightweight multiplatform kotlin library for interacting with the global keyboard and mouse events.
-
 __KeyboardMouse.kt is still in an experimental stage, as such we can't guarantee API stability between releases. While
 we'd love for you to try out our library, we don't recommend you use this in production just yet.__
 
@@ -26,28 +24,7 @@ Mouse (receiving and sending global events).
 We aim to provide high-level as well as high-performant low-level access to such APIs. See the usage section below to
 know more!
 
-## Status of KeyboardMouse.kt
 
-- [ ] Keyboard
-    - [X] Windows
-        - [X] x86_64 (64 bit)
-        - [ ] x86    (32 bit)
-    - [X] Linux
-        - [X] x86_64 (64 bit)
-        - [ ] x86    (32 bit)
-    - [ ] MacOS
-    - [X] JVM
-        - [X] Windows x86_64 (64 bit)
-        - [X] Windows x86    (32 bit)
-        - [X] Linux x86_64 (64 bit)
-        - [X] Linux x86    (32 bit)
-        - [ ] Linux Arm32
-        - [ ] Linux Arm64
-- [ ] Mouse
-    - [ ] Windows
-    - [ ] Linux
-    - [ ] MacOS
-    - [ ] JVM
 
 ## Installation
 
