@@ -13,7 +13,7 @@
     </a>
 </p>
 
-A lightweight multiplatform kotlin library for interacting with global keyboard and mouse events.
+A lightweight multiplatform kotlin library for interacting with the global keyboard and mouse events.
 
 __KeyboardMouse.kt is still in an experimental stage, as such we can't guarantee API stability between releases. While
 we'd love for you to try out our library, we don't recommend you use this in production just yet.__
@@ -36,7 +36,7 @@ know more!
         - [X] x86_64 (64 bit)
         - [ ] x86    (32 bit)
     - [ ] MacOS
-    - [ ] JVM
+    - [X] JVM
         - [X] Windows x86_64 (64 bit)
         - [X] Windows x86    (32 bit)
         - [X] Linux x86_64 (64 bit)
@@ -53,7 +53,60 @@ know more!
 
 To add the library to your project, add the following the repository and dependency (`build.gradle.kts`):
 
+### Gradle (Groovy)
+
+```groovy
+repositories {
+    maven { url "https://dl.bintray.com/animeshz/maven" }
+}
+```
+```groovy
+dependencies {
+    // In commonMain (targeting Kotlin/Multiplatform)
+    implementation("com.github.animeshz:keyboard-kt:<version>")
+    implementation("com.github.animeshz:mouse-kt:<version>")
+
+    // In platformMain (targeting particular platform in Kotlin), e.g. -jvm, -linuxX64, etc.
+    implementation("com.github.animeshz:keyboard-kt-<platform>:<version>")
+    implementation("com.github.animeshz:mouse-kt<platform>:<version>")
+
+    // Using from Java 8 (with complete Java support)
+    implementation("com.github.animeshz:keyboard-kt-jdk8:<version>")
+}
+```
+
+### Gradle (Kotlin)
+
 ```kotlin
+repositories {
+    maven(url = "https://dl.bintray.com/animeshz/maven")
+}
+```
+```kotlin
+dependencies {
+    // In commonMain (targeting Kotlin/Multiplatform)
+    implementation("com.github.animeshz:keyboard-kt:<version>")
+    implementation("com.github.animeshz:mouse-kt:<version>")
+
+    // In platformMain (targeting particular platform in Kotlin), e.g. -jvm, -linuxX64, etc.
+    implementation("com.github.animeshz:keyboard-kt-<platform>:<version>")
+    implementation("com.github.animeshz:mouse-kt<platform>:<version>")
+
+    // Using from Java 8 (with complete Java support)
+    implementation("com.github.animeshz:keyboard-kt-jdk8:<version>")
+}
+```
+
+<details>
+    <summary><b>A sample `bulid.gradle.kts` script when targeting Kotlin/Multiplatform.</b></summary>
+
+As we all know the dependencies must be specified in their particular scopes in when targeting Kotlin/Multiplatform.
+
+```
+plugins {
+    kotlin("mutliplatform") version "<kotlin-version>"
+}
+
 repositories {
     maven(url = "https://dl.bintray.com/animeshz/maven")
 }
@@ -90,68 +143,21 @@ kotlin {
     }
 }
 ```
+</details>
 
 ## Usage
 
-### Low Level API:
+### Keyboard
 
-Low Level API depends on [NativeKeyboardHandler][1] that can be obtained via [nativeKbHandlerForPlatform][2].
+#### From Kotlin (Multiplatform)
 
-- Listening to events using Flow.
-  ```kotlin
-  handler.events
-      .filter { it.state == KeyState.KeyDown }
-      .map { it.key }
-      .collect { println(it) }
-  ```
-- Sending a [Key][3] event.
-  ```kotlin
-  handler.sendEvent(KeyEvent(Key.A, KeyState.KeyDown))
-  ```
-- Get [KeyState][7] (KeyDown or KeyUp) of the [Key][3].
-  ```kotlin
-  handler.getKeyState(Key.A)
-  handler.getKeyState(Key.RightAlt)
-  ```
-- Get States of Toggleable Keys (returns a Boolean).
-  ```kotlin
-  handler.isCapsLockOn()
-  handler.isNumLockOn()
-  handler.isScrollLockOn()
-  ```
+<b>See: [keyboard-kt/USAGE.md](https://github.com/Animeshz/keyboard-mouse-kt/tree/master/keyboard-kt/USAGE.md)</b>
 
-### High level API:
+#### From Java (JVM)
 
-High Level API depends on [Keyboard][4] which is a wrapper around the [NativeKeyboardHandler][1].
+<b>See: [integration/keyboard-kt-jdk8/USAGE.md](https://github.com/Animeshz/keyboard-mouse-kt/tree/master/integration/keyboard-kt-jdk8/USAGE.md)</b>
 
-- Adding a shortcut (Hotkey).
-  ```kotlin
-  keyboard.addShortcut(Key.LeftCtrl + Key.E, trigger = KeyState.KeyDown) {
-      println("triggered")
-  }
-  ```
-- Send a [KeySet][5] to the host machine.
-  ```kotlin
-  keyboard.send(Key.LeftAlt + Key.M)
-  ```
-- Write a sentence (String) on the host machine.
-  ```kotlin
-  keyboard.write("Hello Keyboard!")
-  ```
-- Suspensive wait till a [KeySet][5] is pressed.
-  ```kotlin
-  keyboard.awaitTill(Key.LeftCtrl + Key.LeftShift + Key.R)
-  ```
-- Record Key presses till specific [KeySet][5] is pressed into a [KeyPressSequence][6].
-  ```kotlin
-  val records: KeyPressSequence = keyboard.recordTill(Key.LeftAlt + Key.A)
-  ```
-- Play a recorded or created collection of Keys at defined order.
-  ```kotlin
-  keyboard.play(records, speedFactor = 1.25)
-  ```
-
-__Note: In Kotlin/Native environment, the `Keyboard.dispose()` must be called in order to avoid memory leaks (when process is alive, but the Keyboard instance is no longer referenced).__
+A few more examples can be found at [keyboard/src/commonTest/examples](https://github.com/Animeshz/keyboard-mouse-kt/tree/master/keyboard-kt/src/commonTest/kotlin/examples)
 
 ## Contributing and future plans
 
@@ -160,18 +166,3 @@ The Github dicussions are open! Be sure to show your existence, say hi! and shar
 Issues and PRs are always welcome!
 
 For future plans and contributing to the project please checkout [CONTRIBUTING.md](https://github.com/Animeshz/keyboard-mouse-kt/blob/master/CONTRIBUTING.md)
-
-
-[1]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/NativeKeyboardHandler.kt
-
-[2]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/NativeKeyboardHandler.kt
-
-[3]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/Key.kt
-
-[4]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/Keyboard.kt
-
-[5]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/KeySet.kt
-
-[6]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/Keyboard.kt#L33
-
-[7]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/events/KeyEvent.kt
