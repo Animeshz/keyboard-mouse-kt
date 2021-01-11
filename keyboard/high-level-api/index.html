@@ -417,7 +417,8 @@
 </td></tr></table>
 </div>
 </div>
-<p><sup><strong>Note: <code>trigger</code> defaults to KeyState.KeyDown when not provided.</strong></sup></p>
+<p><sup><strong>Note: <code>trigger</code> defaults to KeyState.KeyDown when not provided.</strong></sup><br>
+<sup><strong>Note: The lambda is in suspend context, launched in context provided at time of instantiation of Keyboard (defaults to Dispatchers.Default). You can always change context anytime inside using the <code>withContext</code> function present in kotlinx.coroutines library.</strong></sup></p>
 </li>
 <li>
 <p>Send a <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/KeySet.kt">KeySet</a> to the host machine.</p>
