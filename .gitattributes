@@ -1,1 +1,2 @@
-include/* linguist-vendored
+docs/* linguist-documentation
+keyboard-kt/src/jvmMain/generated/* linguist-generated

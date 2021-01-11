@@ -37,10 +37,9 @@
     </a>
 </p>
 
-=== "build.gradle.kts"
+=== "Gradle (build.gradle.kts)"
 
     === "Kotlin/JVM"
-
         ```kotlin
         plugins {
             kotlin("jvm") version "<kotlin-version>"
@@ -57,7 +56,6 @@
         ```
     
     === "Java/JVM"
-
         ```kotlin
         plugins {
             java
@@ -78,7 +76,6 @@
         ```
 
     === "Kotlin/Multiplatform"
-
         ```kotlin
         plugins {
             kotlin("mutliplatform") version "<kotlin-version>"
@@ -121,11 +118,10 @@
         }
         ```
 
-=== "build.gradle"
+=== "Gradle (build.gradle)"
 
     === "Kotlin/JVM"
-
-        ```kotlin
+        ```groovy
         plugins {
             id "kotlin-jvm" version "<kotlin-version>"
         }
@@ -141,8 +137,7 @@
         ```
     
     === "Java/JVM"
-
-        ```kotlin
+        ```groovy
         plugins {
             java
         }
@@ -162,8 +157,7 @@
         ```
 
     === "Kotlin/Multiplatform"
-
-        ```kotlin
+        ```groovy
         plugins {
             id "kotlin-mutliplatform" version "<kotlin-version>"
         }
@@ -203,4 +197,64 @@
                 }
             }
         }
+        ```
+
+=== "Maven (pom.xml)"
+
+    === "Kotlin/JVM"
+        ```xml
+        <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+          <modelVersion>4.0.0</modelVersion>
+
+          <repositories>
+            <repository>
+              <id>bintray-animeshz-maven</id>
+              <name>bintray</name>
+              <url>https://dl.bintray.com/animeshz/maven</url>
+            </repository>
+          </repositories>
+
+          <dependencies>
+            <dependency>
+              <groupId>com.github.animeshz</groupId>
+              <artifactId>keyboard-kt-jvm</artifactId>
+              <version>0.2.2</version>
+              <type>pom</type>
+            </dependency>
+          </dependencies>
+
+        </project>
+        ```
+    
+    === "Java/JVM"
+        ```xml
+        <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+          <modelVersion>4.0.0</modelVersion>
+
+          <repositories>
+            <repository>
+              <id>bintray-animeshz-maven</id>
+              <name>bintray</name>
+              <url>https://dl.bintray.com/animeshz/maven</url>
+            </repository>
+          </repositories>
+
+          <dependencies>
+            <dependency>
+              <groupId>com.github.animeshz</groupId>
+              <artifactId>keyboard-kt-jvm</artifactId>
+              <version>0.2.2</version>
+              <type>pom</type>
+            </dependency>
+            <dependency>
+              <groupId>com.github.animeshz</groupId>
+              <artifactId>keyboard-kt-jdk8</artifactId>
+              <version>0.2.2</version>
+              <type>pom</type>
+            </dependency>
+          </dependencies>
+
+        </project>
         ```
