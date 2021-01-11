@@ -23,8 +23,7 @@ we'd love for you to try out our library, we don't recommend you use this in pro
 
 ## What is KeyboardMouse.kt
 
-KeyboardMouse.kt is a lightweight, coroutine-based multiplatform kotlin library for idiomatically interacting with Keyboard and
-Mouse (receiving and sending global events).
+KeyboardMouse.kt is a lightweight, coroutine-based multiplatform kotlin library for idiomatically interacting with Keyboard and Mouse (receiving and sending global events) from Kotlin and Java.
 
 We aim to provide high-level as well as high-performant low-level access to such APIs. See the documentation below to
 know more!
