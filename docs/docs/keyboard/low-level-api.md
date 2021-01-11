@@ -7,7 +7,6 @@ Low Level API depends on [NativeKeyboardHandler][1] that can be obtained via `na
 - Listening to events using Flow.
 
     === "Kotlin"
-
         ```kotlin
         handler.events
             .filter { it.state == KeyState.KeyDown }
@@ -18,7 +17,6 @@ Low Level API depends on [NativeKeyboardHandler][1] that can be obtained via `na
 - Sending a [Key][2] event.
     
     === "Kotlin"
-
         ```kotlin
         handler.sendEvent(KeyEvent(Key.A, KeyState.KeyDown))
         ```
@@ -26,7 +24,6 @@ Low Level API depends on [NativeKeyboardHandler][1] that can be obtained via `na
 - Get [KeyState][3] (KeyDown or KeyUp) of the [Key][2].
 
     === "Kotlin"
-
         ```kotlin
         handler.getKeyState(Key.A)
         handler.getKeyState(Key.RightAlt)
@@ -35,7 +32,6 @@ Low Level API depends on [NativeKeyboardHandler][1] that can be obtained via `na
 - Get States of Toggleable Keys (returns a Boolean).
 
     === "Kotlin"
-
         ```kotlin
         handler.isCapsLockOn()
         handler.isNumLockOn()
@@ -49,7 +45,6 @@ Low Level API depends on [JNativeKeyboardHandler][4] that can be obtained via `J
 - Listening to events using a callback.
 
     === "Java 8 or above"
-
         ```java
         handler.addHandler(keyEvent -> {
             if (keyEvent.state == KeyState.KeyDown) {
@@ -57,25 +52,25 @@ Low Level API depends on [JNativeKeyboardHandler][4] that can be obtained via `J
             }
         });
         ```
+
 - Sending a [Key][2] event.
 
     === "Java 8 or above"
-
         ```java
         handler.sendEvent(new KeyEvent(Key.A, KeyState.KeyDown));
         ```
+
 - Get [KeyState][3] (KeyDown or KeyUp) of the [Key][2].
 
     === "Java 8 or above"
-
         ```java
         handler.getKeyState(Key.A);
         handler.getKeyState(Key.RightAlt);
         ```
+
 - Get States of Toggleable Keys (returns a boolean).
 
     === "Java 8 or above"
-
         ```java
         handler.isCapsLockOn();
         handler.isNumLockOn();

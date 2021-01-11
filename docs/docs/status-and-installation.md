@@ -40,7 +40,6 @@
 === "Gradle (build.gradle.kts)"
 
     === "Kotlin/JVM"
-
         ```kotlin
         plugins {
             kotlin("jvm") version "<kotlin-version>"
@@ -57,7 +56,6 @@
         ```
     
     === "Java/JVM"
-
         ```kotlin
         plugins {
             java
@@ -78,7 +76,6 @@
         ```
 
     === "Kotlin/Multiplatform"
-
         ```kotlin
         plugins {
             kotlin("mutliplatform") version "<kotlin-version>"
@@ -124,7 +121,6 @@
 === "Gradle (build.gradle)"
 
     === "Kotlin/JVM"
-
         ```groovy
         plugins {
             id "kotlin-jvm" version "<kotlin-version>"
@@ -141,7 +137,6 @@
         ```
     
     === "Java/JVM"
-
         ```groovy
         plugins {
             java
@@ -162,7 +157,6 @@
         ```
 
     === "Kotlin/Multiplatform"
-
         ```groovy
         plugins {
             id "kotlin-mutliplatform" version "<kotlin-version>"
@@ -208,7 +202,6 @@
 === "Maven (pom.xml)"
 
     === "Kotlin/JVM"
-
         ```xml
         <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -235,7 +228,6 @@
         ```
     
     === "Java/JVM"
-
         ```xml
         <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
