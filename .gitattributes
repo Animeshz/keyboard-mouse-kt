@@ -1,2 +1,2 @@
-project-docs/* linguist-documentation
+docs/* linguist-documentation
 keyboard-kt/src/jvmMain/generated/* linguist-generated
