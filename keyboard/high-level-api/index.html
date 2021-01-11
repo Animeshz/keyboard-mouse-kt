@@ -473,7 +473,21 @@
 <ul>
 <li>
 <p>Adding a shortcut (Hotkey).</p>
-<div class="tabbed-set" data-tabs="7:2"><input checked="checked" id="__tabbed_7_1" name="__tabbed_7" type="radio" /><label for="__tabbed_7_1">Java 8</label><div class="tabbed-content"></div>
+<div class="tabbed-set" data-tabs="7:2"><input checked="checked" id="__tabbed_7_1" name="__tabbed_7" type="radio" /><label for="__tabbed_7_1">Java 8</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">Set</span><span class="o">&lt;</span><span class="n">Key</span><span class="o">&gt;</span> <span class="n">keys</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="n">Collections</span><span class="p">.</span><span class="na">addAll</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">Key</span><span class="p">.</span><span class="na">LeftCtrl</span><span class="p">,</span> <span class="n">Key</span><span class="p">.</span><span class="na">E</span><span class="p">);</span>
+
+<span class="n">keyboard</span><span class="p">.</span><span class="na">addShortcut</span><span class="p">(</span><span class="k">new</span> <span class="n">KeySet</span><span class="p">(</span><span class="n">keys</span><span class="p">),</span> <span class="n">KeyState</span><span class="p">.</span><span class="na">KeyDown</span><span class="p">,</span>
+    <span class="p">()</span> <span class="o">-&gt;</span> <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;triggered&quot;</span><span class="p">)</span>
+<span class="p">);</span>
+</code></pre></div>
+</td></tr></table>
+</div>
 <input id="__tabbed_7_2" name="__tabbed_7" type="radio" /><label for="__tabbed_7_2">Java 9 or above</label><div class="tabbed-content">
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
@@ -492,7 +506,17 @@
 </li>
 <li>
 <p>Send a <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/KeySet.kt">KeySet</a> to the host machine.</p>
-<div class="tabbed-set" data-tabs="8:2"><input checked="checked" id="__tabbed_8_1" name="__tabbed_8" type="radio" /><label for="__tabbed_8_1">Java 8</label><div class="tabbed-content"></div>
+<div class="tabbed-set" data-tabs="8:2"><input checked="checked" id="__tabbed_8_1" name="__tabbed_8" type="radio" /><label for="__tabbed_8_1">Java 8</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">Set</span><span class="o">&lt;</span><span class="n">Key</span><span class="o">&gt;</span> <span class="n">keys</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="n">Collections</span><span class="p">.</span><span class="na">addAll</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">Key</span><span class="p">.</span><span class="na">LeftAlt</span><span class="p">,</span> <span class="n">Key</span><span class="p">.</span><span class="na">M</span><span class="p">);</span>
+
+<span class="n">keyboard</span><span class="p">.</span><span class="na">send</span><span class="p">(</span><span class="k">new</span> <span class="n">KeySet</span><span class="p">(</span><span class="n">keys</span><span class="p">));</span>
+</code></pre></div>
+</td></tr></table>
+</div>
 <input id="__tabbed_8_2" name="__tabbed_8" type="radio" /><label for="__tabbed_8_2">Java 9 or above</label><div class="tabbed-content">
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
@@ -515,7 +539,19 @@
 </li>
 <li>
 <p>Asynchronous wait till a <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/KeySet.kt">KeySet</a> is pressed.</p>
-<div class="tabbed-set" data-tabs="10:2"><input checked="checked" id="__tabbed_10_1" name="__tabbed_10" type="radio" /><label for="__tabbed_10_1">Java 8</label><div class="tabbed-content"></div>
+<div class="tabbed-set" data-tabs="10:2"><input checked="checked" id="__tabbed_10_1" name="__tabbed_10" type="radio" /><label for="__tabbed_10_1">Java 8</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">Set</span><span class="o">&lt;</span><span class="n">Key</span><span class="o">&gt;</span> <span class="n">keys</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="n">Collections</span><span class="p">.</span><span class="na">addAll</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">Key</span><span class="p">.</span><span class="na">LeftCtrl</span> <span class="o">+</span> <span class="n">Key</span><span class="p">.</span><span class="na">LeftShift</span> <span class="o">+</span> <span class="n">Key</span><span class="p">.</span><span class="na">R</span><span class="p">);</span>
+
+<span class="n">keyboard</span><span class="p">.</span><span class="na">completeWhenPressed</span><span class="p">(</span><span class="k">new</span> <span class="n">KeySet</span><span class="p">(</span><span class="n">keys</span><span class="p">),</span> <span class="n">KeyState</span><span class="p">.</span><span class="na">KeyDown</span><span class="p">)</span>
+    <span class="p">.</span><span class="na">thenApply</span><span class="p">(</span><span class="n">unit</span> <span class="o">-&gt;</span> <span class="p">{...});</span>
+</code></pre></div>
+</td></tr></table>
+</div>
 <input id="__tabbed_10_2" name="__tabbed_10" type="radio" /><label for="__tabbed_10_2">Java 9 or above</label><div class="tabbed-content">
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
@@ -533,7 +569,21 @@
 </li>
 <li>
 <p>Record Key presses till specific <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/KeySet.kt">KeySet</a> is pressed into a list of pair of Duration and KeyEvent.</p>
-<div class="tabbed-set" data-tabs="11:2"><input checked="checked" id="__tabbed_11_1" name="__tabbed_11" type="radio" /><label for="__tabbed_11_1">Java 8</label><div class="tabbed-content"></div>
+<div class="tabbed-set" data-tabs="11:2"><input checked="checked" id="__tabbed_11_1" name="__tabbed_11" type="radio" /><label for="__tabbed_11_1">Java 8</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3
+4
+5
+6</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">Set</span><span class="o">&lt;</span><span class="n">Key</span><span class="o">&gt;</span> <span class="n">keys</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HashSet</span><span class="o">&lt;&gt;</span><span class="p">();</span>
+<span class="n">Collections</span><span class="p">.</span><span class="na">addAll</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">Key</span><span class="p">.</span><span class="na">LeftAlt</span><span class="p">,</span> <span class="n">Key</span><span class="p">.</span><span class="na">A</span><span class="p">);</span>
+
+<span class="c1">// `trigger` defaults to KeyState.KeyDown when not provided.</span>
+<span class="n">CompletableFuture</span><span class="o">&lt;</span><span class="n">List</span><span class="o">&lt;</span><span class="n">Duration</span><span class="p">,</span> <span class="n">KeyEvent</span><span class="o">&gt;&gt;</span> <span class="n">records</span> <span class="o">=</span>
+    <span class="n">keyboard</span><span class="p">.</span><span class="na">recordTill</span><span class="p">(</span><span class="k">new</span> <span class="n">KeySet</span><span class="p">(</span><span class="n">keys</span><span class="p">));</span>
+</code></pre></div>
+</td></tr></table>
+</div>
 <input id="__tabbed_11_2" name="__tabbed_11" type="radio" /><label for="__tabbed_11_2">Java 9 or above</label><div class="tabbed-content">
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
