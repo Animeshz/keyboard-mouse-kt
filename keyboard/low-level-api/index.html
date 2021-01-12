@@ -282,15 +282,29 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#kotlin-multiplatform-jvm" class="md-nav__link">
-    Kotlin (Multiplatform / JVM)
+  <a href="#listening-to-events-using-flow-kotlin-or-callback-java" class="md-nav__link">
+    Listening to events using Flow (Kotlin) or callback (Java).
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#java-jvm" class="md-nav__link">
-    Java (JVM)
+  <a href="#sending-a-key-event" class="md-nav__link">
+    Sending a Key event.
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-keystate-keydown-or-keyup-of-the-key" class="md-nav__link">
+    Get KeyState (KeyDown or KeyUp) of the Key.
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-states-of-toggleable-keys-returns-a-boolean" class="md-nav__link">
+    Get States of Toggleable Keys (returns a Boolean).
   </a>
   
 </li>
@@ -371,15 +385,29 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#kotlin-multiplatform-jvm" class="md-nav__link">
-    Kotlin (Multiplatform / JVM)
+  <a href="#listening-to-events-using-flow-kotlin-or-callback-java" class="md-nav__link">
+    Listening to events using Flow (Kotlin) or callback (Java).
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#java-jvm" class="md-nav__link">
-    Java (JVM)
+  <a href="#sending-a-key-event" class="md-nav__link">
+    Sending a Key event.
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-keystate-keydown-or-keyup-of-the-key" class="md-nav__link">
+    Get KeyState (KeyDown or KeyUp) of the Key.
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-states-of-toggleable-keys-returns-a-boolean" class="md-nav__link">
+    Get States of Toggleable Keys (returns a Boolean).
   </a>
   
 </li>
@@ -402,12 +430,10 @@
                 
                 
                 <h1 id="low-level-api">Low Level API</h1>
-<h2 id="kotlin-multiplatform-jvm">Kotlin (Multiplatform / JVM)</h2>
-<p>Low Level API depends on <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard-kt/src/commonMain/kotlin/com/github/animeshz/keyboard/NativeKeyboardHandler.kt">NativeKeyboardHandler</a> that can be obtained via <code>nativeKbHandlerForPlatform()</code>.</p>
-<ul>
-<li>
-<p>Listening to events using Flow.</p>
-<div class="tabbed-set" data-tabs="1:1"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Kotlin</label><div class="tabbed-content">
+<p><strong>Kotlin:</strong> Low Level API depends on <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard-kt/src/commonMain/kotlin/com/github/animeshz/keyboard/NativeKeyboardHandler.kt">NativeKeyboardHandler</a> that can be obtained via <code>nativeKbHandlerForPlatform()</code>.</p>
+<p><strong>Java:</strong> Low Level API depends on <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/integration/keyboard-kt-jdk8/src/main/kotlin/com/github/animeshz/keyboard/JNativeKeyboardHandler.kt">JNativeKeyboardHandler</a> that can be obtained via <code>JNativeKeyboardHandler.INSTANCE</code>.</p>
+<h2 id="listening-to-events-using-flow-kotlin-or-callback-java">Listening to events using Flow (Kotlin) or callback (Java).</h2>
+<div class="tabbed-set" data-tabs="1:2"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Kotlin</label><div class="tabbed-content">
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
@@ -418,48 +444,7 @@
 </code></pre></div>
 </td></tr></table>
 </div>
-</div>
-</li>
-<li>
-<p>Sending a <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard-kt/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/Key.kt">Key</a> event.</p>
-<div class="tabbed-set" data-tabs="2:1"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><label for="__tabbed_2_1">Kotlin</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">handler</span><span class="p">.</span><span class="n">sendEvent</span><span class="p">(</span><span class="n">KeyEvent</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="n">A</span><span class="p">,</span> <span class="n">KeyState</span><span class="p">.</span><span class="n">KeyDown</span><span class="p">))</span>
-</code></pre></div>
-</td></tr></table>
-</div>
-</div>
-</li>
-<li>
-<p>Get <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard-kt/src/commonMain/kotlin/com/github/animeshz/keyboard/events/KeyEvent.kt">KeyState</a> (KeyDown or KeyUp) of the <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard-kt/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/Key.kt">Key</a>.</p>
-<div class="tabbed-set" data-tabs="3:1"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><label for="__tabbed_3_1">Kotlin</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
-2</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">handler</span><span class="p">.</span><span class="n">getKeyState</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="n">A</span><span class="p">)</span>
-<span class="n">handler</span><span class="p">.</span><span class="n">getKeyState</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="n">RightAlt</span><span class="p">)</span>
-</code></pre></div>
-</td></tr></table>
-</div>
-</div>
-</li>
-<li>
-<p>Get States of Toggleable Keys (returns a Boolean).</p>
-<div class="tabbed-set" data-tabs="4:1"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><label for="__tabbed_4_1">Kotlin</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
-2
-3</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">handler</span><span class="p">.</span><span class="n">isCapsLockOn</span><span class="p">()</span>
-<span class="n">handler</span><span class="p">.</span><span class="n">isNumLockOn</span><span class="p">()</span>
-<span class="n">handler</span><span class="p">.</span><span class="n">isScrollLockOn</span><span class="p">()</span>
-</code></pre></div>
-</td></tr></table>
-</div>
-</div>
-</li>
-</ul>
-<h2 id="java-jvm">Java (JVM)</h2>
-<p>Low Level API depends on <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/integration/keyboard-kt-jdk8/src/main/kotlin/com/github/animeshz/keyboard/JNativeKeyboardHandler.kt">JNativeKeyboardHandler</a> that can be obtained via <code>JNativeKeyboardHandler.INSTANCE</code>.</p>
-<ul>
-<li>
-<p>Listening to events using a callback.</p>
-<div class="tabbed-set" data-tabs="5:1"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><label for="__tabbed_5_1">Java 8 or above</label><div class="tabbed-content">
+<input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><label for="__tabbed_1_2">Java 8 or above</label><div class="tabbed-content">
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
@@ -473,19 +458,27 @@
 </td></tr></table>
 </div>
 </div>
-</li>
-<li>
-<p>Sending a <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard-kt/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/Key.kt">Key</a> event.</p>
-<div class="tabbed-set" data-tabs="6:1"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio" /><label for="__tabbed_6_1">Java 8 or above</label><div class="tabbed-content">
+<h2 id="sending-a-key-event">Sending a <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard-kt/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/Key.kt">Key</a> event.</h2>
+<div class="tabbed-set" data-tabs="2:2"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><label for="__tabbed_2_1">Kotlin</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">handler</span><span class="p">.</span><span class="n">sendEvent</span><span class="p">(</span><span class="n">KeyEvent</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="n">A</span><span class="p">,</span> <span class="n">KeyState</span><span class="p">.</span><span class="n">KeyDown</span><span class="p">))</span>
+</code></pre></div>
+</td></tr></table>
+</div>
+<input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><label for="__tabbed_2_2">Java 8 or above</label><div class="tabbed-content">
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">handler</span><span class="p">.</span><span class="na">sendEvent</span><span class="p">(</span><span class="k">new</span> <span class="n">KeyEvent</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="na">A</span><span class="p">,</span> <span class="n">KeyState</span><span class="p">.</span><span class="na">KeyDown</span><span class="p">));</span>
 </code></pre></div>
 </td></tr></table>
 </div>
 </div>
-</li>
-<li>
-<p>Get <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard-kt/src/commonMain/kotlin/com/github/animeshz/keyboard/events/KeyEvent.kt">KeyState</a> (KeyDown or KeyUp) of the <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard-kt/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/Key.kt">Key</a>.</p>
-<div class="tabbed-set" data-tabs="7:1"><input checked="checked" id="__tabbed_7_1" name="__tabbed_7" type="radio" /><label for="__tabbed_7_1">Java 8 or above</label><div class="tabbed-content">
+<h2 id="get-keystate-keydown-or-keyup-of-the-key">Get <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard-kt/src/commonMain/kotlin/com/github/animeshz/keyboard/events/KeyEvent.kt">KeyState</a> (KeyDown or KeyUp) of the <a href="../key/">Key</a>.</h2>
+<div class="tabbed-set" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><label for="__tabbed_3_1">Kotlin</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">handler</span><span class="p">.</span><span class="n">getKeyState</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="n">A</span><span class="p">)</span>
+<span class="n">handler</span><span class="p">.</span><span class="n">getKeyState</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="n">RightAlt</span><span class="p">)</span>
+</code></pre></div>
+</td></tr></table>
+</div>
+<input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><label for="__tabbed_3_2">Java 8 or above</label><div class="tabbed-content">
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">handler</span><span class="p">.</span><span class="na">getKeyState</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="na">A</span><span class="p">);</span>
 <span class="n">handler</span><span class="p">.</span><span class="na">getKeyState</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="na">RightAlt</span><span class="p">);</span>
@@ -493,10 +486,17 @@
 </td></tr></table>
 </div>
 </div>
-</li>
-<li>
-<p>Get States of Toggleable Keys (returns a boolean).</p>
-<div class="tabbed-set" data-tabs="8:1"><input checked="checked" id="__tabbed_8_1" name="__tabbed_8" type="radio" /><label for="__tabbed_8_1">Java 8 or above</label><div class="tabbed-content">
+<h2 id="get-states-of-toggleable-keys-returns-a-boolean">Get States of Toggleable Keys (returns a Boolean).</h2>
+<div class="tabbed-set" data-tabs="4:2"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><label for="__tabbed_4_1">Kotlin</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+2
+3</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">handler</span><span class="p">.</span><span class="n">isCapsLockOn</span><span class="p">()</span>
+<span class="n">handler</span><span class="p">.</span><span class="n">isNumLockOn</span><span class="p">()</span>
+<span class="n">handler</span><span class="p">.</span><span class="n">isScrollLockOn</span><span class="p">()</span>
+</code></pre></div>
+</td></tr></table>
+</div>
+<input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><label for="__tabbed_4_2">Java 8 or above</label><div class="tabbed-content">
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">handler</span><span class="p">.</span><span class="na">isCapsLockOn</span><span class="p">();</span>
@@ -506,8 +506,6 @@
 </td></tr></table>
 </div>
 </div>
-</li>
-</ul>
                 
               
               

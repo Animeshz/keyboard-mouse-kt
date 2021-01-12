@@ -295,15 +295,43 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#kotlin-multiplatform-jvm" class="md-nav__link">
-    Kotlin (Multiplatform / JVM)
+  <a href="#adding-a-shortcut-hotkey" class="md-nav__link">
+    Adding a shortcut (Hotkey).
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#java-jvm" class="md-nav__link">
-    Java (JVM)
+  <a href="#send-a-keyset-to-the-host-machine" class="md-nav__link">
+    Send a KeySet to the host machine.
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#write-a-sentence-string-on-the-host-machine" class="md-nav__link">
+    Write a sentence (String) on the host machine.
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#wait-till-a-keyset-is-pressed" class="md-nav__link">
+    Wait till a KeySet is pressed.
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#record-key-presses-till-specific-keyset" class="md-nav__link">
+    Record Key presses till specific KeySet.
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#play-a-recorded-or-created-collection-of-keys-at-defined-order" class="md-nav__link">
+    Play a recorded or created collection of Keys at defined order.
   </a>
   
 </li>
@@ -371,15 +399,43 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#kotlin-multiplatform-jvm" class="md-nav__link">
-    Kotlin (Multiplatform / JVM)
+  <a href="#adding-a-shortcut-hotkey" class="md-nav__link">
+    Adding a shortcut (Hotkey).
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#java-jvm" class="md-nav__link">
-    Java (JVM)
+  <a href="#send-a-keyset-to-the-host-machine" class="md-nav__link">
+    Send a KeySet to the host machine.
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#write-a-sentence-string-on-the-host-machine" class="md-nav__link">
+    Write a sentence (String) on the host machine.
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#wait-till-a-keyset-is-pressed" class="md-nav__link">
+    Wait till a KeySet is pressed.
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#record-key-presses-till-specific-keyset" class="md-nav__link">
+    Record Key presses till specific KeySet.
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#play-a-recorded-or-created-collection-of-keys-at-defined-order" class="md-nav__link">
+    Play a recorded or created collection of Keys at defined order.
   </a>
   
 </li>
@@ -402,78 +458,20 @@
                 
                 
                 <h1 id="high-level-api">High Level API</h1>
-<h2 id="kotlin-multiplatform-jvm">Kotlin (Multiplatform / JVM)</h2>
-<p>High Level API depends on <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/Keyboard.kt">Keyboard</a> which is a wrapper around the <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/NativeKeyboardHandler.kt">NativeKeyboardHandler</a>.</p>
-<ul>
-<li>
-<p>Adding a shortcut (Hotkey).</p>
-<div class="tabbed-set" data-tabs="1:1"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Kotlin</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+<p><strong>Kotlin:</strong> High Level API depends on <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/Keyboard.kt">Keyboard</a> which is a wrapper around the <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/NativeKeyboardHandler.kt">NativeKeyboardHandler</a>.</p>
+<p><strong>Java:</strong> High Level API depends on <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/integration/keyboard-kt-jdk8/src/main/kotlin/com/github/animeshz/keyboard/JKeyboard.kt">JKeyboard</a>.</p>
+<h2 id="adding-a-shortcut-hotkey">Adding a shortcut (Hotkey).</h2>
+<div class="tabbed-set" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Kotlin</label><div class="tabbed-content">
+<p><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">keyboard</span><span class="p">.</span><span class="n">addShortcut</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="n">LeftCtrl</span> <span class="p">+</span> <span class="n">Key</span><span class="p">.</span><span class="n">E</span><span class="p">,</span> <span class="n">trigger</span> <span class="p">=</span> <span class="n">KeyState</span><span class="p">.</span><span class="n">KeyDown</span><span class="p">)</span> <span class="p">{</span>
     <span class="n">println</span><span class="p">(</span><span class="s">&quot;triggered&quot;</span><span class="p">)</span>
 <span class="p">}</span>
 </code></pre></div>
 </td></tr></table>
+<sup><strong>Note: The lambda is in suspend context, launched in context provided at time of instantiation of Keyboard (defaults to Dispatchers.Default).</strong></sup></p>
 </div>
-</div>
-<p><sup><strong>Note: <code>trigger</code> defaults to KeyState.KeyDown when not provided.</strong></sup><br>
-<sup><strong>Note: The lambda is in suspend context, launched in context provided at time of instantiation of Keyboard (defaults to Dispatchers.Default). You can always change context anytime inside using the <code>withContext</code> function present in kotlinx.coroutines library.</strong></sup></p>
-</li>
-<li>
-<p>Send a <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/KeySet.kt">KeySet</a> to the host machine.</p>
-<div class="tabbed-set" data-tabs="2:1"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><label for="__tabbed_2_1">Kotlin</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">keyboard</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="n">LeftAlt</span> <span class="p">+</span> <span class="n">Key</span><span class="p">.</span><span class="n">M</span><span class="p">)</span>
-</code></pre></div>
-</td></tr></table>
-</div>
-</div>
-</li>
-<li>
-<p>Write a sentence (String) on the host machine.</p>
-<div class="tabbed-set" data-tabs="3:1"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><label for="__tabbed_3_1">Kotlin</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">keyboard</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;Hello Keyboard!&quot;</span><span class="p">)</span>
-</code></pre></div>
-</td></tr></table>
-</div>
-</div>
-</li>
-<li>
-<p>Suspensive wait till a <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/KeySet.kt">KeySet</a> is pressed.</p>
-<div class="tabbed-set" data-tabs="4:1"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><label for="__tabbed_4_1">Kotlin</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">keyboard</span><span class="p">.</span><span class="n">awaitTill</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="n">LeftCtrl</span> <span class="p">+</span> <span class="n">Key</span><span class="p">.</span><span class="n">LeftShift</span> <span class="p">+</span> <span class="n">Key</span><span class="p">.</span><span class="n">R</span><span class="p">,</span> <span class="n">trigger</span> <span class="p">=</span> <span class="n">KeyState</span><span class="p">.</span><span class="n">KeyDown</span><span class="p">)</span>
-</code></pre></div>
-</td></tr></table>
-</div>
-</div>
-<p><sup><strong>Note: <code>trigger</code> defaults to KeyState.KeyDown when not provided.</strong></sup></p>
-</li>
-<li>
-<p>Record Key presses till specific <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/KeySet.kt">KeySet</a> is pressed into a <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/Keyboard.kt">KeyPressSequence</a> (Type alias to a list of pair of Duration and KeyEvent).</p>
-<div class="tabbed-set" data-tabs="5:1"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><label for="__tabbed_5_1">Kotlin</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">records</span><span class="p">:</span> <span class="n">KeyPressSequence</span> <span class="p">=</span> <span class="n">keyboard</span><span class="p">.</span><span class="n">recordTill</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="n">LeftAlt</span> <span class="p">+</span> <span class="n">Key</span><span class="p">.</span><span class="n">A</span><span class="p">)</span>
-</code></pre></div>
-</td></tr></table>
-</div>
-</div>
-</li>
-<li>
-<p>Play a recorded or created collection of Keys at defined order.</p>
-<div class="tabbed-set" data-tabs="6:1"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio" /><label for="__tabbed_6_1">Kotlin</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">keyboard</span><span class="p">.</span><span class="n">play</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">speedFactor</span> <span class="p">=</span> <span class="m">1.25</span><span class="p">)</span>
-</code></pre></div>
-</td></tr></table>
-</div>
-</div>
-<p><sup><strong>Note: <code>speedFactor</code> defaults to 1.0 when not provided.</strong></sup></p>
-</li>
-</ul>
-<h2 id="java-jvm">Java (JVM)</h2>
-<p>High Level API depends on <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/integration/keyboard-kt-jdk8/src/main/kotlin/com/github/animeshz/keyboard/JKeyboard.kt">JKeyboard</a>.</p>
-<ul>
-<li>
-<p>Adding a shortcut (Hotkey).</p>
-<div class="tabbed-set" data-tabs="7:2"><input checked="checked" id="__tabbed_7_1" name="__tabbed_7" type="radio" /><label for="__tabbed_7_1">Java 8</label><div class="tabbed-content">
+<input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><label for="__tabbed_1_2">Java 8</label><div class="tabbed-content">
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
@@ -488,7 +486,7 @@
 </code></pre></div>
 </td></tr></table>
 </div>
-<input id="__tabbed_7_2" name="__tabbed_7" type="radio" /><label for="__tabbed_7_2">Java 9 or above</label><div class="tabbed-content">
+<input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><label for="__tabbed_1_3">Java 9 or above</label><div class="tabbed-content">
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
@@ -502,11 +500,14 @@
 </td></tr></table>
 </div>
 </div>
-<p><sup><strong>Note: <code>trigger</code> defaults to KeyState.KeyDown when not provided.</strong></sup></p>
-</li>
-<li>
-<p>Send a <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/KeySet.kt">KeySet</a> to the host machine.</p>
-<div class="tabbed-set" data-tabs="8:2"><input checked="checked" id="__tabbed_8_1" name="__tabbed_8" type="radio" /><label for="__tabbed_8_1">Java 8</label><div class="tabbed-content">
+<p><sup><strong>Note: <code>trigger</code> defaults to KeyState.KeyDown when not provided.</strong></sup><br></p>
+<h2 id="send-a-keyset-to-the-host-machine">Send a <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/KeySet.kt">KeySet</a> to the host machine.</h2>
+<div class="tabbed-set" data-tabs="2:3"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><label for="__tabbed_2_1">Kotlin</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">keyboard</span><span class="p">.</span><span class="n">send</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="n">LeftAlt</span> <span class="p">+</span> <span class="n">Key</span><span class="p">.</span><span class="n">M</span><span class="p">)</span>
+</code></pre></div>
+</td></tr></table>
+</div>
+<input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><label for="__tabbed_2_2">Java 8</label><div class="tabbed-content">
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
@@ -517,7 +518,7 @@
 </code></pre></div>
 </td></tr></table>
 </div>
-<input id="__tabbed_8_2" name="__tabbed_8" type="radio" /><label for="__tabbed_8_2">Java 9 or above</label><div class="tabbed-content">
+<input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><label for="__tabbed_2_3">Java 9 or above</label><div class="tabbed-content">
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">Set</span><span class="o">&lt;</span><span class="n">Key</span><span class="o">&gt;</span> <span class="n">keys</span> <span class="o">=</span> <span class="n">Set</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="na">LeftAlt</span><span class="p">,</span> <span class="n">Key</span><span class="p">.</span><span class="na">M</span><span class="p">);</span>
@@ -527,20 +528,27 @@
 </td></tr></table>
 </div>
 </div>
-</li>
-<li>
-<p>Write a sentence (String) on the host machine.</p>
-<div class="tabbed-set" data-tabs="9:1"><input checked="checked" id="__tabbed_9_1" name="__tabbed_9" type="radio" /><label for="__tabbed_9_1">Java 8 or above</label><div class="tabbed-content">
+<h2 id="write-a-sentence-string-on-the-host-machine">Write a sentence (String) on the host machine.</h2>
+<div class="tabbed-set" data-tabs="3:2"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><label for="__tabbed_3_1">Kotlin</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">keyboard</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;Hello Keyboard!&quot;</span><span class="p">)</span>
+</code></pre></div>
+</td></tr></table>
+</div>
+<input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><label for="__tabbed_3_2">Java 8 or above</label><div class="tabbed-content">
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">keyboard</span><span class="p">.</span><span class="na">write</span><span class="p">(</span><span class="s">&quot;Hello Keyboard!&quot;</span><span class="p">);</span>
 </code></pre></div>
 </td></tr></table>
 </div>
 </div>
-</li>
-<li>
-<p>Asynchronous wait till a <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/KeySet.kt">KeySet</a> is pressed.</p>
-<div class="tabbed-set" data-tabs="10:2"><input checked="checked" id="__tabbed_10_1" name="__tabbed_10" type="radio" /><label for="__tabbed_10_1">Java 8</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+<h2 id="wait-till-a-keyset-is-pressed">Wait till a <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/KeySet.kt">KeySet</a> is pressed.</h2>
+<p>Suspensive wait in Kotlin, whereas asynchronous <code>CompletableFuture&lt;&gt;</code> for Java</p>
+<div class="tabbed-set" data-tabs="4:3"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><label for="__tabbed_4_1">Kotlin</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">keyboard</span><span class="p">.</span><span class="n">awaitTill</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="n">LeftCtrl</span> <span class="p">+</span> <span class="n">Key</span><span class="p">.</span><span class="n">LeftShift</span> <span class="p">+</span> <span class="n">Key</span><span class="p">.</span><span class="n">R</span><span class="p">,</span> <span class="n">trigger</span> <span class="p">=</span> <span class="n">KeyState</span><span class="p">.</span><span class="n">KeyDown</span><span class="p">)</span>
+</code></pre></div>
+</td></tr></table>
+</div>
+<input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><label for="__tabbed_4_2">Java 8</label><div class="tabbed-content">
+<p><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
 4
@@ -551,9 +559,10 @@
     <span class="p">.</span><span class="na">thenApply</span><span class="p">(</span><span class="n">unit</span> <span class="o">-&gt;</span> <span class="p">{...});</span>
 </code></pre></div>
 </td></tr></table>
+<sup><strong>Note: Unit is similar to java.lang.Void, a singleton object which has nothing to do for us.</strong></sup></p>
 </div>
-<input id="__tabbed_10_2" name="__tabbed_10" type="radio" /><label for="__tabbed_10_2">Java 9 or above</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
+<input id="__tabbed_4_3" name="__tabbed_4" type="radio" /><label for="__tabbed_4_3">Java 9 or above</label><div class="tabbed-content">
+<p><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
 4</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">Set</span><span class="o">&lt;</span><span class="n">Key</span><span class="o">&gt;</span> <span class="n">keys</span> <span class="o">=</span> <span class="n">Set</span><span class="p">.</span><span class="na">of</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="na">LeftCtrl</span> <span class="o">+</span> <span class="n">Key</span><span class="p">.</span><span class="na">LeftShift</span> <span class="o">+</span> <span class="n">Key</span><span class="p">.</span><span class="na">R</span><span class="p">);</span>
@@ -562,14 +571,18 @@
     <span class="p">.</span><span class="na">thenApply</span><span class="p">(</span><span class="n">unit</span> <span class="o">-&gt;</span> <span class="p">{...});</span>
 </code></pre></div>
 </td></tr></table>
-</div>
-</div>
-<p><sup><strong>Note: <code>trigger</code> defaults to KeyState.KeyDown when not provided.</strong></sup><br>
 <sup><strong>Note: Unit is similar to java.lang.Void, a singleton object which has nothing to do for us.</strong></sup></p>
-</li>
-<li>
-<p>Record Key presses till specific <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/KeySet.kt">KeySet</a> is pressed into a list of pair of Duration and KeyEvent.</p>
-<div class="tabbed-set" data-tabs="11:2"><input checked="checked" id="__tabbed_11_1" name="__tabbed_11" type="radio" /><label for="__tabbed_11_1">Java 8</label><div class="tabbed-content">
+</div>
+</div>
+<p><sup><strong>Note: <code>trigger</code> defaults to KeyState.KeyDown when not provided.</strong></sup></p>
+<h2 id="record-key-presses-till-specific-keyset">Record Key presses till specific <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/KeySet.kt">KeySet</a>.</h2>
+<p>Recorded KeyPresses is pushed into a <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/Keyboard.kt">KeyPressSequence</a> (<code>List&lt;Duration, KeyEvent&gt;</code>)</p>
+<div class="tabbed-set" data-tabs="5:3"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><label for="__tabbed_5_1">Kotlin</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">val</span> <span class="py">records</span><span class="p">:</span> <span class="n">KeyPressSequence</span> <span class="p">=</span> <span class="n">keyboard</span><span class="p">.</span><span class="n">recordTill</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="n">LeftAlt</span> <span class="p">+</span> <span class="n">Key</span><span class="p">.</span><span class="n">A</span><span class="p">)</span>
+</code></pre></div>
+</td></tr></table>
+</div>
+<input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><label for="__tabbed_5_2">Java 8</label><div class="tabbed-content">
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
@@ -584,7 +597,7 @@
 </code></pre></div>
 </td></tr></table>
 </div>
-<input id="__tabbed_11_2" name="__tabbed_11" type="radio" /><label for="__tabbed_11_2">Java 9 or above</label><div class="tabbed-content">
+<input id="__tabbed_5_3" name="__tabbed_5" type="radio" /><label for="__tabbed_5_3">Java 9 or above</label><div class="tabbed-content">
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
 2
 3
@@ -596,18 +609,19 @@
 </td></tr></table>
 </div>
 </div>
-</li>
-<li>
-<p>Play a recorded or created collection of Keys at defined order at given speed.</p>
-<div class="tabbed-set" data-tabs="12:1"><input checked="checked" id="__tabbed_12_1" name="__tabbed_12" type="radio" /><label for="__tabbed_12_1">Java 8 or above</label><div class="tabbed-content">
+<h2 id="play-a-recorded-or-created-collection-of-keys-at-defined-order">Play a recorded or created collection of Keys at defined order.</h2>
+<div class="tabbed-set" data-tabs="6:2"><input checked="checked" id="__tabbed_6_1" name="__tabbed_6" type="radio" /><label for="__tabbed_6_1">Kotlin</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">keyboard</span><span class="p">.</span><span class="n">play</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="n">speedFactor</span> <span class="p">=</span> <span class="m">1.25</span><span class="p">)</span>
+</code></pre></div>
+</td></tr></table>
+</div>
+<input id="__tabbed_6_2" name="__tabbed_6" type="radio" /><label for="__tabbed_6_2">Java 8 or above</label><div class="tabbed-content">
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">CompletableFuture</span><span class="o">&lt;</span><span class="n">Unit</span><span class="o">&gt;</span> <span class="n">onFinish</span> <span class="o">=</span> <span class="n">keyboard</span><span class="p">.</span><span class="na">play</span><span class="p">(</span><span class="n">records</span><span class="p">,</span> <span class="mf">1.25</span><span class="p">)</span>
 </code></pre></div>
 </td></tr></table>
 </div>
 </div>
 <p><sup><strong>Note: <code>speedFactor</code> defaults to 1.0 when not provided.</strong></sup></p>
-</li>
-</ul>
                 
               
               
