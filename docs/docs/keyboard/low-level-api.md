@@ -1,81 +1,70 @@
 # Low Level API
 
-## Kotlin (Multiplatform / JVM)
+**Kotlin:** Low Level API depends on [NativeKeyboardHandler][1] that can be obtained via `nativeKbHandlerForPlatform()`.
 
-Low Level API depends on [NativeKeyboardHandler][1] that can be obtained via `nativeKbHandlerForPlatform()`.
+**Java:** Low Level API depends on [JNativeKeyboardHandler][4] that can be obtained via `JNativeKeyboardHandler.INSTANCE`.
 
-- Listening to events using Flow.
+## Listening to events using Flow (Kotlin) or callback (Java).
 
-    === "Kotlin"
-        ```kotlin
-        handler.events
-            .filter { it.state == KeyState.KeyDown }
-            .map { it.key }
-            .collect { println(it) }
-        ```
+=== "Kotlin"
+    ```kotlin
+    handler.events
+        .filter { it.state == KeyState.KeyDown }
+        .map { it.key }
+        .collect { println(it) }
+    ```
 
-- Sending a [Key][2] event.
+=== "Java 8 or above"
+    ```java
+    handler.addHandler(keyEvent -> {
+        if (keyEvent.state == KeyState.KeyDown) {
+            System.out.println(keyEvent.key);
+        }
+    });
+    ```
+
+## Sending a [Key][2] event.
     
-    === "Kotlin"
-        ```kotlin
-        handler.sendEvent(KeyEvent(Key.A, KeyState.KeyDown))
-        ```
+=== "Kotlin"
+    ```kotlin
+    handler.sendEvent(KeyEvent(Key.A, KeyState.KeyDown))
+    ```
 
-- Get [KeyState][3] (KeyDown or KeyUp) of the [Key][2].
+=== "Java 8 or above"
+    ```java
+    handler.sendEvent(new KeyEvent(Key.A, KeyState.KeyDown));
+    ```
 
-    === "Kotlin"
-        ```kotlin
-        handler.getKeyState(Key.A)
-        handler.getKeyState(Key.RightAlt)
-        ```
 
-- Get States of Toggleable Keys (returns a Boolean).
+## Get [KeyState][3] (KeyDown or KeyUp) of the [Key](key.md).
 
-    === "Kotlin"
-        ```kotlin
-        handler.isCapsLockOn()
-        handler.isNumLockOn()
-        handler.isScrollLockOn()
-        ```
+=== "Kotlin"
+    ```kotlin
+    handler.getKeyState(Key.A)
+    handler.getKeyState(Key.RightAlt)
+    ```
 
-## Java (JVM)
+=== "Java 8 or above"
+    ```java
+    handler.getKeyState(Key.A);
+    handler.getKeyState(Key.RightAlt);
+    ```
 
-Low Level API depends on [JNativeKeyboardHandler][4] that can be obtained via `JNativeKeyboardHandler.INSTANCE`.
+## Get States of Toggleable Keys (returns a Boolean).
 
-- Listening to events using a callback.
+=== "Kotlin"
+    ```kotlin
+    handler.isCapsLockOn()
+    handler.isNumLockOn()
+    handler.isScrollLockOn()
+    ```
 
-    === "Java 8 or above"
-        ```java
-        handler.addHandler(keyEvent -> {
-            if (keyEvent.state == KeyState.KeyDown) {
-                System.out.println(keyEvent.key);
-            }
-        });
-        ```
-
-- Sending a [Key][2] event.
-
-    === "Java 8 or above"
-        ```java
-        handler.sendEvent(new KeyEvent(Key.A, KeyState.KeyDown));
-        ```
-
-- Get [KeyState][3] (KeyDown or KeyUp) of the [Key][2].
-
-    === "Java 8 or above"
-        ```java
-        handler.getKeyState(Key.A);
-        handler.getKeyState(Key.RightAlt);
-        ```
-
-- Get States of Toggleable Keys (returns a boolean).
-
-    === "Java 8 or above"
-        ```java
-        handler.isCapsLockOn();
-        handler.isNumLockOn();
-        handler.isScrollLockOn();
-        ```
+=== "Java 8 or above"
+    ```java
+    handler.isCapsLockOn();
+    handler.isNumLockOn();
+    handler.isScrollLockOn();
+    ```
 
 [1]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard-kt/src/commonMain/kotlin/com/github/animeshz/keyboard/NativeKeyboardHandler.kt
 
