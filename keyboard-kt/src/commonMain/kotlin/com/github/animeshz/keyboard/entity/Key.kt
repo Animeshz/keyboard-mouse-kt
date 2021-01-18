@@ -227,7 +227,7 @@ public enum class Key(public val keyCode: Int) {
                     val c = char.toUpperCase()
                     val values = values()
                     for (i in alphabetOrdinalRange) {
-                        if (values[i].name.length == 1 && values[i].name[0] == c) return values[i] to true
+                        if (values[i].name.length == 1 && values[i].name[0] == c) return values[i] to false
                     }
                 }
             }
