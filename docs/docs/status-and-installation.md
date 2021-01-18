@@ -258,3 +258,39 @@
 
         </project>
         ```
+
+## Use interactively with Jupyter Notebook
+
+Don't have time to setup a Gradle/Maven project? No worries, roll up a [Kotlin's Jupyter Kernel](https://github.com/Kotlin/kotlin-jupyter), and use it as a REPL (it even has kotlin-autocompletion).
+
+??? "If you don't already have jupyter or kotlin-kernel, click here"
+
+    === "Installing JupyterLab"
+        ```bash
+        python3 -m pip install jupyterlab
+        ```
+    === "Installing Kotlin Kernel"
+        ```bash
+        git clone https://github.com/Kotlin/kotlin-jupyter.git && cd kotlin-jupyter && ./gradlew install && cd -
+        ```
+
+Get the quickstart notebook for quickly start using the library without any hassles.
+```bash
+curl https://raw.githubusercontent.com/Animeshz/keyboard-mouse-kt/master/docs/getting_started.ipynb -o getting_started.ipynb
+```
+<sup>**Note: If you are in windows assuming you're using powershell**</sup>
+
+Start the jupyter lab with:
+```bash
+jupyter lab
+```
+
+A browser will open with current directory, open the `getting_started.ipynb` and start playing with it.
+
+??? "If you're new to jupyer, click here"
+
+    use `Ctrl + Enter` to run a cell, `Esc` to get in command mode, `X` to cut a cell, `Z` to undo, `B` to create a new cell below, and so on. Refer to jupyter docs for more info.
+
+A simple demo gif:
+
+![keyboard-kt-jupyter-sample.gif](https://i.imgur.com/QTVcMp1.gif)
