@@ -261,6 +261,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#use-interactively-with-jupyter-notebook" class="md-nav__link">
+    Use interactively with Jupyter Notebook
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -387,6 +394,13 @@
         <li class="md-nav__item">
   <a href="#installation" class="md-nav__link">
     Installation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#use-interactively-with-jupyter-notebook" class="md-nav__link">
+    Use interactively with Jupyter Notebook
   </a>
   
 </li>
@@ -858,6 +872,34 @@
 </div>
 </div>
 </div>
+<h2 id="use-interactively-with-jupyter-notebook">Use interactively with Jupyter Notebook</h2>
+<p>Don't have time to setup a Gradle/Maven project? No worries, roll up a <a href="https://github.com/Kotlin/kotlin-jupyter">Kotlin's Jupyter Kernel</a>, and use it as a REPL (it even has kotlin-autocompletion).</p>
+<details><summary>If you don't already have jupyter or kotlin-kernel, click here</summary><div class="tabbed-set" data-tabs="5:2"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><label for="__tabbed_5_1">Installing JupyterLab</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>python3 -m pip install jupyterlab
+</code></pre></div>
+</td></tr></table>
+</div>
+<input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><label for="__tabbed_5_2">Installing Kotlin Kernel</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>git clone https://github.com/Kotlin/kotlin-jupyter.git <span class="o">&amp;&amp;</span> <span class="nb">cd</span> kotlin-jupyter <span class="o">&amp;&amp;</span> ./gradlew install <span class="o">&amp;&amp;</span> <span class="nb">cd</span> -
+</code></pre></div>
+</td></tr></table>
+</div>
+</div>
+</details>
+<p>Get the quickstart notebook for quickly start using the library without any hassles.
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>curl https://raw.githubusercontent.com/Animeshz/keyboard-mouse-kt/master/docs/getting_started.ipynb &gt; getting_started.ipynb
+</code></pre></div>
+</td></tr></table>
+<sup><strong>Note: If you are in windows assuming you're using powershell</strong></sup></p>
+<p>Start the jupyter lab with:
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>jupyter lab
+</code></pre></div>
+</td></tr></table></p>
+<p>A browser will open with current directory, open the <code>getting_started.ipynb</code> and start playing with it.</p>
+<details><summary>If you're new to jupyer, click here</summary><p>use <code>Ctrl + Enter</code> to run a cell, <code>Esc</code> to get in command mode, <code>X</code> to cut a cell, <code>Z</code> to undo, <code>B</code> to create a new cell below, and so on. Refer to jupyter docs for more info.</p>
+</details>
+<p>A simple demo gif:</p>
+<p><img alt="keyboard-kt-jupyter-sample.gif" src="https://i.imgur.com/QTVcMp1.gif" /></p>
                 
               
               
