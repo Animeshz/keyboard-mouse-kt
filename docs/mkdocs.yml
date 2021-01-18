@@ -20,6 +20,7 @@ plugins:
 markdown_extensions:
   - pymdownx.tabbed
   - pymdownx.superfences
+  - pymdownx.details
   - pymdownx.tasklist:
       custom_checkbox: true
   - pymdownx.highlight:
