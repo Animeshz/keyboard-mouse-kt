@@ -51,6 +51,7 @@ internal class X11KeyboardHandler(x11: COpaquePointer, xInput2: COpaquePointer, 
 
         // https://stackoverflow.com/a/42020068/11377112
         XTestFakeKeyEvent(display, (keyEvent.key.keyCode + 8).toUInt(), if (keyEvent.state == KeyState.KeyDown) 1 else 0, 0UL)
+        XFlush(display)
     }
 
     override fun getKeyState(key: Key): KeyState {

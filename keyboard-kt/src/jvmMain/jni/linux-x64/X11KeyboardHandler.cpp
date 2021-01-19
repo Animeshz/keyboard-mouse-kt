@@ -128,6 +128,7 @@ class X11KeyboardHandler : BaseKeyboardHandler {
     void sendEvent(int scanCode, bool isPressed) {
         // https://stackoverflow.com/a/42020068/11377112
         XTestFakeKeyEvent(display, scanCode + 8, isPressed, 0);
+        XFlush(display);
     }
 
     bool isPressed(int scanCode) {
