@@ -9,10 +9,8 @@ import kotlin.js.JsExport
  *
  * [keyCode] matches with hardware scan codes.
  */
-@ExperimentalJsExport
 @Suppress("unused")
 @ExperimentalKeyIO
-@JsExport
 public enum class Key(public val keyCode: Int) {
     Unknown(-1),
     Esc(1),

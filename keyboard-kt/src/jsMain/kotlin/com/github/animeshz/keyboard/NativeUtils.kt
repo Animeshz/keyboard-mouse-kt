@@ -3,9 +3,11 @@ package com.github.animeshz.keyboard
 public external fun require(module: String): dynamic
 
 @JsModule("os")
+@JsNonModule
 public external fun arch(): String
 
 @JsModule("os")
+@JsNonModule
 public external fun platform(): String
 
 internal object NativeUtils {
@@ -21,17 +23,13 @@ internal object NativeUtils {
         else -> error("OS not supported. Current OS: $platform")
     }
 
-    @ExperimentalJsExport
     @ExperimentalKeyIO
-    fun getNApiNativeHandler(): NApiNativeHandler =
-        require("./lib/$identifier$suffix.node") as NApiNativeHandler
+    val nApiNativeHandler: NApiNativeHandler =
+        (require("./lib/$identifier$suffix.node") as NApiNativeHandler).also { it.init() }
 }
 
 @ExperimentalKeyIO
-@ExperimentalJsExport
-internal external class NApiNativeHandler(
-    publicHandler: JsKeyboardHandler
-) {
+internal external class NApiNativeHandler {
     fun send(scanCode: Int, isPressed: Boolean)
     fun isPressed(scanCode: Int): Boolean
 
@@ -40,6 +38,6 @@ internal external class NApiNativeHandler(
     fun isScrollLockOn(): Boolean
 
     fun init(): Int
-    fun startReadingEvents(): Int
+    fun startReadingEvents(handler: () -> Unit): Int
     fun stopReadingEvents()
 }

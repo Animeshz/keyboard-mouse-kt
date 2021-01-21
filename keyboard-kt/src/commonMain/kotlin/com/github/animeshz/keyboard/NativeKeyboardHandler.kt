@@ -13,15 +13,11 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
 
 /**
  * A low-level implementation for handling [KeyEvent]s (sending and receiving).
  */
-@ExperimentalJsExport
 @ExperimentalKeyIO
-@JsExport
 public interface NativeKeyboardHandler {
     /**
      * A [SharedFlow] of [KeyEvent] for receiving Key events from the target platform.
@@ -60,11 +56,9 @@ public interface NativeKeyboardHandler {
  * Gets the [NativeKeyboardHandler] for the particular platform.
  * Always returns the same instance.
  */
-@ExperimentalJsExport
 @ExperimentalKeyIO
 public expect fun nativeKbHandlerForPlatform(): NativeKeyboardHandler
 
-@ExperimentalJsExport
 @ExperimentalKeyIO
 internal abstract class NativeKeyboardHandlerBase : NativeKeyboardHandler {
     protected val eventsInternal: MutableSharedFlow<KeyEvent> = MutableSharedFlow(extraBufferCapacity = 8)
