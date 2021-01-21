@@ -3,13 +3,6 @@
 ## Status
 
 - [ ] Keyboard
-    - [ ] Windows
-        - [X] x86_64 (64 bit)
-        - [ ] x86    (32 bit)
-    - [ ] Linux
-        - [X] x86_64 (64 bit)
-        - [ ] x86    (32 bit)
-    - [ ] MacOS
     - [ ] JVM
         - [X] Windows x86_64 (64 bit)
         - [X] Windows x86    (32 bit)
@@ -17,6 +10,23 @@
         - [X] Linux x86    (32 bit)
         - [ ] Linux Arm32
         - [ ] Linux Arm64
+        - [ ] MacOS
+    - [ ] JS
+        - [ ] Windows x86_64 (64 bit)
+        - [ ] Windows x86    (32 bit)
+        - [ ] Linux x86_64 (64 bit)
+        - [ ] Linux x86    (32 bit)
+        - [ ] Linux Arm32
+        - [ ] Linux Arm64
+        - [ ] MacOS
+    - [ ] Native
+        - [X] Windows x86_64 (64 bit)
+        - [ ] Windows x86    (32 bit)
+        - [X] Linux x86_64 (64 bit)
+        - [ ] Linux x86    (32 bit)
+        - [ ] Linux Arm32
+        - [ ] Linux Arm64
+        - [ ] MacOS
 - [ ] Mouse
     - [ ] Windows
     - [ ] Linux

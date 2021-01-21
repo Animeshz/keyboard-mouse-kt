@@ -12,11 +12,13 @@ import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import kotlin.js.JsName
 import kotlin.test.Test
 
 @ExperimentalKeyIO
 class NativeKeyboardHandlerTest {
     @Test
+    @JsName("Caps_lock_key_should_be_toggled_when_KeyDown_event_is_triggered")
     fun `Caps lock key should be toggled when KeyDown event is triggered`() {
         val handler = nativeKbHandlerForPlatform()
 
@@ -35,6 +37,7 @@ class NativeKeyboardHandlerTest {
     }
 
     @Test
+    @JsName("Test_send_and_receive_event")
     fun `Test send and receive event`() = runBlockingTest {
         val handler = nativeKbHandlerForPlatform()
 

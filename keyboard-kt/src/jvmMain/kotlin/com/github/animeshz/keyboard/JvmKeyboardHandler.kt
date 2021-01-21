@@ -47,7 +47,7 @@ internal object JvmKeyboardHandler : NativeKeyboardHandlerBase() {
     }
 
     private external fun nativeInit(): Int
-    private external fun nativeSendEvent(scanCode: Int, isDown: Boolean)
+    private external fun nativeSendEvent(scanCode: Int, isPressed: Boolean)
     private external fun nativeIsPressed(scanCode: Int): Boolean
     private external fun nativeStartReadingEvents(): Int
     private external fun nativeStopReadingEvents()
