@@ -1,14 +1,18 @@
 package com.github.animeshz.keyboard.entity
 
 import com.github.animeshz.keyboard.ExperimentalKeyIO
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
 /**
  * Represents corresponding key of the keyboard.
  *
  * [keyCode] matches with hardware scan codes.
  */
+@ExperimentalJsExport
 @Suppress("unused")
 @ExperimentalKeyIO
+@JsExport
 public enum class Key(public val keyCode: Int) {
     Unknown(-1),
     Esc(1),

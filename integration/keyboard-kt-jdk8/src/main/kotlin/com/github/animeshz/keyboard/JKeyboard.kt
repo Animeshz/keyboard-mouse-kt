@@ -43,7 +43,11 @@ public class JKeyboard {
         keySet: KeySet,
         trigger: KeyState = KeyState.KeyDown,
         handler: ShortcutHandler
-    ): Cancellable = delegate.addShortcut(keySet, trigger) { handler.handle() }
+    ): Cancellable {
+        val kCancellable = delegate.addShortcut(keySet, trigger) { handler.handle() }
+
+        return Cancellable { kCancellable() }
+    }
 
     /**
      * Presses and releases the [keySet] on the host machine.

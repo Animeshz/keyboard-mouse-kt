@@ -29,7 +29,7 @@ import kotlin.time.TimeSource
 /**
  * A typealias of lambda returned from [Keyboard.addShortcut] for better readability.
  */
-public fun interface Cancellable : () -> Unit
+public typealias Cancellable = () -> Unit
 
 /**
  * Represents a keypress sequence with each element in ascending order of duration from the start time.
@@ -79,7 +79,7 @@ public class Keyboard(
         handlers.value += keySet to handler
         startIfNeeded()
 
-        return Cancellable {
+        return {
             handlers.value -= keySet
             stopIfNeeded()
         }

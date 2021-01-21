@@ -192,6 +192,22 @@ fun KotlinMultiplatformExtension.configureJvm() {
     }
 }
 
+fun KotlinMultiplatformExtension.configureJs() {
+    js(IR) {
+        nodejs()
+    }
+
+    val jsMain by sourceSets.getting {
+        dependencies {
+            implementation(devNpm("node-addon-api", "*"))
+        }
+    }
+    val jsTest by sourceSets.getting { dependsOn(jsMain) }
+
+    mainSourceSets.add(jsMain)
+    testSourceSets.add(jsTest)
+}
+
 fun KotlinMultiplatformExtension.configureLinux() {
     linuxX64 {
         val main by compilations.getting
@@ -217,6 +233,7 @@ fun KotlinMultiplatformExtension.configureMingw() {
 
 kotlin {
     configureJvm()
+    configureJs()
     configureLinux()
     configureMingw()
 
@@ -234,7 +251,7 @@ kotlin {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
                 implementation("io.mockk:mockk-common:1.10.3")
-                implementation("io.kotest:kotest-assertions-core:4.3.1")
+                implementation("io.kotest:kotest-assertions-core:4.4.0.RC2")
             }
         }
 

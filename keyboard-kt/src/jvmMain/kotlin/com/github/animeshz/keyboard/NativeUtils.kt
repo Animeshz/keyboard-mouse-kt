@@ -16,14 +16,14 @@ internal object NativeUtils {
             "aarch64" in arch || "arm" in arch -> error("Arm not supported") /* "arm" */
             "64" in arch -> "x64"
             "86" in arch || "32" in arch -> "x86"
-            else -> error("CPU architecture not supported")
+            else -> error("CPU architecture not supported. Current CPU architecture: $arch")
         }
 
         extension = when {
             "mac" in os || "darwin" in os -> error("Mac is not supported currently") /* "libKeyboardKt.dylib" */
             "win" in os -> "dll"
             "nux" in os || "nix" in os || "aix" in os -> "so"
-            else -> error("OS not supported")
+            else -> error("OS not supported. Current OS: $os")
         }
     }
 

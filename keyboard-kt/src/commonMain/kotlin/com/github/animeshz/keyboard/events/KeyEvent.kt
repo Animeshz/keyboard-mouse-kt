@@ -2,6 +2,8 @@ package com.github.animeshz.keyboard.events
 
 import com.github.animeshz.keyboard.ExperimentalKeyIO
 import com.github.animeshz.keyboard.entity.Key
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
 /**
  * When a user presses a key on a hardware keyboard, a [KeyEvent] is sent.
@@ -9,7 +11,9 @@ import com.github.animeshz.keyboard.entity.Key
  * @param key The [Key] that is associated with the event.
  * @param state The type of the event (see [KeyState]).
  */
+@ExperimentalJsExport
 @ExperimentalKeyIO
+@JsExport
 public class KeyEvent(
     public val key: Key,
     public val state: KeyState
@@ -20,7 +24,9 @@ public class KeyEvent(
 /**
  * The State of [Key].
  */
+@ExperimentalJsExport
 @ExperimentalKeyIO
+@JsExport
 public enum class KeyState {
     /**
      * Type of state when the user lifts their finger off a key on the keyboard.
