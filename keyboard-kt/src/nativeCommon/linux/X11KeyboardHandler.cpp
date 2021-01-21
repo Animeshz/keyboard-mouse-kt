@@ -2,11 +2,13 @@
 #include <X11/extensions/XInput2.h>
 #include <X11/extensions/XTest.h>
 #include <dlfcn.h>
-#include <jni.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "BaseKeyboardHandler.h"
+#include <functional>
+#include <thread>
+
+#include "../BaseKeyboardHandler.h"
 
 class X11KeyboardHandler : BaseKeyboardHandler {
    private:
@@ -17,7 +19,8 @@ class X11KeyboardHandler : BaseKeyboardHandler {
     int xiOpcode;
     volatile bool stopReading = false;
 
-    X11KeyboardHandler(void *x11, void *xInput2, void *xTest, Display *display, int xiOpcode) {
+    X11KeyboardHandler(void *x11, void *xInput2, void *xTest, Display *display,
+                       int xiOpcode) {
         this->x11 = x11;
         this->xInput2 = xInput2;
         this->xTest = xTest;
@@ -55,7 +58,8 @@ class X11KeyboardHandler : BaseKeyboardHandler {
             return NULL;
         }
 
-        // Check XInput2 functions are present, since libXi may contain XInput or XInput2.
+        // Check XInput2 functions are present, since libXi may contain XInput
+        // or XInput2.
         void *f = dlsym(xInput2, "XISelectEvents");
         if (f == NULL) {
             dlclose(x11);
@@ -91,24 +95,11 @@ class X11KeyboardHandler : BaseKeyboardHandler {
             return NULL;
         }
 
-        Window root = XDefaultRootWindow(display);
-        XIEventMask *xiMask = new XIEventMask;
-        xiMask->deviceid = XIAllMasterDevices;
-        xiMask->mask_len = XIMaskLen(XI_LASTEVENT);
-        xiMask->mask = new unsigned char[xiMask->mask_len]();
-
-        XISetMask(xiMask->mask, XI_RawKeyPress);
-        XISetMask(xiMask->mask, XI_RawKeyRelease);
-        XISelectEvents(display, root, xiMask, 1);
-        XSync(display, 0);
-
-        delete [] xiMask->mask;
-        delete xiMask;
-
         int xiOpcode;
         int queryEvent;
         int queryError;
-        XQueryExtension(display, "XInputExtension", &xiOpcode, &queryEvent, &queryError);
+        XQueryExtension(display, "XInputExtension", &xiOpcode, &queryEvent,
+                        &queryError);
 
         return new X11KeyboardHandler(x11, xInput2, xTest, display, xiOpcode);
     }
@@ -125,6 +116,8 @@ class X11KeyboardHandler : BaseKeyboardHandler {
 
     bool isNumLockOn() { return toggleStates() & 2; }
 
+    bool isScrollLockOn() { return 0; }
+
     void sendEvent(int scanCode, bool isPressed) {
         // https://stackoverflow.com/a/42020068/11377112
         XTestFakeKeyEvent(display, scanCode + 8, isPressed, 0);
@@ -139,7 +132,27 @@ class X11KeyboardHandler : BaseKeyboardHandler {
         return keyStates[xKeyCode / 8] & (1 << (xKeyCode % 8));
     }
 
-    void startReadingEvents(JNIEnv *env, jobject obj, jmethodID emitEvent) {
+    int startReadingEvents(std::function<void(int, bool)> callback) {
+        std::thread th(&X11KeyboardHandler::readInThread, this, callback);
+
+        return 0;
+    }
+
+    void readInThread(std::function<void(int, bool)> callback) {
+        Window root = XDefaultRootWindow(display);
+        XIEventMask *xiMask = new XIEventMask;
+        xiMask->deviceid = XIAllMasterDevices;
+        xiMask->mask_len = XIMaskLen(XI_LASTEVENT);
+        xiMask->mask = new unsigned char[xiMask->mask_len]();
+
+        XISetMask(xiMask->mask, XI_RawKeyPress);
+        XISetMask(xiMask->mask, XI_RawKeyRelease);
+        XISelectEvents(display, root, xiMask, 1);
+        XSync(display, 0);
+
+        delete[] xiMask->mask;
+        delete xiMask;
+
         stopReading = false;
         XEvent event;
 
@@ -148,10 +161,11 @@ class X11KeyboardHandler : BaseKeyboardHandler {
             if (stopReading) break;
 
             XGenericEventCookie cookie = event.xcookie;
-            if (cookie.type != GenericEvent || cookie.extension != xiOpcode) continue;
+            if (cookie.type != GenericEvent || cookie.extension != xiOpcode)
+                continue;
 
             if (XGetEventData(display, &cookie)) {
-                jboolean keyEventType;
+                bool keyEventType;
                 if (cookie.evtype == XI_RawKeyPress)
                     keyEventType = 1;
                 else if (cookie.evtype == XI_RawKeyRelease)
@@ -160,7 +174,7 @@ class X11KeyboardHandler : BaseKeyboardHandler {
                     continue;
 
                 XIRawEvent *cookieData = (XIRawEvent *)cookie.data;
-                env->CallVoidMethod(obj, emitEvent, cookieData->detail - 8, keyEventType);
+                callback(cookieData->detail - 8, keyEventType);
             }
 
             XFreeEventData(display, &cookie);
@@ -176,7 +190,8 @@ class X11KeyboardHandler : BaseKeyboardHandler {
         dummyEvent.type = 33;
         dummyEvent.format = 32;
 
-        XSendEvent(display, XDefaultRootWindow(display), 0, 0, (XEvent *)&dummyEvent);
+        XSendEvent(display, XDefaultRootWindow(display), 0, 0,
+                   (XEvent *)&dummyEvent);
         XFlush(display);
     }
 };

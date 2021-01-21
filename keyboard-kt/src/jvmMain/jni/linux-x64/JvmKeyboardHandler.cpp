@@ -6,6 +6,8 @@ extern "C" {
 #endif
 
 BaseKeyboardHandler *handler = NULL;
+JavaVM *jvm;
+jobject JvmKeyboardHandler = NULL;
 
 JNIEXPORT jint JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeInit(JNIEnv *env, jobject obj) {
     handler = X11KeyboardHandler::Create();
@@ -36,13 +38,26 @@ JNIEXPORT jboolean JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_
 }
 
 JNIEXPORT jint JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeStartReadingEvents(JNIEnv *env, jobject obj) {
+    env->GetJavaVM(&jvm);
+    JvmKeyboardHandler = env->NewGlobalRef(obj);
     jmethodID emitEvent = env->GetMethodID(env->GetObjectClass(obj), "emitEvent", "(IZ)V");
-    handler->startReadingEvents(env, obj, emitEvent);
-    return 0;
+
+    return handler->startReadingEvents(
+        [emitEvent](int scanCode, bool isPressed) {
+            JNIEnv *newEnv;
+            if (jvm->AttachCurrentThread((void **)&newEnv, NULL) >= JNI_OK) {
+                newEnv->CallVoidMethod(JvmKeyboardHandler, emitEvent, scanCode, isPressed);
+            }
+        }
+    );
 }
 
 JNIEXPORT void JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeStopReadingEvents(JNIEnv *env, jobject obj) {
     return handler->stopReadingEvents();
+
+    env->DeleteGlobalRef(JvmKeyboardHandler);
+    JvmKeyboardHandler = NULL;
+    jvm = NULL;
 }
 
 #ifdef __cplusplus
