@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 @ExperimentalKeyIO
-internal object JsKeyboardHandler : NativeKeyboardHandlerBase() {
+internal object KotlinJsKeyboardHandler : NativeKeyboardHandlerBase() {
     override fun sendEvent(keyEvent: KeyEvent) {
         nApiNativeHandler.send(keyEvent.key.keyCode, keyEvent.state.isPressed())
     }
@@ -25,7 +25,10 @@ internal object JsKeyboardHandler : NativeKeyboardHandlerBase() {
     override fun isScrollLockOn(): Boolean = nApiNativeHandler.isScrollLockOn()
 
     override fun startReadingEvents() {
-        val code = nApiNativeHandler.startReadingEvents()
+        val code = nApiNativeHandler.startReadingEvents { scanCode, isPressed ->
+            eventsInternal.tryEmit(KeyEvent(Key.fromKeyCode(scanCode), isPressed.toKeyState()))
+        }
+
         if (code != 0) {
             error("Unable to set native hook. Error code: $code")
         }
@@ -36,7 +39,7 @@ internal object JsKeyboardHandler : NativeKeyboardHandlerBase() {
 
 @ExperimentalKeyIO
 public actual fun nativeKbHandlerForPlatform(): NativeKeyboardHandler {
-    return JsKeyboardHandler
+    return KotlinJsKeyboardHandler
 }
 
 @ExperimentalKeyIO
@@ -51,31 +54,31 @@ internal fun Boolean.toKeyState() = if (this) KeyState.KeyDown else KeyState.Key
 @ExperimentalJsExport
 @ExperimentalKeyIO
 @JsExport
-@JsName("KeyboardHandler")
-public object JsKeyboardHandlerExport {
+@JsName("JsKeyboardHandler")
+public object JsKeyboardHandler {
     private val scope = CoroutineScope(Dispatchers.Unconfined)
 
     @JsName("addHandler")
     public fun addHandler(handler: (key: String, isPressed: Boolean) -> Unit) {
-        JsKeyboardHandler.events.onEach { handler(it.key.name, it.state.isPressed()) }
+        KotlinJsKeyboardHandler.events.onEach { handler(it.key.name, it.state.isPressed()) }
             .launchIn(scope)
     }
 
     @JsName("send")
     public fun NativeKeyboardHandler.sendEvent(key: String, isPressed: Boolean): Unit =
-        JsKeyboardHandler.sendEvent(KeyEvent(key.toKey(), isPressed.toKeyState()))
+        KotlinJsKeyboardHandler.sendEvent(KeyEvent(key.toKey(), isPressed.toKeyState()))
 
     @JsName("getKeyState")
     public fun NativeKeyboardHandler.getKeyState(key: String): Boolean =
         getKeyState(key.toKey()).isPressed()
 
     @JsName("isCapsLockOn")
-    public fun isCapsLockOn(): Boolean = JsKeyboardHandler.isCapsLockOn()
+    public fun isCapsLockOn(): Boolean = KotlinJsKeyboardHandler.isCapsLockOn()
 
     @JsName("isNumLockOn")
-    public fun isNumLockOn(): Boolean = JsKeyboardHandler.isNumLockOn()
+    public fun isNumLockOn(): Boolean = KotlinJsKeyboardHandler.isNumLockOn()
 
     @JsName("isScrollLockOn")
-    public fun isScrollLockOn(): Boolean = JsKeyboardHandler.isScrollLockOn()
+    public fun isScrollLockOn(): Boolean = KotlinJsKeyboardHandler.isScrollLockOn()
 }
 

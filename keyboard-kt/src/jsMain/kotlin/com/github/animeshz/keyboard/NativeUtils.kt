@@ -2,14 +2,6 @@ package com.github.animeshz.keyboard
 
 public external fun require(module: String): dynamic
 
-@JsModule("os")
-@JsNonModule
-public external fun arch(): String
-
-@JsModule("os")
-@JsNonModule
-public external fun platform(): String
-
 internal object NativeUtils {
     private val suffix = when(val architecture = arch()) {
         "x64" -> "x64"
@@ -25,7 +17,7 @@ internal object NativeUtils {
 
     @ExperimentalKeyIO
     val nApiNativeHandler: NApiNativeHandler =
-        (require("./lib/$identifier$suffix.node") as NApiNativeHandler).also { it.init() }
+        (require("./lib/$identifier$suffix.node").NApiNativeHandler() as NApiNativeHandler).also { it.init() }
 }
 
 @ExperimentalKeyIO
@@ -38,6 +30,6 @@ internal external class NApiNativeHandler {
     fun isScrollLockOn(): Boolean
 
     fun init(): Int
-    fun startReadingEvents(handler: () -> Unit): Int
+    fun startReadingEvents(handler: (scanCode: Int, isPressed: Boolean) -> Unit): Int
     fun stopReadingEvents()
 }

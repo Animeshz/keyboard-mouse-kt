@@ -193,7 +193,8 @@ fun KotlinMultiplatformExtension.configureJvm() {
 }
 
 fun KotlinMultiplatformExtension.configureJs() {
-    js(IR) {
+    js {
+        useCommonJs()
         nodejs()
     }
 
@@ -202,7 +203,12 @@ fun KotlinMultiplatformExtension.configureJs() {
             implementation(devNpm("node-addon-api", "*"))
         }
     }
-    val jsTest by sourceSets.getting { dependsOn(jsMain) }
+    val jsTest by sourceSets.getting {
+        dependsOn(jsMain)
+        dependencies {
+            implementation(kotlin("test-js"))
+        }
+    }
 
     mainSourceSets.add(jsMain)
     testSourceSets.add(jsTest)

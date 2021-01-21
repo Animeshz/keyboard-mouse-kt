@@ -25,11 +25,11 @@ public class TimedKeyEvent(
 @ExperimentalKeyIO
 @ExperimentalCoroutinesApi
 @JsExport
-@JsName("Keyboard")
+@JsName("JsKeyboard")
 public class JsKeyboard {
     private val delegate = Keyboard()
 
-    public val handler: JsKeyboardHandlerExport = JsKeyboardHandlerExport
+    public val handler: JsKeyboardHandler = JsKeyboardHandler
 
     private fun parseKeySet(str: String): KeySet =
         str.split(Regex("""\s*\+\s*"""))
