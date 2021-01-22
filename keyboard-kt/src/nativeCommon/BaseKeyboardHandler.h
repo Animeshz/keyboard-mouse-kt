@@ -12,7 +12,7 @@ class BaseKeyboardHandler {
 
     virtual bool isPressed(int scanCode) = 0;
 
-    virtual int startReadingEvents(std::function<void(int, bool)>) = 0;
+    virtual int startReadingEvents(void (*callback)(int, bool)) = 0;
 
     virtual void stopReadingEvents() = 0;
 };

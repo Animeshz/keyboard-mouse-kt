@@ -1,11 +1,9 @@
-#include <stdlib.h>
-#include <string.h>
 #include <windows.h>
 #include <winuser.h>
 
+#include <cstdlib>
+#include <cstring>
 #include <functional>
-#include <future>
-#include <thread>
 
 #include "../BaseKeyboardHandler.h"
 
@@ -13,13 +11,15 @@
 
 class WindowsKeyboardHandler : BaseKeyboardHandler {
    private:
-    static WindowsKeyboardHandler *instance;
+    inline static WindowsKeyboardHandler *instance = NULL;
+    inline static void (*callback)(int, bool) = NULL;
     DWORD threadId = 0;
+    CRITICAL_SECTION cs;
+    CONDITION_VARIABLE cv;
+
     WindowsKeyboardHandler() {}
 
    public:
-    static std::function<void(int, bool)> callback;
-
     static BaseKeyboardHandler *getInstance() {
         if (!instance) instance = new WindowsKeyboardHandler();
         return instance;
@@ -71,25 +71,34 @@ class WindowsKeyboardHandler : BaseKeyboardHandler {
         return GetKeyState(vk) < 0;
     }
 
-    int startReadingEvents(std::function<void(int, bool)> callback) {
-        std::promise<int> p;
-        std::future<int> f = p.get_future();
-        std::thread th(readInThread, callback, std::move(p));
+    int startReadingEvents(void (*callback)(int, bool)) {
+        int ret = 0;
+        WindowsKeyboardHandler::callback = callback;
 
-        threadId = GetThreadId((HANDLE)th.native_handle());
+        InitializeCriticalSection (&cs);
+        InitializeConditionVariable (&cv);
+        
+        EnterCriticalSection(&cs);
+        CreateThread(NULL, 0, readInThread, (LPVOID)&ret, 0, &threadId);
+        SleepConditionVariableCS(&cv, &cs, INFINITE);
+        LeaveCriticalSection(&cs);
 
-        return f.get();
+        return ret;
     }
 
     void stopReadingEvents() { PostThreadMessage(threadId, WM_QUIT, 0, 0L); }
 
-    static void readInThread(std::function<void(int, bool)> callback, std::promise<int> &&p) {
+    static DWORD WINAPI readInThread(LPVOID data) {
         HHOOK hook = SetWindowsHookExW(WH_KEYBOARD_LL, LowLevelKeyboardProc, GetModuleHandleW(NULL), 0);
         if (hook == NULL) {
-            p.set_value(GetLastError());
-        } else {
-            p.set_value(0);
+            *(int *)data = GetLastError();
         }
+        data = NULL;  // Immediately remove pointer to the stack variable
+
+        auto handler = (WindowsKeyboardHandler *)WindowsKeyboardHandler::getInstance();
+        EnterCriticalSection(&handler->cs);
+        WakeConditionVariable(&handler->cv);
+        LeaveCriticalSection(&handler->cs);
 
         MSG msg;
         while (GetMessageW(&msg, NULL, 0, 0)) {
@@ -98,9 +107,10 @@ class WindowsKeyboardHandler : BaseKeyboardHandler {
         }
 
         UnhookWindowsHookEx(hook);
+        return 0;
     }
 
-    static LRESULT CALLBACK LowLevelKeyboardProc(_In_ int nCode, _In_ WPARAM wParam, _In_ LPARAM lParam) {
+    static LRESULT CALLBACK LowLevelKeyboardProc(int nCode, WPARAM wParam, LPARAM lParam) {
         tagKBDLLHOOKSTRUCT *keyInfo = (tagKBDLLHOOKSTRUCT *)lParam;
         int vk = keyInfo->vkCode;
 
@@ -147,7 +157,7 @@ class WindowsKeyboardHandler : BaseKeyboardHandler {
                 }
             }
 
-            ((WindowsKeyboardHandler *)WindowsKeyboardHandler::getInstance())->callback(scanCode, isPressed);
+            WindowsKeyboardHandler::callback(scanCode, isPressed);
         }
 
         return CallNextHookEx(NULL, nCode, wParam, lParam);
