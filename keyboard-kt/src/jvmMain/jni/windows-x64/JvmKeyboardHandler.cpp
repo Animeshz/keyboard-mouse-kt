@@ -13,6 +13,7 @@ extern "C" {
 
 JavaVM *jvm = NULL;
 jobject JvmKeyboardHandler = NULL;
+jmethodID emitEvent = NULL;
 
 JNIEXPORT jboolean JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_isCapsLockOn(JNIEnv *env, jobject obj) { return WindowsKeyboardHandler::getInstance()->isCapsLockOn(); }
 
@@ -30,19 +31,19 @@ JNIEXPORT jboolean JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_
     return WindowsKeyboardHandler::getInstance()->isPressed(scanCode);
 }
 
+void emitEventToJvm(int scanCode, bool isPressed) {
+    JNIEnv *newEnv;
+    if (jvm->AttachCurrentThread((void **)&newEnv, NULL) >= JNI_OK) {
+        newEnv->CallVoidMethod(JvmKeyboardHandler, emitEvent, scanCode, isPressed);
+    }
+}
+
 JNIEXPORT jint JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeStartReadingEvents(JNIEnv *env, jobject obj) {
     env->GetJavaVM(&jvm);
     JvmKeyboardHandler = env->NewGlobalRef(obj);
-    jmethodID emitEvent = env->GetMethodID(env->GetObjectClass(obj), "emitEvent", "(IZ)V");
-    
-    return WindowsKeyboardHandler::getInstance()->startReadingEvents(
-        [emitEvent](int scanCode, bool isPressed) {
-            JNIEnv *newEnv;
-            if (jvm->AttachCurrentThread((void **)&newEnv, NULL) >= JNI_OK && JvmKeyboardHandler != NULL) {
-                newEnv->CallVoidMethod(JvmKeyboardHandler, emitEvent, scanCode, isPressed);
-            }
-        }
-    );
+    emitEvent = env->GetMethodID(env->GetObjectClass(obj), "emitEvent", "(IZ)V");
+
+    return WindowsKeyboardHandler::getInstance()->startReadingEvents(emitEventToJvm);
 }
 
 JNIEXPORT void JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeStopReadingEvents(JNIEnv *env, jobject obj) {

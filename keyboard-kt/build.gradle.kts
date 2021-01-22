@@ -133,9 +133,9 @@ fun KotlinMultiplatformExtension.configureJvm() {
 
             val targets = listOf(
                 Target("windows", "x64", "animeshz/keyboard-mouse-kt:jni-build-windows-x64"),
-                Target("windows", "x86", "animeshz/keyboard-mouse-kt:jni-build-windows-x86"),
-                Target("linux", "x64", "animeshz/keyboard-mouse-kt:jni-build-linux-x64"),
-                Target("linux", "x86", "animeshz/keyboard-mouse-kt:jni-build-linux-x86")
+                Target("windows", "x86", "animeshz/keyboard-mouse-kt:jni-build-windows-x86")
+                // Target("linux", "x64", "animeshz/keyboard-mouse-kt:jni-build-linux-x64"),
+                // Target("linux", "x86", "animeshz/keyboard-mouse-kt:jni-build-linux-x86")
             )
 
             for (target in targets) {
