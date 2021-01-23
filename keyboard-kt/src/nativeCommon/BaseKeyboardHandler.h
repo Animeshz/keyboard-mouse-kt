@@ -1,5 +1,3 @@
-#include <functional>
-
 class BaseKeyboardHandler {
    public:
     virtual bool isCapsLockOn() = 0;

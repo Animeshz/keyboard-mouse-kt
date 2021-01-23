@@ -1,18 +1,15 @@
 #include <windows.h>
 #include <winuser.h>
 
-#include <cstdlib>
-#include <cstring>
-#include <functional>
-
 #include "../BaseKeyboardHandler.h"
 
 #define FAKE_ALT LLKHF_INJECTED | 0x20
 
+BaseKeyboardHandler *instance;
+void (*callback)(int, bool);
+
 class WindowsKeyboardHandler : BaseKeyboardHandler {
    private:
-    inline static WindowsKeyboardHandler *instance = NULL;
-    inline static void (*callback)(int, bool) = NULL;
     DWORD threadId = 0;
     CRITICAL_SECTION cs;
     CONDITION_VARIABLE cv;
@@ -21,8 +18,8 @@ class WindowsKeyboardHandler : BaseKeyboardHandler {
 
    public:
     static BaseKeyboardHandler *getInstance() {
-        if (!instance) instance = new WindowsKeyboardHandler();
-        return instance;
+        if (!::instance) ::instance = new WindowsKeyboardHandler();
+        return ::instance;
     }
 
     ~WindowsKeyboardHandler() { stopReadingEvents(); }
@@ -73,11 +70,11 @@ class WindowsKeyboardHandler : BaseKeyboardHandler {
 
     int startReadingEvents(void (*callback)(int, bool)) {
         int ret = 0;
-        WindowsKeyboardHandler::callback = callback;
+        ::callback = callback;
 
         InitializeCriticalSection (&cs);
         InitializeConditionVariable (&cv);
-        
+
         EnterCriticalSection(&cs);
         CreateThread(NULL, 0, readInThread, (LPVOID)&ret, 0, &threadId);
         SleepConditionVariableCS(&cv, &cs, INFINITE);
@@ -96,9 +93,9 @@ class WindowsKeyboardHandler : BaseKeyboardHandler {
         data = NULL;  // Immediately remove pointer to the stack variable
 
         auto handler = (WindowsKeyboardHandler *)WindowsKeyboardHandler::getInstance();
-        EnterCriticalSection(&handler->cs);
-        WakeConditionVariable(&handler->cv);
-        LeaveCriticalSection(&handler->cs);
+//        EnterCriticalSection(&handler->cs);
+//        WakeConditionVariable(&handler->cv);
+//        LeaveCriticalSection(&handler->cs);
 
         MSG msg;
         while (GetMessageW(&msg, NULL, 0, 0)) {
@@ -157,7 +154,7 @@ class WindowsKeyboardHandler : BaseKeyboardHandler {
                 }
             }
 
-            WindowsKeyboardHandler::callback(scanCode, isPressed);
+            ::callback(scanCode, isPressed);
         }
 
         return CallNextHookEx(NULL, nCode, wParam, lParam);
