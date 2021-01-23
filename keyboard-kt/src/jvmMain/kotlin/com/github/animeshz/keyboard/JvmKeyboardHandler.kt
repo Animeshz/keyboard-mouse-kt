@@ -4,7 +4,6 @@ import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlin.concurrent.thread
 
 @ExperimentalCoroutinesApi
 @ExperimentalKeyIO
@@ -33,12 +32,9 @@ internal object JvmKeyboardHandler : NativeKeyboardHandlerBase() {
     external override fun isScrollLockOn(): Boolean
 
     override fun startReadingEvents() {
-        thread {
-            val code = nativeStartReadingEvents()
-            if (code != 0) {
-                // Cannot throw, execute will consume it
-                IllegalStateException("Unable to set native hook. Error code: $code").printStackTrace()
-            }
+        val code = nativeStartReadingEvents()
+        if (code != 0) {
+            error("Unable to set native hook. Error code: $code")
         }
     }
 

@@ -7,13 +7,12 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s")
 
 include_directories(KeyboardKtx64 PRIVATE $ENV{JNI_HEADERS_DIR})
 include_directories(KeyboardKtx64 PRIVATE "../../generated/jni")
+include_directories(KeyboardKtx64 PRIVATE "../../../nativeCommon/linux")
 
 include_directories($ENV{X11_HEADERS_DIR})
 include_directories($ENV{X11_HEADERS_DIR}/extensions)
 
 add_library(
     KeyboardKtx64 SHARED
-    BaseKeyboardHandler.h
-    X11KeyboardHandler.cpp
     JvmKeyboardHandler.cpp
 )
