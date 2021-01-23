@@ -7,16 +7,25 @@ repositories {
     jcenter()
 }
 
+dependencies {
+    implementation(kotlin("gradle-plugin"))
+}
+
 gradlePlugin {
     plugins.register("keyboard-mouse-publishing") {
         id = "keyboard-mouse-publishing"
         implementationClass = "com.github.animeshz.keyboard_mouse.publishing.PublishingPlugin"
     }
 
-    plugins.register("class-loader-plugin") {
-        id = "class-loader-plugin"
-        implementationClass = "com.example.ClassLoaderPlugin"
+    plugins.register("keyboard-mouse-multiplatform-configuration") {
+        id = "keyboard-mouse-multiplatform-plugin"
+        implementationClass = "com.github.animeshz.keyboard_mouse.multiplatform_configuration.MppConfigurationPlugin"
     }
+
+//    plugins.register("keyboard-mouse-multiplatform-configuration") {
+//        id = "keyboard-mouse-multiplatform-plugin"
+//        implementationClass = "com.github.animeshz.keyboard_mouse.multiplatform_configuration.MppConfigurationPlugin"
+//    }
 
 //    plugins.register()
 }

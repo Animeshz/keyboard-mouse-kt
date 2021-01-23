@@ -10,7 +10,7 @@ import kotlin.system.exitProcess
 
 plugins {
     kotlin("multiplatform")
-    id("maven-publish")
+//    id("keyboard-mouse-multiplatform-configuration")
     id("keyboard-mouse-publishing")
     id("org.jlleitschuh.gradle.ktlint") version "9.4.1"
 }
@@ -134,9 +134,9 @@ fun KotlinMultiplatformExtension.configureJvm() {
 
             val targets = listOf(
                 Target("windows", "x64", "animeshz/keyboard-mouse-kt:jni-build-windows-x64"),
-                Target("windows", "x86", "animeshz/keyboard-mouse-kt:jni-build-windows-x86"),
-                Target("linux", "x64", "animeshz/keyboard-mouse-kt:jni-build-linux-x64"),
-                Target("linux", "x86", "animeshz/keyboard-mouse-kt:jni-build-linux-x86")
+                Target("windows", "x86", "animeshz/keyboard-mouse-kt:jni-build-windows-x86")
+//                Target("linux", "x64", "animeshz/keyboard-mouse-kt:jni-build-linux-x64"),
+//                Target("linux", "x86", "animeshz/keyboard-mouse-kt:jni-build-linux-x86")
             )
 
             for (target in targets) {
@@ -160,7 +160,7 @@ fun KotlinMultiplatformExtension.configureJvm() {
                                 "mkdir -p \$WORK_DIR/project/build/jni && " +
                                     "mkdir -p \$WORK_DIR/project/build/tmp/compile-jni-${target.os}-${target.arch} && " +
                                     "cd \$WORK_DIR/project/build/tmp/compile-jni-${target.os}-${target.arch} && " +
-                                    "cmake \$WORK_DIR/project/src/jvmMain/jni/${target.os}-${target.arch} && " +
+                                    "cmake -DARCH=${target.arch} \$WORK_DIR/project/src/jvmMain/jni/${target.os} && " +
                                     "cmake --build . --config Release && " + // optional --verbose, need to find a way
                                     "cp -rf libKeyboardKt${target.arch}.{dll,so,dylib} \$WORK_DIR/project/build/jni 2>/dev/null || : && " +
                                     "cd .. && rm -rf compile-jni-${target.os}-${target.arch}"
@@ -187,7 +187,8 @@ fun KotlinMultiplatformExtension.configureJvm() {
                     } while (error.startsWith(nonDaemonError))
                 }
 
-                if (exit != 0) throw GradleException(error)
+                System.err.println(error)
+                if (exit != 0) throw GradleException("An error occured while running the command, see the stderr for more details.")
             }
         }
     }

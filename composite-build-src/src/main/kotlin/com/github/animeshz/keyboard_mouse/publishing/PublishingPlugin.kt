@@ -4,7 +4,10 @@ import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.withType
+
+const val projectUrl = "https://github.com/Animeshz/keyboard-mouse-kt"
 
 open class PublishingConfigurationExtension  {
     var repository: String? = null
@@ -15,13 +18,12 @@ open class PublishingConfigurationExtension  {
 class PublishingPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         val ext = target.extensions.create("publishingConfig", PublishingConfigurationExtension::class.java)
+        target.apply(plugin = "maven-publish")
 
         target.afterEvaluate {
             val repository = ext.repository ?: error("publishingConfig.repository must not be null")
 
             target.extensions.configure<PublishingExtension>("publishing") {
-                val projectUrl = "https://github.com/Animeshz/keyboard-mouse-kt"
-
                 repositories {
                     maven {
                         setUrl(repository)
