@@ -9,7 +9,7 @@ import org.gradle.kotlin.dsl.withType
 
 const val projectUrl = "https://github.com/Animeshz/keyboard-mouse-kt"
 
-open class PublishingConfigurationExtension  {
+open class PublishingConfigurationExtension {
     var repository: String? = null
     var username: String? = null
     var password: String? = null
