@@ -132,13 +132,13 @@ class X11KeyboardHandler : BaseKeyboardHandler {
         return keyStates[xKeyCode / 8] & (1 << (xKeyCode % 8));
     }
 
-    int startReadingEvents(std::function<void(int, bool)> callback) {
+    int startReadingEvents(void (*callback)(int, bool)) {
         std::thread th(&X11KeyboardHandler::readInThread, this, callback);
 
         return 0;
     }
 
-    void readInThread(std::function<void(int, bool)> callback) {
+    void readInThread(void (*callback)(int, bool)) {
         Window root = XDefaultRootWindow(display);
         XIEventMask *xiMask = new XIEventMask;
         xiMask->deviceid = XIAllMasterDevices;

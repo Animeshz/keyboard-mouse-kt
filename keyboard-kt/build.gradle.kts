@@ -133,9 +133,9 @@ fun KotlinMultiplatformExtension.configureJvm() {
 
             val targets = listOf(
                 Target("windows", "x64", "animeshz/keyboard-mouse-kt:jni-build-windows-x64"),
-                Target("windows", "x86", "animeshz/keyboard-mouse-kt:jni-build-windows-x86")
-                // Target("linux", "x64", "animeshz/keyboard-mouse-kt:jni-build-linux-x64"),
-                // Target("linux", "x86", "animeshz/keyboard-mouse-kt:jni-build-linux-x86")
+                Target("windows", "x86", "animeshz/keyboard-mouse-kt:jni-build-windows-x86"),
+                Target("linux", "x64", "animeshz/keyboard-mouse-kt:jni-build-linux-x64"),
+                Target("linux", "x86", "animeshz/keyboard-mouse-kt:jni-build-linux-x86")
             )
 
             for (target in targets) {
@@ -160,7 +160,7 @@ fun KotlinMultiplatformExtension.configureJvm() {
                                     "mkdir -p \$WORK_DIR/project/build/tmp/compile-jni-${target.os}-${target.arch} && " +
                                     "cd \$WORK_DIR/project/build/tmp/compile-jni-${target.os}-${target.arch} && " +
                                     "cmake \$WORK_DIR/project/src/jvmMain/jni/${target.os}-${target.arch} && " +
-                                    "cmake --build . --config Release && " +
+                                    "cmake --build . --verbose --config Release && " + // optional --verbose, need to find a way
                                     "cp -rf libKeyboardKt${target.arch}.{dll,so,dylib} \$WORK_DIR/project/build/jni 2>/dev/null || : && " +
                                     "cd .. && rm -rf compile-jni-${target.os}-${target.arch}"
                             )
