@@ -1,3 +1,4 @@
+#include <new>
 #include <windows.h>
 #include <winuser.h>
 
@@ -18,11 +19,13 @@ class WindowsKeyboardHandler : BaseKeyboardHandler {
 
    public:
     static BaseKeyboardHandler *getInstance() {
-        if (!::instance) ::instance = new WindowsKeyboardHandler();
+        if (!::instance) {
+            // Hack to avoid `libstdc++-6.dll` a ~2MB GNU's stdlib that is not bundled in windows.
+            ::instance = (WindowsKeyboardHandler *) malloc(sizeof(WindowsKeyboardHandler));
+            new(::instance) WindowsKeyboardHandler;
+        }
         return ::instance;
     }
-
-    ~WindowsKeyboardHandler() { stopReadingEvents(); }
 
     bool isCapsLockOn() { return GetKeyState(0x14) & 1; }
 
@@ -93,9 +96,9 @@ class WindowsKeyboardHandler : BaseKeyboardHandler {
         data = NULL;  // Immediately remove pointer to the stack variable
 
         auto handler = (WindowsKeyboardHandler *)WindowsKeyboardHandler::getInstance();
-//        EnterCriticalSection(&handler->cs);
-//        WakeConditionVariable(&handler->cv);
-//        LeaveCriticalSection(&handler->cs);
+        EnterCriticalSection(&handler->cs);
+        WakeConditionVariable(&handler->cv);
+        LeaveCriticalSection(&handler->cs);
 
         MSG msg;
         while (GetMessageW(&msg, NULL, 0, 0)) {

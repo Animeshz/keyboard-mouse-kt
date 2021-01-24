@@ -30,7 +30,7 @@ class ConfigurationPlugin : Plugin<Project> {
                 .register<JniHeaderGenerationTask>("generateJniHeaders", extension.headers).get()
 
             with(extension.compilation) {
-                if (baseInputPath.isEmpty() || outputDir.isEmpty() || targets.isEmpty()) return@afterEvaluate
+                if (baseInputPaths.isEmpty() || outputDir.isEmpty() || targets.isEmpty()) return@afterEvaluate
             }
 
             extension.compilation.targets.forEach { target ->
@@ -40,7 +40,7 @@ class ConfigurationPlugin : Plugin<Project> {
                     .configure {
                         dockerImage = target.dockerImage
 
-                        inputs.dir(extension.compilation.baseInputPath / target.os)
+                        for (path in extension.compilation.baseInputPaths) inputs.dir(path / target.os)
                         outputs.dir(extension.compilation.outputDir)
 
                         dependsOn(headersTask)

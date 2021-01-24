@@ -25,7 +25,7 @@ open class JniHeaderConfiguration {
 }
 
 open class JniCompilationConfiguration {
-    var baseInputPath: String = ""
+    var baseInputPaths: List<String> = emptyList()
     var outputDir: String = ""
     var targets: List<Target> = emptyList()
 }
