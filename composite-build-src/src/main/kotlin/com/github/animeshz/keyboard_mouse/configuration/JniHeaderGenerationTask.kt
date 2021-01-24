@@ -25,23 +25,8 @@ open class JniHeaderGenerationTask @Inject constructor(
         dependsOn(project.tasks.getByName("compileKotlinJvm"))
     }
 
-    private fun check() {
-        println("Checking docker installation")
-
-        val exit = project.exec {
-            commandLine(if (Os.isFamily(Os.FAMILY_WINDOWS)) listOf("cmd", "/c", "where", "docker") else listOf("which", "docker"))
-            isIgnoreExitValue = true
-        }.exitValue
-        if (exit != 0) {
-            println("Please install docker before running this task")
-            exitProcess(1)
-        }
-    }
-
     @TaskAction
     fun run() {
-        check()
-
         val javaHome = Jvm.current().javaHome
         val javap = javaHome.resolve("bin").walk().firstOrNull { it.name.startsWith("javap") }?.absolutePath ?: error("javap not found")
         val javac = javaHome.resolve("bin").walk().firstOrNull { it.name.startsWith("javac") }?.absolutePath ?: error("javac not found")

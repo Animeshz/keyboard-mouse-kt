@@ -8,6 +8,7 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
+import kotlin.system.exitProcess
 
 /**
  * For building shared libraries out of C/C++ sources
@@ -25,8 +26,23 @@ open class JniCompilationTask @Inject constructor(
 
     var dockerImage: String = ""
 
+    private fun check() {
+        println("Checking docker installation")
+
+        val exit = project.exec {
+            commandLine(if (Os.isFamily(Os.FAMILY_WINDOWS)) listOf("cmd", "/c", "where", "docker") else listOf("which", "docker"))
+            isIgnoreExitValue = true
+        }.exitValue
+        if (exit != 0) {
+            println("Please install docker before running this task")
+            exitProcess(1)
+        }
+    }
+
     @TaskAction
     fun run() {
+        check()
+
         val tmpVar = project.file(".").absolutePath
         val path = if (Os.isFamily(Os.FAMILY_WINDOWS)) {
             "/run/desktop/mnt/host/${tmpVar[0].toLowerCase()}${tmpVar.substring(2 until tmpVar.length).replace('\\', '/')}"

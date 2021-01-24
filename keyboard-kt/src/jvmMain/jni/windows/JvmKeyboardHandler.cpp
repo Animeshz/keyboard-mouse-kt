@@ -1,7 +1,3 @@
-#include <stdio.h>
-
-#include <string>
-
 #include "WindowsKeybaordHandler.cpp"
 #include "com_github_animeshz_keyboard_JvmKeyboardHandler.h"
 
