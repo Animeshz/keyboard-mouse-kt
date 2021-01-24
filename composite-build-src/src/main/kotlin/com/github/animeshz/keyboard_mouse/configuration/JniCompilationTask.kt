@@ -1,11 +1,11 @@
 package com.github.animeshz.keyboard_mouse.configuration
 
-import groovy.cli.Option
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.options.Option
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
 import kotlin.system.exitProcess
@@ -20,8 +20,7 @@ open class JniCompilationTask @Inject constructor(
         group = "jni"
     }
 
-    @get:Input
-    @set:Option(shortName = "verbose", description = "Configures the URL to be verified.")
+    @Option(option = "verbose", description = "Configures the URL to be verified.")
     var isVerbose: Boolean = false
 
     var dockerImage: String = ""

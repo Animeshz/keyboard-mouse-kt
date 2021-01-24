@@ -99,7 +99,7 @@ configureJni {
         outputDir = "src/jvmMain/generated/jni"
     }
     compilation {
-        baseInputPath = "src/jvmMain/jni"
+        baseInputPaths = listOf("src/jvmMain/jni", "src/nativeCommon")
         outputDir = "build/jni"
 
         targets = listOf(
