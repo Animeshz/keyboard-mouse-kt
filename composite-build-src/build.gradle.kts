@@ -17,15 +17,8 @@ gradlePlugin {
         implementationClass = "com.github.animeshz.keyboard_mouse.publishing.PublishingPlugin"
     }
 
-    plugins.register("keyboard-mouse-configuration") {
-        id = "keyboard-mouse-configuration"
-        implementationClass = "com.github.animeshz.keyboard_mouse.configuration.ConfigurationPlugin"
+    plugins.register("keyboard-mouse-native-compile") {
+        id = "keyboard-mouse-native-compile"
+        implementationClass = "com.github.animeshz.keyboard_mouse.native_compile.NativeCompilationPlugin"
     }
-
-//    plugins.register("keyboard-mouse-multiplatform-configuration") {
-//        id = "keyboard-mouse-multiplatform-plugin"
-//        implementationClass = "com.github.animeshz.keyboard_mouse.multiplatform_configuration.MppConfigurationPlugin"
-//    }
-
-//    plugins.register()
 }

@@ -1,6 +1,5 @@
 package com.github.animeshz.keyboard
 
-import com.github.animeshz.keyboard.NativeUtils.nApiNativeHandler
 import com.github.animeshz.keyboard.entity.Key
 import com.github.animeshz.keyboard.events.KeyEvent
 import com.github.animeshz.keyboard.events.KeyState
@@ -12,20 +11,20 @@ import kotlinx.coroutines.flow.onEach
 @ExperimentalKeyIO
 internal object KotlinJsKeyboardHandler : NativeKeyboardHandlerBase() {
     override fun sendEvent(keyEvent: KeyEvent) {
-        nApiNativeHandler.send(keyEvent.key.keyCode, keyEvent.state.isPressed())
+        NApiNativeHandler.send(keyEvent.key.keyCode, keyEvent.state.isPressed())
     }
 
     override fun getKeyState(key: Key): KeyState =
-        nApiNativeHandler.isPressed(key.keyCode).toKeyState()
+        NApiNativeHandler.isPressed(key.keyCode).toKeyState()
 
-    override fun isCapsLockOn(): Boolean = nApiNativeHandler.isCapsLockOn()
+    override fun isCapsLockOn(): Boolean = NApiNativeHandler.isCapsLockOn()
 
-    override fun isNumLockOn(): Boolean = nApiNativeHandler.isNumLockOn()
+    override fun isNumLockOn(): Boolean = NApiNativeHandler.isNumLockOn()
 
-    override fun isScrollLockOn(): Boolean = nApiNativeHandler.isScrollLockOn()
+    override fun isScrollLockOn(): Boolean = NApiNativeHandler.isScrollLockOn()
 
     override fun startReadingEvents() {
-        val code = nApiNativeHandler.startReadingEvents { scanCode, isPressed ->
+        val code = NApiNativeHandler.startReadingEvents { scanCode, isPressed ->
             eventsInternal.tryEmit(KeyEvent(Key.fromKeyCode(scanCode), isPressed.toKeyState()))
         }
 
@@ -34,7 +33,7 @@ internal object KotlinJsKeyboardHandler : NativeKeyboardHandlerBase() {
         }
     }
 
-    override fun stopReadingEvents() = nApiNativeHandler.stopReadingEvents()
+    override fun stopReadingEvents() = NApiNativeHandler.stopReadingEvents()
 }
 
 @ExperimentalKeyIO
