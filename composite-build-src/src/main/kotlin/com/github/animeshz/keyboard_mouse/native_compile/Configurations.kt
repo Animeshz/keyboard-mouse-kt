@@ -1,4 +1,4 @@
-package com.github.animeshz.keyboard_mouse.configuration
+package com.github.animeshz.keyboard_mouse.native_compile
 
 class Target(
     val os: String,

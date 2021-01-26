@@ -1,4 +1,4 @@
-package com.github.animeshz.keyboard_mouse.configuration
+package com.github.animeshz.keyboard_mouse.native_compile
 
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -9,7 +9,7 @@ import org.gradle.kotlin.dsl.getValue
 import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 
-class ConfigurationPlugin : Plugin<Project> {
+class NativeCompilationPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         target.apply(plugin = "org.jetbrains.kotlin.multiplatform")
         val ext = target.extensions.create("configureJni", JniConfiguration::class.java)

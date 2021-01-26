@@ -1,4 +1,4 @@
-package com.github.animeshz.keyboard_mouse.configuration
+package com.github.animeshz.keyboard_mouse.native_compile
 
 import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.DefaultTask

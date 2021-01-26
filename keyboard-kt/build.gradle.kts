@@ -1,12 +1,12 @@
 @file:Suppress("UNUSED_VARIABLE")
 
-import com.github.animeshz.keyboard_mouse.configuration.Target
+import com.github.animeshz.keyboard_mouse.native_compile.Target
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 
 plugins {
     kotlin("multiplatform")
-    id("keyboard-mouse-configuration")
+    id("keyboard-mouse-native-compile")
     id("keyboard-mouse-publishing")
     id("org.jlleitschuh.gradle.ktlint") version "9.4.1"
 }
@@ -54,11 +54,7 @@ kotlin {
             }
         }
 
-        val jsMain by sourceSets.getting {
-            dependencies {
-                implementation(devNpm("node-addon-api", "*"))
-            }
-        }
+        val jsMain by sourceSets.getting { dependsOn(commonMain) }
         val jsTest by sourceSets.getting {
             dependsOn(commonTest)
             dependsOn(jsMain)
@@ -99,7 +95,7 @@ configureJni {
         outputDir = "src/jvmMain/generated/jni"
     }
     compilation {
-        baseInputPaths = listOf("src/jvmMain/jni", "src/nativeCommon")
+        baseInputPaths = listOf("src/jvmMain/cpp", "src/nativeCommon")
         outputDir = "build/jni"
 
         targets = listOf(
