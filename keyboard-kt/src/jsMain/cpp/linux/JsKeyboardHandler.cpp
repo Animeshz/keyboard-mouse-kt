@@ -1,6 +1,6 @@
 #include <napi.h>
 
-#include "WindowsKeyboardHandler.cpp"
+#include "LinuxKeyboardHandler.cpp"
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,32 +22,37 @@ void Send(const Napi::CallbackInfo& info) {
     int scanCode = info[0].As<Napi::Number>().Int32Value();
     bool isPressed = info[0].As<Napi::Boolean>().Value();
 
-    WindowsKeyboardHandler::getInstance()->sendEvent(scanCode, isPressed);
+    LinuxKeyboardHandler::getInstance()->sendEvent(scanCode, isPressed);
 }
 
 Napi::Value IsPressed(const Napi::CallbackInfo& info) {
     int scanCode = info[0].As<Napi::Number>().Int32Value();
 
-    bool res = WindowsKeyboardHandler::getInstance()->isPressed(scanCode);
+    bool res = LinuxKeyboardHandler::getInstance()->isPressed(scanCode);
     return Napi::Boolean::New(info.Env(), res);
 }
 
 Napi::Value IsCapsLockOn(const Napi::CallbackInfo& info) {
-    bool res = WindowsKeyboardHandler::getInstance()->isCapsLockOn();
+    bool res = LinuxKeyboardHandler::getInstance()->isCapsLockOn();
     return Napi::Boolean::New(info.Env(), res);
 }
 
 Napi::Value IsNumLockOn(const Napi::CallbackInfo& info) {
-    bool res = WindowsKeyboardHandler::getInstance()->isNumLockOn();
+    bool res = LinuxKeyboardHandler::getInstance()->isNumLockOn();
     return Napi::Boolean::New(info.Env(), res);
 }
 
 Napi::Value IsScrollLockOn(const Napi::CallbackInfo& info) {
-    bool res = WindowsKeyboardHandler::getInstance()->isScrollLockOn();
+    bool res = LinuxKeyboardHandler::getInstance()->isScrollLockOn();
     return Napi::Boolean::New(info.Env(), res);
 }
 
-Napi::Value Init(const Napi::CallbackInfo& info) { return Napi::Number::New(info.Env(), 0); }
+Napi::Value Init(const Napi::CallbackInfo& info) {
+    int ret = 1;
+    if (LinuxKeyboardHandler::getInstance() != NULL) ret = 0;
+
+    return Napi::Number::New(info.Env(), ret);
+}
 
 void EmitEventToJs(Napi::Env env, Napi::Function callback, std::nullptr_t* context, EventData* data) {
     if (env != NULL && callback != NULL && data != NULL) {
@@ -71,11 +76,11 @@ Napi::Value StartReadingEvents(const Napi::CallbackInfo& info) {
     Napi::Env env = info.Env();
     ts_callback = TSFN::New(env, info[0].As<Napi::Function>(), "StartReadingEvents", 0, 1);
 
-    int res = WindowsKeyboardHandler::getInstance()->startReadingEvents(EmitEventToTSCallback);
+    int res = LinuxKeyboardHandler::getInstance()->startReadingEvents(EmitEventToTSCallback);
     return Napi::Number::New(env, res);
 }
 
-void StopReadingEvents(const Napi::CallbackInfo& info) { WindowsKeyboardHandler::getInstance()->stopReadingEvents(); }
+void StopReadingEvents(const Napi::CallbackInfo& info) { LinuxKeyboardHandler::getInstance()->stopReadingEvents(); }
 
 Napi::Object InitModule(Napi::Env env, Napi::Object exports) {
     exports["send"] = Napi::Function::New(env, Send);
@@ -90,7 +95,7 @@ Napi::Object InitModule(Napi::Env env, Napi::Object exports) {
     return exports;
 }
 
-NODE_API_MODULE(KeyboardKtWindows##ARCH, InitModule)
+NODE_API_MODULE(KeyboardKtLinux##ARCH, InitModule)
 
 #ifdef __cplusplus
 }

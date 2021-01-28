@@ -6,25 +6,25 @@
 
 #define FAKE_ALT LLKHF_INJECTED | 0x20
 
-BaseKeyboardHandler *instance;
-void (*callback)(int, bool);
-
 class WindowsKeyboardHandler : BaseKeyboardHandler {
    private:
     DWORD threadId = 0;
     CRITICAL_SECTION cs;
     CONDITION_VARIABLE cv;
 
+    static WindowsKeyboardHandler *instance;
+    void (*callback)(int, bool);
+
     WindowsKeyboardHandler() {}
 
    public:
     static BaseKeyboardHandler *getInstance() {
-        if (!::instance) {
+        if (!instance) {
             // Hack to avoid `libstdc++-6.dll` a ~2MB GNU's stdlib that is not bundled in windows.
-            ::instance = (WindowsKeyboardHandler *) malloc(sizeof(WindowsKeyboardHandler));
-            new(::instance) WindowsKeyboardHandler;
+            instance = (WindowsKeyboardHandler *) malloc(sizeof(WindowsKeyboardHandler));
+            new(instance) WindowsKeyboardHandler;
         }
-        return ::instance;
+        return instance;
     }
 
     bool isCapsLockOn() { return GetKeyState(0x14) & 1; }
@@ -73,7 +73,7 @@ class WindowsKeyboardHandler : BaseKeyboardHandler {
 
     int startReadingEvents(void (*callback)(int, bool)) {
         int ret = 0;
-        ::callback = callback;
+        this->callback = callback;
 
         InitializeCriticalSection (&cs);
         InitializeConditionVariable (&cv);
@@ -95,10 +95,9 @@ class WindowsKeyboardHandler : BaseKeyboardHandler {
         }
         data = NULL;  // Immediately remove pointer to the stack variable
 
-        auto handler = (WindowsKeyboardHandler *)WindowsKeyboardHandler::getInstance();
-        EnterCriticalSection(&handler->cs);
-        WakeConditionVariable(&handler->cv);
-        LeaveCriticalSection(&handler->cs);
+        EnterCriticalSection(&instance->cs);
+        WakeConditionVariable(&instance->cv);
+        LeaveCriticalSection(&instance->cs);
 
         MSG msg;
         while (GetMessageW(&msg, NULL, 0, 0)) {
@@ -157,9 +156,11 @@ class WindowsKeyboardHandler : BaseKeyboardHandler {
                 }
             }
 
-            ::callback(scanCode, isPressed);
+            instance->callback(scanCode, isPressed);
         }
 
         return CallNextHookEx(NULL, nCode, wParam, lParam);
     }
 };
+
+WindowsKeyboardHandler *WindowsKeyboardHandler::instance = NULL;

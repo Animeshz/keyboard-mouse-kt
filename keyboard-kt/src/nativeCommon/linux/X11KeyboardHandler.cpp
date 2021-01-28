@@ -4,8 +4,10 @@
 #include <dlfcn.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <functional>
+#include <future>
 #include <thread>
 
 #include "../BaseKeyboardHandler.h"
@@ -16,16 +18,20 @@ class X11KeyboardHandler : BaseKeyboardHandler {
     void *xInput2;
     void *xTest;
     Display *display;
-    int xiOpcode;
-    volatile bool stopReading = false;
 
-    X11KeyboardHandler(void *x11, void *xInput2, void *xTest, Display *display,
-                       int xiOpcode) {
+    std::condition_variable cv;
+    std::mutex cv_m;
+    bool stopReading;
+
+    static X11KeyboardHandler *instance;
+    void (*callback)(int, bool);
+
+    X11KeyboardHandler(void *x11, void *xInput2, void *xTest,
+                       Display *display) {
         this->x11 = x11;
         this->xInput2 = xInput2;
         this->xTest = xTest;
         this->display = display;
-        this->xiOpcode = xiOpcode;
     }
 
     inline int toggleStates() {
@@ -34,38 +40,36 @@ class X11KeyboardHandler : BaseKeyboardHandler {
         return mask.led_mask;
     }
 
-   public:
-    static BaseKeyboardHandler *Create() {
+    static void Create() {
         if (getenv("DISPLAY") == NULL) {
-            return NULL;
+            return;
         }
 
         void *x11 = dlopen("libX11.so.6", RTLD_GLOBAL | RTLD_LAZY);
         if (x11 == NULL) {
-            return NULL;
+            return;
         }
 
         void *xInput2 = dlopen("libXi.so.6", RTLD_GLOBAL | RTLD_LAZY);
         if (xInput2 == NULL) {
             dlclose(x11);
-            return NULL;
+            return;
         }
 
         void *xTest = dlopen("libXtst.so.6", RTLD_GLOBAL | RTLD_LAZY);
         if (xTest == NULL) {
             dlclose(x11);
             dlclose(xInput2);
-            return NULL;
+            return;
         }
 
         // Check XInput2 functions are present, since libXi may contain XInput
         // or XInput2.
-        void *f = dlsym(xInput2, "XISelectEvents");
-        if (f == NULL) {
+        if (dlsym(xInput2, "XISelectEvents") == NULL) {
             dlclose(x11);
             dlclose(xInput2);
             dlclose(xTest);
-            return NULL;
+            return;
         }
 
         // Load definitions
@@ -87,21 +91,109 @@ class X11KeyboardHandler : BaseKeyboardHandler {
 
         dlsym(xTest, "XTestFakeKeyEvent");
 
-        Display *display = XOpenDisplay(NULL);
+        std::promise<Display *> p;
+        auto f = p.get_future();
+        std::thread t(setupDisplayAndReadWhenRequired, std::move(p));
+        t.detach();
+        Display *display = f.get();
+
         if (display == NULL) {
             dlclose(x11);
             dlclose(xInput2);
             dlclose(xTest);
-            return NULL;
+            return;
+        }
+
+        instance = new X11KeyboardHandler(x11, xInput2, xTest, display);
+
+        // Wait till we've done setting up the masks
+        std::unique_lock<std::mutex> lk(instance->cv_m);
+        instance->cv.wait(lk);
+    }
+
+    static void setupDisplayAndReadWhenRequired(std::promise<Display *> &&p) {
+        Display *display = XOpenDisplay(NULL);
+        p.set_value(display);
+
+        if (display == NULL) {
+            return;
         }
 
         int xiOpcode;
-        int queryEvent;
-        int queryError;
-        XQueryExtension(display, "XInputExtension", &xiOpcode, &queryEvent,
-                        &queryError);
 
-        return new X11KeyboardHandler(x11, xInput2, xTest, display, xiOpcode);
+        // Discard single use variables from stack as we don't need them
+        {
+            int queryEvent;
+            int queryError;
+            XQueryExtension(display, "XInputExtension", &xiOpcode, &queryEvent,
+                            &queryError);
+
+            Window root = XDefaultRootWindow(display);
+            int maskLen = XIMaskLen(XI_LASTEVENT);
+            unsigned char mask[maskLen];
+
+            XIEventMask xiMask;
+            xiMask.deviceid = XIAllMasterDevices;
+            xiMask.mask_len = maskLen;
+            xiMask.mask = mask;
+
+            XISetMask(xiMask.mask, XI_RawKeyPress);
+            XISetMask(xiMask.mask, XI_RawKeyRelease);
+            XISelectEvents(display, root, &xiMask, 1);
+            XSync(display, 0);
+        }
+
+        X11KeyboardHandler *handler;
+        while ((handler = instance) == NULL) {
+            // We shouldn't fall here, but who knows?
+            usleep(20);
+        }
+
+        // Notify we've set up masking, so the handler becomes usable.
+        handler->cv.notify_all();
+
+        std::unique_lock<std::mutex> lk(handler->cv_m);
+        while (true) {
+            // Wait till we asked to collect the events
+            handler->cv.wait(lk);
+
+            handler->stopReading = false;
+
+            // Clear old events in the queue.
+            XSync(display, 1);
+            XEvent event;
+
+            while (true) {
+                XNextEvent(display, &event);
+                if (handler->stopReading) break;
+
+                XGenericEventCookie cookie = event.xcookie;
+                if (cookie.type != GenericEvent || cookie.extension != xiOpcode)
+                    continue;
+
+                if (XGetEventData(display, &cookie)) {
+                    bool keyEventType;
+                    if (cookie.evtype == XI_RawKeyPress)
+                        keyEventType = 1;
+                    else if (cookie.evtype == XI_RawKeyRelease)
+                        keyEventType = 0;
+                    else
+                        continue;
+
+                    XIRawEvent *cookieData = (XIRawEvent *)cookie.data;
+                    handler->callback(cookieData->detail - 8, keyEventType);
+                }
+
+                XFreeEventData(display, &cookie);
+            }
+        }
+    }
+
+   public:
+    static BaseKeyboardHandler *getInstance() {
+        if (!instance) Create();
+
+        return instance;
     }
 
     ~X11KeyboardHandler() {
@@ -133,52 +225,13 @@ class X11KeyboardHandler : BaseKeyboardHandler {
     }
 
     int startReadingEvents(void (*callback)(int, bool)) {
-        std::thread th(&X11KeyboardHandler::readInThread, this, callback);
+        {
+            std::lock_guard<std::mutex> lk(cv_m);
+            this->callback = callback;
+        }
+        cv.notify_all();
 
         return 0;
-    }
-
-    void readInThread(void (*callback)(int, bool)) {
-        Window root = XDefaultRootWindow(display);
-        XIEventMask *xiMask = new XIEventMask;
-        xiMask->deviceid = XIAllMasterDevices;
-        xiMask->mask_len = XIMaskLen(XI_LASTEVENT);
-        xiMask->mask = new unsigned char[xiMask->mask_len]();
-
-        XISetMask(xiMask->mask, XI_RawKeyPress);
-        XISetMask(xiMask->mask, XI_RawKeyRelease);
-        XISelectEvents(display, root, xiMask, 1);
-        XSync(display, 0);
-
-        delete[] xiMask->mask;
-        delete xiMask;
-
-        stopReading = false;
-        XEvent event;
-
-        while (true) {
-            XNextEvent(display, &event);
-            if (stopReading) break;
-
-            XGenericEventCookie cookie = event.xcookie;
-            if (cookie.type != GenericEvent || cookie.extension != xiOpcode)
-                continue;
-
-            if (XGetEventData(display, &cookie)) {
-                bool keyEventType;
-                if (cookie.evtype == XI_RawKeyPress)
-                    keyEventType = 1;
-                else if (cookie.evtype == XI_RawKeyRelease)
-                    keyEventType = 0;
-                else
-                    continue;
-
-                XIRawEvent *cookieData = (XIRawEvent *)cookie.data;
-                callback(cookieData->detail - 8, keyEventType);
-            }
-
-            XFreeEventData(display, &cookie);
-        }
     }
 
     void stopReadingEvents() {
@@ -195,3 +248,5 @@ class X11KeyboardHandler : BaseKeyboardHandler {
         XFlush(display);
     }
 };
+
+X11KeyboardHandler *X11KeyboardHandler::instance = NULL;

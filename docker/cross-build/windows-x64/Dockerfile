@@ -15,7 +15,7 @@ RUN \
     curl \
     python3 \
     nodejs && \
-    npm install -g node-gyp && \
+    npm install -g cmake-js && \
     mkdir -p ${JNI_HEADERS_DIR} && \
     cd ${JNI_HEADERS_DIR} && \
     curl 'https://raw.githubusercontent.com/openjdk/jdk/master/src/java.base/share/native/include/jni.h' > jni.h && \
