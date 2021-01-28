@@ -15,6 +15,6 @@ include_directories($ENV{X11_HEADERS_DIR})
 include_directories($ENV{X11_HEADERS_DIR}/extensions)
 
 add_library(
-    KeyboardKt${ARCH} SHARED
+    ${PROJECT_NAME}${ARCH} SHARED
     JvmKeyboardHandler.cpp
 )

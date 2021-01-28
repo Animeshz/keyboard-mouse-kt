@@ -64,7 +64,7 @@ open class JniCompilationTask @Inject constructor(
                         "mkdir -p \$WORK_DIR/project/build/jni && " +
                             "mkdir -p \$WORK_DIR/project/build/tmp/compile-jni-${target.os}-${target.arch} && " +
                             "cd \$WORK_DIR/project/build/tmp/compile-jni-${target.os}-${target.arch} && " +
-                            "cmake -DARCH=${target.arch} \$WORK_DIR/project/src/jvmMain/jni/${target.os} && " +
+                            "cmake -DARCH=${target.arch} \$WORK_DIR/project/src/jvmMain/cpp/${target.os} && " +
                             "cmake --build . ${if (isVerbose) "--verbose " else ""}--config Release && " +
                             "cp -rf libKeyboardKt${target.arch}.{dll,so,dylib} \$WORK_DIR/project/build/jni 2>/dev/null || : && " +
                             "cd .. && rm -rf compile-jni-${target.os}-${target.arch}"

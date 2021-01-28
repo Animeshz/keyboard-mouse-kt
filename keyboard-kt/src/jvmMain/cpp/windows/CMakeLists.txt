@@ -14,6 +14,6 @@ include_directories("../../generated/jni")
 include_directories("../../../nativeCommon/windows")
 
 add_library(
-    KeyboardKt${ARCH} SHARED
+    ${PROJECT_NAME}${ARCH} SHARED
     JvmKeyboardHandler.cpp
 )

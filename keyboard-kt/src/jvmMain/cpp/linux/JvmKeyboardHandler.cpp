@@ -1,36 +1,31 @@
-#include "X11KeyboardHandler.cpp"
+#include "LinuxKeyboardHandler.cpp"
 #include "com_github_animeshz_keyboard_JvmKeyboardHandler.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-BaseKeyboardHandler *handler = NULL;
 JavaVM *jvm = NULL;
 jobject JvmKeyboardHandler = NULL;
 jmethodID emitEvent = NULL;
 
 JNIEXPORT jint JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeInit(JNIEnv *env, jobject obj) {
-    handler = X11KeyboardHandler::Create();
-    if (handler != NULL) return 0;
-
-    // handler = DeviceKeyboardHandler.Create();
-    // if (handler != NULL) return 0;
+    if (LinuxKeyboardHandler::getInstance() != NULL) return 0;
 
     return 1;
 }
 
-JNIEXPORT jboolean JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_isCapsLockOn(JNIEnv *env, jobject obj) { return handler->isCapsLockOn(); }
+JNIEXPORT jboolean JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_isCapsLockOn(JNIEnv *env, jobject obj) { return LinuxKeyboardHandler::getInstance()->isCapsLockOn(); }
 
-JNIEXPORT jboolean JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_isNumLockOn(JNIEnv *env, jobject obj) { return handler->isNumLockOn(); }
+JNIEXPORT jboolean JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_isNumLockOn(JNIEnv *env, jobject obj) { return LinuxKeyboardHandler::getInstance()->isNumLockOn(); }
 
 JNIEXPORT jboolean JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_isScrollLockOn(JNIEnv *env, jobject obj) { return 0; }
 
 JNIEXPORT void JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeSendEvent(JNIEnv *env, jobject obj, jint scanCode, jboolean isPressed) {
-    return handler->sendEvent(scanCode, isPressed);
+    return LinuxKeyboardHandler::getInstance()->sendEvent(scanCode, isPressed);
 }
 
-JNIEXPORT jboolean JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeIsPressed(JNIEnv *env, jobject obj, jint scanCode) { return handler->isPressed(scanCode); }
+JNIEXPORT jboolean JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeIsPressed(JNIEnv *env, jobject obj, jint scanCode) { return LinuxKeyboardHandler::getInstance()->isPressed(scanCode); }
 
 void emitEventToJvm(int scanCode, bool isPressed) {
     JNIEnv *newEnv;
@@ -44,11 +39,11 @@ JNIEXPORT jint JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nati
     JvmKeyboardHandler = env->NewGlobalRef(obj);
     emitEvent = env->GetMethodID(env->GetObjectClass(obj), "emitEvent", "(IZ)V");
 
-    return handler->startReadingEvents(emitEventToJvm);
+    return LinuxKeyboardHandler::getInstance()->startReadingEvents(emitEventToJvm);
 }
 
 JNIEXPORT void JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeStopReadingEvents(JNIEnv *env, jobject obj) {
-    return handler->stopReadingEvents();
+    return LinuxKeyboardHandler::getInstance()->stopReadingEvents();
 
     env->DeleteGlobalRef(JvmKeyboardHandler);
     JvmKeyboardHandler = NULL;
