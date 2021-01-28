@@ -9,6 +9,8 @@ option(ARCH "architecture")
 
 add_definitions(-D_WIN32_WINNT=0x600)
 add_definitions(-DNAPI_VERSION=5)
+add_definitions(-DARCH=${ARCH})
+
 include_directories(${CMAKE_JS_INC})
 include_directories($ENV{NODE_ADDON_API_HEADERS_DIR})
 include_directories("../../../nativeCommon/windows")

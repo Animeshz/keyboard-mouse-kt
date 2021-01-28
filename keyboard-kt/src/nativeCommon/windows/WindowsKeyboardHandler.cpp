@@ -19,12 +19,12 @@ class WindowsKeyboardHandler : BaseKeyboardHandler {
 
    public:
     static BaseKeyboardHandler *getInstance() {
-        if (!::instance) {
+        if (!instance) {
             // Hack to avoid `libstdc++-6.dll` a ~2MB GNU's stdlib that is not bundled in windows.
-            ::instance = (WindowsKeyboardHandler *) malloc(sizeof(WindowsKeyboardHandler));
-            new(::instance) WindowsKeyboardHandler;
+            instance = (WindowsKeyboardHandler *) malloc(sizeof(WindowsKeyboardHandler));
+            new(instance) WindowsKeyboardHandler;
         }
-        return ::instance;
+        return instance;
     }
 
     bool isCapsLockOn() { return GetKeyState(0x14) & 1; }
@@ -73,7 +73,7 @@ class WindowsKeyboardHandler : BaseKeyboardHandler {
 
     int startReadingEvents(void (*callback)(int, bool)) {
         int ret = 0;
-        ::callback = callback;
+        this->callback = callback;
 
         InitializeCriticalSection (&cs);
         InitializeConditionVariable (&cv);

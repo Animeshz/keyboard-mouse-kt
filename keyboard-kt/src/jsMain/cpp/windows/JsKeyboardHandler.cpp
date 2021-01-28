@@ -90,8 +90,7 @@ Napi::Object InitModule(Napi::Env env, Napi::Object exports) {
     return exports;
 }
 
-// Put a preprocessor to append arch
-NODE_API_MODULE(KeyboardKtWindows, InitModule)
+NODE_API_MODULE(KeyboardKtWindows##ARCH, InitModule)
 
 #ifdef __cplusplus
 }

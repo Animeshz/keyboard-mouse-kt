@@ -42,25 +42,25 @@ class X11KeyboardHandler : BaseKeyboardHandler {
 
     static void Create() {
         if (getenv("DISPLAY") == NULL) {
-            return NULL;
+            return;
         }
 
         void *x11 = dlopen("libX11.so.6", RTLD_GLOBAL | RTLD_LAZY);
         if (x11 == NULL) {
-            return NULL;
+            return;
         }
 
         void *xInput2 = dlopen("libXi.so.6", RTLD_GLOBAL | RTLD_LAZY);
         if (xInput2 == NULL) {
             dlclose(x11);
-            return NULL;
+            return;
         }
 
         void *xTest = dlopen("libXtst.so.6", RTLD_GLOBAL | RTLD_LAZY);
         if (xTest == NULL) {
             dlclose(x11);
             dlclose(xInput2);
-            return NULL;
+            return;
         }
 
         // Check XInput2 functions are present, since libXi may contain XInput
@@ -69,7 +69,7 @@ class X11KeyboardHandler : BaseKeyboardHandler {
             dlclose(x11);
             dlclose(xInput2);
             dlclose(xTest);
-            return NULL;
+            return;
         }
 
         // Load definitions
@@ -101,13 +101,13 @@ class X11KeyboardHandler : BaseKeyboardHandler {
             dlclose(x11);
             dlclose(xInput2);
             dlclose(xTest);
-            return NULL;
+            return;
         }
 
         instance = new X11KeyboardHandler(x11, xInput2, xTest, display);
-        
+
         // Wait till we've done setting up the masks
-        std::lock_guard<std::mutex> lk(instance->cv_m);
+        std::unique_lock<std::mutex> lk(instance->cv_m);
         instance->cv.wait(lk);
     }
 
@@ -133,13 +133,13 @@ class X11KeyboardHandler : BaseKeyboardHandler {
             unsigned char mask[maskLen];
 
             XIEventMask xiMask;
-            xiMask->deviceid = XIAllMasterDevices;
-            xiMask->mask_len = maskLen;
-            xiMask->mask = mask;
+            xiMask.deviceid = XIAllMasterDevices;
+            xiMask.mask_len = maskLen;
+            xiMask.mask = mask;
 
-            XISetMask(xiMask->mask, XI_RawKeyPress);
-            XISetMask(xiMask->mask, XI_RawKeyRelease);
-            XISelectEvents(display, root, xiMask, 1);
+            XISetMask(xiMask.mask, XI_RawKeyPress);
+            XISetMask(xiMask.mask, XI_RawKeyRelease);
+            XISelectEvents(display, root, &xiMask, 1);
             XSync(display, 0);
         }
 

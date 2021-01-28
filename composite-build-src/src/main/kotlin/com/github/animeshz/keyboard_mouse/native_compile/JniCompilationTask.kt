@@ -20,7 +20,8 @@ open class JniCompilationTask @Inject constructor(
         group = "jni"
     }
 
-    @Option(option = "verbose", description = "Configures the URL to be verified.")
+    @get:Input
+    @set:Option(option = "verbose", description = "Configures the URL to be verified.")
     var isVerbose: Boolean = false
 
     var dockerImage: String = ""
