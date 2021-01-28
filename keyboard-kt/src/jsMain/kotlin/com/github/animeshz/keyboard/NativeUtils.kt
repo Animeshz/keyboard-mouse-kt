@@ -3,8 +3,8 @@ package com.github.animeshz.keyboard
 public external fun require(module: String): dynamic
 
 private val suffix = when(val architecture = arch()) {
-    "x64" -> "X64"
-    "x32" -> "X86"
+    "x64" -> "x64"
+    "x32" -> "x86"
     else -> error("Non x86 architectures are not supported, current architecture: $architecture")
 }
 private val identifier = when(val platform = platform()) {
@@ -15,11 +15,11 @@ private val identifier = when(val platform = platform()) {
 }
 
 @ExperimentalKeyIO
-internal val NApiNativeHandler: NApiNativeHandlerI =
-    require("./lib/KeyboardKt$identifier$suffix.node").unsafeCast<NApiNativeHandlerI>()
+internal val NApiNativeHandler: INApiNativeHandler =
+    require("./lib/KeyboardKt$identifier$suffix.node").unsafeCast<INApiNativeHandler>()
 
 @ExperimentalKeyIO
-internal interface NApiNativeHandlerI {
+internal interface INApiNativeHandler {
     fun send(scanCode: Int, isPressed: Boolean)
     fun isPressed(scanCode: Int): Boolean
 

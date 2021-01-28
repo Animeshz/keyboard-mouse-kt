@@ -10,6 +10,12 @@ import kotlinx.coroutines.flow.onEach
 
 @ExperimentalKeyIO
 internal object KotlinJsKeyboardHandler : NativeKeyboardHandlerBase() {
+    init {
+        if (NApiNativeHandler.init() != 0) {
+            error("Native initialization failed")
+        }
+    }
+
     override fun sendEvent(keyEvent: KeyEvent) {
         NApiNativeHandler.send(keyEvent.key.keyCode, keyEvent.state.isPressed())
     }

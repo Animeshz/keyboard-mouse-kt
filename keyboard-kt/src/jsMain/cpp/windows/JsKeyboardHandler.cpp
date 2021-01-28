@@ -90,7 +90,8 @@ Napi::Object InitModule(Napi::Env env, Napi::Object exports) {
     return exports;
 }
 
-NODE_API_MODULE(KeyboardKtWindows##ARCH, InitModule)
+#define MODULE_NAME KeyboardKtWindows ## ARCH
+NODE_API_MODULE(MODULE_NAME, InitModule)
 
 #ifdef __cplusplus
 }

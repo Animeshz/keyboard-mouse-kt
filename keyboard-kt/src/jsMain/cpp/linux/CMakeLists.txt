@@ -7,6 +7,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s")
 
 option(ARCH "architecture")
 
+set(TARGET ${PROJECT_NAME}Linux${ARCH})
+
 add_definitions(-DARCH=${ARCH})
 
 include_directories(${CMAKE_JS_INC})
@@ -14,10 +16,10 @@ include_directories($ENV{NODE_ADDON_API_HEADERS_DIR})
 include_directories("../../../nativeCommon/linux")
 
 add_library(
-    ${PROJECT_NAME}${ARCH} SHARED
+    ${TARGET} SHARED
     JsKeyboardHandler.cpp
     ${CMAKE_JS_SRC}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
-target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB})
+set_target_properties(${TARGET} PROPERTIES PREFIX "" SUFFIX ".node")
+target_link_libraries(${TARGET} ${CMAKE_JS_LIB})
