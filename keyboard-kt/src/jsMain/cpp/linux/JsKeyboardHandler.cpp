@@ -95,7 +95,8 @@ Napi::Object InitModule(Napi::Env env, Napi::Object exports) {
     return exports;
 }
 
-NODE_API_MODULE(KeyboardKtLinux##ARCH, InitModule)
+#define MODULE_NAME KeyboardKtLinux ## ARCH
+NODE_API_MODULE(MODULE_NAME, InitModule)
 
 #ifdef __cplusplus
 }

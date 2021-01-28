@@ -14,10 +14,10 @@ include_directories($ENV{NODE_ADDON_API_HEADERS_DIR})
 include_directories("../../../nativeCommon/linux")
 
 add_library(
-    ${PROJECT_NAME}${ARCH} SHARED
+    ${PROJECT_NAME}Linux${ARCH} SHARED
     JsKeyboardHandler.cpp
     ${CMAKE_JS_SRC}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
-target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB})
+set_target_properties(${PROJECT_NAME}Linux${ARCH} PROPERTIES PREFIX "" SUFFIX ".node")
+target_link_libraries(${PROJECT_NAME}Linux${ARCH} ${CMAKE_JS_LIB})

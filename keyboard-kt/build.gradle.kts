@@ -89,20 +89,34 @@ publishingConfig {
     password = System.getenv("BINTRAY_KEY")
 }
 
-configureJni {
-    headers {
-        inputDir = "src/jvmMain/kotlin"
-        outputDir = "src/jvmMain/generated/jni"
+nativeCompilation {
+    jni {
+        headers {
+            inputDir = "src/jvmMain/kotlin"
+            outputDir = "src/jvmMain/generated/jni"
+        }
+        compilation {
+            baseInputPaths = listOf("src/jvmMain/cpp", "src/nativeCommon")
+            outputDir = "build/jni"
+
+            targets = listOf(
+                Target("windows", "x64", "animeshz/keyboard-mouse-kt:cross-build-windows-x64"),
+                Target("windows", "x86", "animeshz/keyboard-mouse-kt:jni-build-windows-x86"),
+                Target("linux", "x64", "animeshz/keyboard-mouse-kt:cross-build-linux-x64"),
+                Target("linux", "x86", "animeshz/keyboard-mouse-kt:cross-build-linux-x86")
+            )
+        }
     }
-    compilation {
-        baseInputPaths = listOf("src/jvmMain/cpp", "src/nativeCommon")
+
+    napi {
+        baseInputPaths = listOf("src/jsMain/cpp", "src/nativeCommon")
         outputDir = "build/jni"
 
         targets = listOf(
-            Target("windows", "x64", "animeshz/keyboard-mouse-kt:jni-build-windows-x64"),
+            Target("windows", "x64", "animeshz/keyboard-mouse-kt:cross-build-windows-x64"),
             Target("windows", "x86", "animeshz/keyboard-mouse-kt:jni-build-windows-x86"),
-            Target("linux", "x64", "animeshz/keyboard-mouse-kt:jni-build-linux-x64"),
-            Target("linux", "x86", "animeshz/keyboard-mouse-kt:jni-build-linux-x86")
+            Target("linux", "x64", "animeshz/keyboard-mouse-kt:cross-build-linux-x64"),
+            Target("linux", "x86", "animeshz/keyboard-mouse-kt:cross-build-linux-x86")
         )
     }
 }

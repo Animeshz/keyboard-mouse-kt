@@ -17,7 +17,7 @@ open class JniHeaderGenerationTask @Inject constructor(
     val methodRegex = """.*\bnative\b.*""".toRegex()
 
     init {
-        group = "jni"
+        group = "nativeCompilation"
 
         inputs.dir(configuration.inputDir)
         outputs.dir(configuration.outputDir)

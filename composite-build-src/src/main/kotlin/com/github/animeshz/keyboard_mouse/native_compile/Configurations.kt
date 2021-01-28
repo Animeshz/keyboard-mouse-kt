@@ -6,6 +6,19 @@ class Target(
     val dockerImage: String
 )
 
+open class NativeConfiguration {
+    val jni = JniConfiguration()
+    val napi = JsCompilationConfiguration()
+
+    fun jni(configuration: JniConfiguration.() -> Unit) {
+        jni.apply(configuration)
+    }
+
+    fun napi(configuration: JsCompilationConfiguration.() -> Unit) {
+        napi.apply(configuration)
+    }
+}
+
 open class JniConfiguration {
     val headers: JniHeaderConfiguration = JniHeaderConfiguration()
     val compilation: JniCompilationConfiguration = JniCompilationConfiguration()
@@ -25,6 +38,12 @@ open class JniHeaderConfiguration {
 }
 
 open class JniCompilationConfiguration {
+    var baseInputPaths: List<String> = emptyList()
+    var outputDir: String = ""
+    var targets: List<Target> = emptyList()
+}
+
+open class JsCompilationConfiguration {
     var baseInputPaths: List<String> = emptyList()
     var outputDir: String = ""
     var targets: List<Target> = emptyList()

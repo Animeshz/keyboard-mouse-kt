@@ -16,10 +16,10 @@ include_directories($ENV{NODE_ADDON_API_HEADERS_DIR})
 include_directories("../../../nativeCommon/windows")
 
 add_library(
-    ${PROJECT_NAME}${ARCH} SHARED
+    ${PROJECT_NAME}Windows${ARCH} SHARED
     JsKeyboardHandler.cpp
     ${CMAKE_JS_SRC}
 )
 
-set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
-target_link_libraries(${PROJECT_NAME} ${CMAKE_JS_LIB})
+set_target_properties(${PROJECT_NAME}Windows${ARCH} PROPERTIES PREFIX "" SUFFIX ".node")
+target_link_libraries(${PROJECT_NAME}Windows${ARCH} ${CMAKE_JS_LIB})

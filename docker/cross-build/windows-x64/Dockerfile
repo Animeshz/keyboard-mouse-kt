@@ -10,7 +10,6 @@ ENV NODE_ADDON_API_HEADERS_DIR=${WORK_DIR}/support-files/headers/node-addon-api
 RUN \
     apt-get update && \
     curl -sL https://deb.nodesource.com/setup_lts.x | bash - && \
-    apt-get install -f && \
     apt-get install --no-install-recommends --yes \
     curl \
     python3 \
