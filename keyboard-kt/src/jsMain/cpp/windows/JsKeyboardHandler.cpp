@@ -55,12 +55,12 @@ void EmitEventToJs(Napi::Env env, Napi::Function callback, std::nullptr_t* conte
     }
 
     if (data != NULL) {
-        delete data;
+        free(data);
     }
 }
 
 void EmitEventToTSCallback(int scanCode, bool isPressed) {
-    EventData* data = new EventData;
+    EventData* data = (EventData *) malloc(sizeof(EventData));
     data->scanCode = scanCode;
     data->isPressed = isPressed;
 

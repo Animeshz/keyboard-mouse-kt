@@ -4,7 +4,7 @@ plugins {
 
 allprojects {
     this.group = "com.github.animeshz"
-    this.version = "0.2.5"
+    this.version = "0.3.0"
 
     repositories {
         mavenCentral()

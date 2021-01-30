@@ -1,0 +1,33 @@
+{
+  "name": "keyboard-kt",
+  "description": "A lightweight multiplatform library for interacting with global keyboard and mouse events and states from Kotlin, Java and NodeJS.",
+  "keywords": [
+    "kotlin",
+    "kotlin",
+    "java",
+    "keyboard",
+    "mouse",
+    "java-native-interface",
+    "hotkey",
+    "multiplatform",
+    "keyboard-listeners",
+    "global-events",
+    "keyboard-events",
+    "mouse-events",
+    "keyboard-hooks",
+    "keyboard-state",
+    "multiplatform-kotlin-library"
+  ],
+  "homepage": "https://animeshz.github.io/keyboard-mouse-kt",
+  "licence": "MIT",
+  "author": {
+    "name": "Animesh Sahu",
+    "email": "animeshsahu19@yahoo.com"
+  },
+  "repository": {
+    "url": "git+https://animeshz.github.io/keyboard-mouse-kt.git"
+  },
+  "bugs": {
+    "url": "https://animeshz.github.io/keyboard-mouse-kt/issues"
+  }
+}
