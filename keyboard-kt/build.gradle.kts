@@ -8,6 +8,7 @@ plugins {
     kotlin("multiplatform")
     id("keyboard-mouse-native-compile")
     id("keyboard-mouse-publishing")
+    id("lt.petuska.npm.publish") version "1.0.4"
     id("org.jlleitschuh.gradle.ktlint") version "9.4.1"
 }
 
@@ -87,6 +88,29 @@ publishingConfig {
     repository = "https://api.bintray.com/maven/animeshz/maven/keyboard-kt/;publish=1;override=1"
     username = System.getenv("BINTRAY_USER")
     password = System.getenv("BINTRAY_KEY")
+}
+
+npmPublishing {
+    repositories {
+        repository("npmjs") {
+            registry = uri("https://registry.npmjs.org")
+            authToken = System.getenv("NPM_TOKEN")
+        }
+    }
+
+    publications {
+        val js by getting {
+            files {
+                from(project.file("build/napi"))
+            }
+
+            packageJsonFile = project.file("src/jsMain/package.template.json")
+            packageJson {
+                version = project.version as String
+                readme = rootProject.file("README.md")
+            }
+        }
+    }
 }
 
 nativeCompilation {

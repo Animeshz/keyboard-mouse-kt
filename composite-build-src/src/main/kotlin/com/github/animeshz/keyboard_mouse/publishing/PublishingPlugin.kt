@@ -21,7 +21,7 @@ class PublishingPlugin : Plugin<Project> {
         target.apply(plugin = "maven-publish")
 
         target.afterEvaluate {
-            val repository = ext.repository ?: error("publishingConfig.repository must not be null")
+            val repository = ext.repository ?: return@afterEvaluate println("publishingConfig.repository is missing, skipping...")
 
             target.extensions.configure<PublishingExtension>("publishing") {
                 repositories {
