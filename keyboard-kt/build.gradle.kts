@@ -110,13 +110,13 @@ nativeCompilation {
 
     napi {
         baseInputPaths = listOf("src/jsMain/cpp", "src/nativeCommon")
-        outputDir = "build/jni"
+        outputDir = "build/napi"
 
         targets = listOf(
             Target("windows", "x64", "animeshz/keyboard-mouse-kt:cross-build-windows-x64"),
             Target("windows", "x86", "animeshz/keyboard-mouse-kt:cross-build-windows-x86"),
             Target("linux", "x64", "animeshz/keyboard-mouse-kt:cross-build-linux-x64")
-            // NodeJS doesn't ship in x86, so people must be building the nodejs theirselves, so supporting it is not really necessary for now
+            // NodeJS doesn't ship in x86, so people must be building the nodejs their selves, so supporting it is not really necessary for now
             // Target("linux", "x86", "animeshz/keyboard-mouse-kt:cross-build-linux-x86")
         )
     }

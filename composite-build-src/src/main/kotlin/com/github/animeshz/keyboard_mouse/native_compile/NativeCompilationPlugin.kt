@@ -7,7 +7,8 @@ import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.creating
 import org.gradle.kotlin.dsl.getValue
 import org.gradle.kotlin.dsl.register
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.gradle.kotlin.dsl.withType
+import org.gradle.language.jvm.tasks.ProcessResources
 
 class NativeCompilationPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -25,8 +26,6 @@ class NativeCompilationPlugin : Plugin<Project> {
             }
 
             val compileJniAll by project.tasks.creating { group = "nativeCompilation" }
-            project.tasks.getByName("jvmProcessResources") { dependsOn(compileJniAll) }
-
             val headersTask = project.tasks
                 .register<JniHeaderGenerationTask>("generateJniHeaders", extension.headers).get()
 
@@ -46,8 +45,9 @@ class NativeCompilationPlugin : Plugin<Project> {
                     }
             }
 
-            project.configure<KotlinMultiplatformExtension> {
-                sourceSets.getByName("jvmMain").resources.srcDir(extension.compilation.outputDir)
+            tasks.withType<ProcessResources>().named("jvmProcessResources") {
+                dependsOn(compileJniAll)
+                from(project.file(extension.compilation.outputDir))
             }
         }
     }
@@ -70,7 +70,10 @@ class NativeCompilationPlugin : Plugin<Project> {
                     }
             }
 
-            // Specify the js include dir
+            tasks.withType<ProcessResources>().named("jsProcessResources") {
+                dependsOn(compileNapiAll)
+                from(project.file(extension.outputDir))
+            }
         }
     }
 

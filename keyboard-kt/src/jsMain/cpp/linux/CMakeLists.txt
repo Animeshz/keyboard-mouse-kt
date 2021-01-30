@@ -7,7 +7,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s")
 
 option(ARCH "architecture")
 
-set(TARGET ${PROJECT_NAME}Windows${ARCH})
+set(TARGET ${PROJECT_NAME}Linux${ARCH})
 
 add_definitions(-DARCH=${ARCH})
 
