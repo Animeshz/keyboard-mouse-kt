@@ -47,8 +47,8 @@ open class NapiCompilationTask @Inject constructor(
                         "bash",
                         "-c",
                         "mkdir -p \$WORK_DIR/project/build/napi && " +
-                            "cmake-js --arch=${target.arch} --CDARCH=${target.arch} ${if (isVerbose) "-l=verbose " else ""} -d=\$WORK_DIR/project/src/jsMain/cpp/${target.os} && " +
-                            "cp -rf \$WORK_DIR/project/src/jsMain/cpp/${target.os}/build/Release/KeyboardKt${target.os.capitalize()}${target.arch}.node \$WORK_DIR/project/build/napi 2>/dev/null || : && " +
+                            "cmake-js compile --CDARCH=${target.arch} --arch=${target.arch} ${if (isVerbose) "-l=verbose " else ""} -d=\$WORK_DIR/project/src/jsMain/cpp/${target.os} && " +
+                            "cp -rf \$WORK_DIR/project/src/jsMain/cpp/${target.os}/build/{Release/,}KeyboardKt${target.os.capitalize()}${target.arch}.node \$WORK_DIR/project/build/napi 2>/dev/null || : && " +
                             "rm -rf \$WORK_DIR/project/src/jsMain/cpp/${target.os}/build"
                     )
 
