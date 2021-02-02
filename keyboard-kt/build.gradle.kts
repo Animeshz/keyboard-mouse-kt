@@ -2,13 +2,14 @@
 
 import com.github.animeshz.keyboard_mouse.native_compile.Target
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 
 plugins {
     kotlin("multiplatform")
     id("keyboard-mouse-native-compile")
     id("keyboard-mouse-publishing")
-    id("lt.petuska.npm.publish") version "1.0.4"
+    id("lt.petuska.npm.publish") version "1.1.1"
     id("org.jlleitschuh.gradle.ktlint") version "9.4.1"
 }
 
@@ -104,7 +105,9 @@ npmPublishing {
                 from(project.file("build/napi"))
             }
 
-            packageJsonFile = project.file("src/jsMain/package.template.json")
+            bundleKotlinDependencies = false
+            shrinkwrapBundledDependencies = false
+            packageJsonTemplateFile = project.file("src/jsMain/package.template.json")
             packageJson {
                 version = project.version as String
                 readme = rootProject.file("README.md")
@@ -157,6 +160,10 @@ tasks.withType<AbstractTestTask> {
 tasks.withType<KotlinJvmCompile> {
     kotlinOptions.jvmTarget = "1.8"
 }
+tasks.withType<KotlinJsCompile> {
+    kotlinOptions.sourceMap = false
+}
+
 tasks.getByName<Test>("jvmTest") {
     useJUnitPlatform()
 }

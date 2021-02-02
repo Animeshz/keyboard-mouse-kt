@@ -130,7 +130,7 @@ class X11KeyboardHandler : BaseKeyboardHandler {
 
             Window root = XDefaultRootWindow(display);
             int maskLen = XIMaskLen(XI_LASTEVENT);
-            unsigned char mask[maskLen];
+            unsigned char mask[maskLen] = { 0 };
 
             XIEventMask xiMask;
             xiMask.deviceid = XIAllMasterDevices;
