@@ -70,12 +70,12 @@ public object JsKeyboardHandler {
     }
 
     @JsName("send")
-    public fun NativeKeyboardHandler.sendEvent(key: String, isPressed: Boolean): Unit =
+    public fun sendEvent(key: String, isPressed: Boolean): Unit =
         KotlinJsKeyboardHandler.sendEvent(KeyEvent(key.toKey(), isPressed.toKeyState()))
 
     @JsName("getKeyState")
-    public fun NativeKeyboardHandler.getKeyState(key: String): Boolean =
-        getKeyState(key.toKey()).isPressed()
+    public fun getKeyState(key: String): Boolean =
+        KotlinJsKeyboardHandler.getKeyState(key.toKey()).isPressed()
 
     @JsName("isCapsLockOn")
     public fun isCapsLockOn(): Boolean = KotlinJsKeyboardHandler.isCapsLockOn()

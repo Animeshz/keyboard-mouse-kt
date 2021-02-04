@@ -4,6 +4,8 @@
 
 **Java:** High Level API depends on [JKeyboard][4].
 
+**NodeJS:** High Level API depends on [JsKeyboard][5].
+
 ## Adding a shortcut (Hotkey).
 
 === "Kotlin"
@@ -13,6 +15,13 @@
     }
     ```
     <sup>**Note: The lambda is in suspend context, launched in context provided at time of instantiation of Keyboard (defaults to Dispatchers.Default).**</sup>
+
+=== "NodeJS"
+    ```js
+    keyboard.addShortcut('LeftCtrl + E', true,
+        () => console.log("triggered")
+    );
+    ```
 
 === "Java 8"
     ```java
@@ -42,6 +51,11 @@
     keyboard.send(Key.LeftAlt + Key.M)
     ```
 
+=== "NodeJS"
+    ```js
+    keyboard.send('LeftAlt + M');
+    ```
+
 === "Java 8"
     ```java
     Set<Key> keys = new HashSet<>();
@@ -64,6 +78,11 @@
     keyboard.write("Hello Keyboard!")
     ```
 
+=== "NodeJS"
+    ```js
+    keyboard.write('Hello Keyboard!');
+    ```
+
 === "Java 8 or above"
     ```java
     keyboard.write("Hello Keyboard!");
@@ -76,6 +95,11 @@ Suspensive wait in Kotlin, whereas asynchronous `CompletableFuture<>` for Java
 === "Kotlin"
     ```kotlin
     keyboard.awaitTill(Key.LeftCtrl + Key.LeftShift + Key.R, trigger = KeyState.KeyDown)
+    ```
+
+=== "NodeJS"
+    ```js
+    await keyboard.completeWhenPressed('LeftCtrl + LeftShift + R');
     ```
 
 === "Java 8"
@@ -109,6 +133,11 @@ Recorded KeyPresses is pushed into a [KeyPressSequence][1] (`List<Duration, KeyE
     val records: KeyPressSequence = keyboard.recordTill(Key.LeftAlt + Key.A)
     ```
 
+=== "NodeJS"
+    ```js
+    const records = await keyboard.recordKeyPressesTill('LeftCtrl + LeftShift + R');
+    ```
+
 === "Java 8"
     ```java
     Set<Key> keys = new HashSet<>();
@@ -134,6 +163,11 @@ Recorded KeyPresses is pushed into a [KeyPressSequence][1] (`List<Duration, KeyE
     keyboard.play(records, speedFactor = 1.25)
     ```
 
+=== "NodeJS"
+    ```js
+    await keyboard.play(records, 1.0);
+    ```
+
 === "Java 8 or above"
     ```java
     CompletableFuture<Unit> onFinish = keyboard.play(records, 1.25)
@@ -148,3 +182,5 @@ Recorded KeyPresses is pushed into a [KeyPressSequence][1] (`List<Duration, KeyE
 [3]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/KeySet.kt
 
 [4]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/integration/keyboard-kt-jdk8/src/main/kotlin/com/github/animeshz/keyboard/JKeyboard.kt
+
+[5]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard-kt/src/jsMain/kotlin/com/github/animeshz/keyboard/JsKeyboard.kt

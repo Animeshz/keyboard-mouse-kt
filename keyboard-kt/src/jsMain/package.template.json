@@ -1,6 +1,16 @@
 {
   "name": "keyboard-kt",
   "description": "A lightweight multiplatform library for interacting with global keyboard and mouse events and states from Kotlin, Java and NodeJS.",
+  "dependencies": {
+    "kotlinx-coroutines-core": "*",
+    "kotlinx-atomicfu": "*",
+    "kotlin": "*",
+    "kotlin-test-js-runner": "*",
+    "kotlin-test": "*"
+  },
+  "devDependencies": {
+    "dukat": "0.5.8-rc.3"
+  },
   "keywords": [
     "kotlin",
     "kotlin",

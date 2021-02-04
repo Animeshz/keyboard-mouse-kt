@@ -15,9 +15,12 @@ plugins {
 
 kotlin {
     jvm()
-    js {
+    js(IR) {
+        moduleName = "keyboard-kt"
+
         useCommonJs()
         nodejs()
+        binaries.library()
     }
     linuxX64 {
         val main by compilations.getting
