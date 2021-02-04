@@ -1,224 +1,34 @@
 @file:Suppress("UNUSED_VARIABLE")
 
-import org.apache.tools.ant.taskdefs.condition.Os
+import com.github.animeshz.keyboard_mouse.native_compile.Target
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
-import org.gradle.internal.jvm.Jvm
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import java.io.ByteArrayOutputStream
-import kotlin.system.exitProcess
+import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile
 
 plugins {
     kotlin("multiplatform")
-    id("maven-publish")
+    id("keyboard-mouse-native-compile")
+    id("keyboard-mouse-publishing")
+    id("lt.petuska.npm.publish") version "1.1.1"
     id("org.jlleitschuh.gradle.ktlint") version "9.4.1"
 }
 
-val mainSourceSets = mutableListOf<org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet>()
-val testSourceSets = mutableListOf<org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet>()
-
-fun KotlinMultiplatformExtension.configureJvm() {
+kotlin {
     jvm()
-    tasks.withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "1.8"
+    js(IR) {
+        moduleName = "keyboard-kt"
+
+        useCommonJs()
+        nodejs()
+        binaries.library()
     }
-    tasks.getByName<Test>("jvmTest") {
-        useJUnitPlatform()
-    }
-
-    val jvmMain by sourceSets.getting
-    val jvmTest by sourceSets.getting {
-        dependsOn(jvmMain)
-        dependencies {
-            implementation(kotlin("test-junit5"))
-            runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
-            implementation("io.kotest:kotest-assertions-core:4.3.2")
-        }
-    }
-    mainSourceSets.add(jvmMain)
-    testSourceSets.add(jvmTest)
-
-    // JNI-C++ configuration
-    val jniHeaderDirectory = file("src/jvmMain/generated/jni").apply { mkdirs() }
-    jvmMain.resources.srcDir("build/jni")
-
-    val generateJniHeaders by tasks.creating {
-        group = "build"
-        dependsOn(tasks.getByName("compileKotlinJvm"))
-
-        // For caching
-        inputs.dir("src/jvmMain/kotlin")
-        outputs.dir("src/jvmMain/generated/jni")
-
-        doLast {
-            val javaHome = Jvm.current().javaHome
-            val javap = javaHome.resolve("bin").walk().firstOrNull { it.name.startsWith("javap") }?.absolutePath ?: error("javap not found")
-            val javac = javaHome.resolve("bin").walk().firstOrNull { it.name.startsWith("javac") }?.absolutePath ?: error("javac not found")
-            val buildDir = file("build/classes/kotlin/jvm/main")
-            val tmpDir = file("build/tmp/jvmJni").apply { mkdirs() }
-
-            buildDir.walkTopDown()
-                .filter { "META" !in it.absolutePath }
-                .forEach { file ->
-                    if (!file.isFile) return@forEach
-
-                    val output = ByteArrayOutputStream().use {
-                        project.exec {
-                            commandLine(javap, "-private", "-cp", buildDir.absolutePath, file.absolutePath)
-                            standardOutput = it
-                        }.assertNormalExitValue()
-                        it.toString()
-                    }
-
-                    val (packageName, className, methodInfo) =
-                        """public \w*\s*class (.+)\.(\w+) (?:implements|extends).*\{\R([^\}]*)\}""".toRegex().find(output)?.destructured ?: return@forEach
-                    val nativeMethods =
-                        """.*\bnative\b.*""".toRegex().findAll(methodInfo).mapNotNull { it.groups }.flatMap { it.asSequence().mapNotNull { group -> group?.value } }.toList()
-                    if (nativeMethods.isEmpty()) return@forEach
-
-                    val source = buildString {
-                        appendln("package $packageName;")
-                        appendln("public class $className {")
-                        for (method in nativeMethods) {
-                            if ("()" in method) appendln(method)
-                            else {
-                                val updatedMethod = StringBuilder(method).apply {
-                                    var count = 0
-                                    var i = 0
-                                    while (i < length) {
-                                        if (this[i] == ',' || this[i] == ')') insert(i, " arg${count++}".also { i += it.length + 1 })
-                                        else i++
-                                    }
-                                }
-                                appendln(updatedMethod)
-                            }
-                        }
-                        appendln("}")
-                    }
-                    val outputFile = tmpDir.resolve(packageName.replace(".", "/")).apply { mkdirs() }.resolve("$className.java").apply { delete() }.apply { createNewFile() }
-                    outputFile.writeText(source)
-
-                    project.exec {
-                        commandLine(javac, "-h", jniHeaderDirectory.absolutePath, outputFile.absolutePath)
-                    }.assertNormalExitValue()
-                }
-        }
-    }
-
-    // For building shared libraries out of C/C++ sources
-    val compileJni by tasks.creating {
-        group = "build"
-        dependsOn(generateJniHeaders)
-        tasks.getByName("jvmProcessResources").dependsOn(this)
-
-        // For caching
-        inputs.dir("src/jvmMain/jni")
-        outputs.dir("build/jni")
-
-        doFirst {
-            println("Checking docker installation")
-
-            val exit = project.exec {
-                commandLine(if (Os.isFamily(Os.FAMILY_WINDOWS)) listOf("cmd", "/c", "where", "docker") else listOf("which", "docker"))
-                isIgnoreExitValue = true
-            }.exitValue
-            if (exit != 0) {
-                println("Please install docker before running this task")
-                exitProcess(1)
-            }
-        }
-
-        doLast {
-            class Target(val os: String, val arch: String, val dockerImage: String)
-
-            val targets = listOf(
-                Target("windows", "x64", "animeshz/keyboard-mouse-kt:jni-build-windows-x64"),
-                Target("windows", "x86", "animeshz/keyboard-mouse-kt:jni-build-windows-x86"),
-                Target("linux", "x64", "animeshz/keyboard-mouse-kt:jni-build-linux-x64"),
-                Target("linux", "x86", "animeshz/keyboard-mouse-kt:jni-build-linux-x86")
-            )
-
-            for (target in targets) {
-                // Integrate with CMake
-                val tmpVar = file(".").absolutePath
-                val path = if (Os.isFamily(Os.FAMILY_WINDOWS)) "/run/desktop/mnt/host/${tmpVar[0].toLowerCase()}${tmpVar.substring(2 until tmpVar.length).replace('\\', '/')}"
-                else tmpVar
-
-                val work: () -> Pair<Int, String> = {
-                    ByteArrayOutputStream().use {
-                        project.exec {
-                            commandLine(
-                                "docker",
-                                "run",
-                                "--rm",
-                                "-v",
-                                "$path:/work/project",
-                                target.dockerImage,
-                                "bash",
-                                "-c",
-                                "mkdir -p \$WORK_DIR/project/build/jni && " +
-                                    "mkdir -p \$WORK_DIR/project/build/tmp/compile-jni-${target.os}-${target.arch} && " +
-                                    "cd \$WORK_DIR/project/build/tmp/compile-jni-${target.os}-${target.arch} && " +
-                                    "cmake \$WORK_DIR/project/src/jvmMain/jni/${target.os}-${target.arch} && " +
-                                    "cmake --build . --config Release && " +
-                                    "cp -rf libKeyboardKt${target.arch}.{dll,so,dylib} \$WORK_DIR/project/build/jni 2>/dev/null || : && " +
-                                    "cd .. && rm -rf compile-jni-${target.os}-${target.arch}"
-                            )
-
-                            isIgnoreExitValue = true
-                            standardOutput = System.out
-                            errorOutput = it
-                        }.exitValue to it.toString()
-                    }
-                }
-                var (exit, error) = work()
-
-                // Fix non-daemon docker on Docker for Windows
-                val nonDaemonError = "docker: error during connect: This error may indicate that the docker daemon is not running."
-                if (Os.isFamily(Os.FAMILY_WINDOWS) && error.startsWith(nonDaemonError)) {
-                    project.exec { commandLine("C:\\Program Files\\Docker\\Docker\\DockerCli.exe", "-SwitchDaemon") }.assertNormalExitValue()
-
-                    do {
-                        Thread.sleep(500)
-                        val result = work()
-                        exit = result.first
-                        error = result.second
-                    } while (error.startsWith(nonDaemonError))
-                }
-
-                if (exit != 0) throw GradleException(error)
-            }
-        }
-    }
-}
-
-fun KotlinMultiplatformExtension.configureLinux() {
     linuxX64 {
         val main by compilations.getting
 
         main.cinterops.create("device") { defFile("src/linuxX64Main/cinterop/device.def") }
         main.cinterops.create("x11") { defFile("src/linuxX64Main/cinterop/x11.def") }
     }
-
-    val linuxX64Main by sourceSets.getting
-    val linuxX64Test by sourceSets.getting { dependsOn(linuxX64Main) }
-    mainSourceSets.add(linuxX64Main)
-    testSourceSets.add(linuxX64Test)
-}
-
-fun KotlinMultiplatformExtension.configureMingw() {
     mingwX64()
-
-    val mingwX64Main by sourceSets.getting
-    val mingwX64Test by sourceSets.getting { dependsOn(mingwX64Main) }
-    mainSourceSets.add(mingwX64Main)
-    testSourceSets.add(mingwX64Test)
-}
-
-kotlin {
-    configureJvm()
-    configureLinux()
-    configureMingw()
 
     sourceSets {
         val commonMain by getting {
@@ -234,15 +44,40 @@ kotlin {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
                 implementation("io.mockk:mockk-common:1.10.3")
-                implementation("io.kotest:kotest-assertions-core:4.3.1")
+                implementation("io.kotest:kotest-assertions-core:4.4.0.RC2")
             }
         }
 
-        configure(mainSourceSets) {
-            dependsOn(commonMain)
-        }
-        configure(testSourceSets) {
+        val jvmMain by sourceSets.getting { dependsOn(commonMain) }
+        val jvmTest by sourceSets.getting {
             dependsOn(commonTest)
+            dependsOn(jvmMain)
+            dependencies {
+                implementation(kotlin("test-junit5"))
+                runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
+                implementation("io.kotest:kotest-assertions-core:4.3.2")
+            }
+        }
+
+        val jsMain by sourceSets.getting { dependsOn(commonMain) }
+        val jsTest by sourceSets.getting {
+            dependsOn(commonTest)
+            dependsOn(jsMain)
+            dependencies {
+                implementation(kotlin("test-js"))
+            }
+        }
+
+        val linuxX64Main by sourceSets.getting { dependsOn(commonMain) }
+        val linuxX64Test by sourceSets.getting {
+            dependsOn(commonTest)
+            dependsOn(linuxX64Main)
+        }
+
+        val mingwX64Main by sourceSets.getting { dependsOn(commonMain) }
+        val mingwX64Test by sourceSets.getting {
+            dependsOn(commonTest)
+            dependsOn(mingwX64Main)
         }
 
         all {
@@ -253,57 +88,68 @@ kotlin {
     explicitApi()
 }
 
-afterEvaluate {
-    publishing {
-        val projectUrl = "https://github.com/Animeshz/keyboard-mouse-kt"
+publishingConfig {
+    repository = "https://api.bintray.com/maven/animeshz/maven/keyboard-kt/;publish=1;override=1"
+    username = System.getenv("BINTRAY_USER")
+    password = System.getenv("BINTRAY_KEY")
+}
 
-        repositories {
-            maven {
-                setUrl("https://api.bintray.com/maven/animeshz/maven/keyboard-kt/;publish=1;override=1")
-                credentials {
-                    username = System.getenv("BINTRAY_USER")
-                    password = System.getenv("BINTRAY_KEY")
-                }
-            }
+npmPublishing {
+    readme = project.rootProject.file("README.md")
+
+    repositories {
+        repository("npmjs") {
+            registry = uri("https://registry.npmjs.org")
+            authToken = System.getenv("NPM_TOKEN")
         }
+    }
 
-        publications.withType<MavenPublication> {
-            pom {
-                name.set(project.name)
+    publications {
+        val js by getting {
+            files {
+                from(project.file("build/napi"))
+            }
+
+            bundleKotlinDependencies = false
+            shrinkwrapBundledDependencies = false
+            packageJsonTemplateFile = project.file("src/jsMain/package.template.json")
+            packageJson {
                 version = project.version as String
-                description.set("A multiplatform kotlin library for interacting with global keyboard and mouse events.")
-                url.set(projectUrl)
-
-                licenses {
-                    license {
-                        name.set("MIT License")
-                        url.set("$projectUrl/blob/master/LICENSE")
-                        distribution.set("repo")
-                    }
-                }
-
-                developers {
-                    developer {
-                        id.set("Animeshz")
-                        name.set("Animesh Sahu")
-                        email.set("animeshsahu19@yahoo.com")
-                    }
-                }
-
-                scm {
-                    url.set(projectUrl)
-                    connection.set("scm:git:$projectUrl.git")
-                    developerConnection.set("scm:git:git@github.com:Animeshz/keyboard-mouse-kt.git")
-                }
-            }
-
-            val publication = this@withType
-            if (publication.name == "kotlinMultiplatform") {
-                publication.artifactId = project.name
-            } else {
-                publication.artifactId = "${project.name}-${publication.name}"
             }
         }
+    }
+}
+
+nativeCompilation {
+    jni {
+        headers {
+            inputDir = "src/jvmMain/kotlin"
+            outputDir = "src/jvmMain/generated/jni"
+        }
+        compilation {
+            baseInputPaths = listOf("src/jvmMain/cpp", "src/nativeCommon")
+            outputDir = "build/jni"
+
+            targets = listOf(
+                Target("windows", "x64", "animeshz/keyboard-mouse-kt:cross-build-windows-x64"),
+                Target("windows", "x86", "animeshz/keyboard-mouse-kt:cross-build-windows-x86"),
+                Target("linux", "x64", "animeshz/keyboard-mouse-kt:cross-build-linux-x64"),
+                Target("linux", "x86", "animeshz/keyboard-mouse-kt:cross-build-linux-x86")
+            )
+        }
+    }
+
+    napi {
+        baseInputPaths = listOf("src/jsMain/cpp", "src/nativeCommon")
+        outputDir = "build/napi"
+
+        targets = listOf(
+            Target("windows", "x64", "animeshz/keyboard-mouse-kt:cross-build-windows-x64"),
+            Target("windows", "x86", "animeshz/keyboard-mouse-kt:cross-build-windows-x86"),
+            Target("linux", "x64", "animeshz/keyboard-mouse-kt:cross-build-linux-x64")
+            // NodeJS doesn't ship in x86, so people must be building the nodejs their selves, so supporting it is not really necessary for now
+            // Target("linux", "x86", "animeshz/keyboard-mouse-kt:cross-build-linux-x86")
+        )
     }
 }
 
@@ -313,6 +159,17 @@ tasks.withType<AbstractTestTask> {
         showStandardStreams = true
         exceptionFormat = TestExceptionFormat.FULL
     }
+}
+
+tasks.withType<KotlinJvmCompile> {
+    kotlinOptions.jvmTarget = "1.8"
+}
+tasks.withType<KotlinJsCompile> {
+    kotlinOptions.sourceMap = false
+}
+
+tasks.getByName<Test>("jvmTest") {
+    useJUnitPlatform()
 }
 
 ktlint {

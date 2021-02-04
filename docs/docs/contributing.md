@@ -49,8 +49,8 @@ Following are the future plans for the project:
 To build and publish to mavenLocal:
 `$ ./gradlew build publishToMavenLocal`
 
-The only requirement is to install Docker when building for JVM due to cross-compilation requirement of JNI native libs to be able to pack the full Jar from any platform that is supported cross-platform.
+The only requirement is to install Docker when building for JVM & JS due to cross-compilation requirement of JNI & NApi native libs.
 
-<sup>**Note: If you are using Windows, please enable Symbolic Links at the time of installation of git and use the [following instructions](https://stackoverflow.com/a/40914277/11377112) in order to fetch the symbolic links from the git which is present in jni folders.**</sup>
+If you ever get clock gets skewed (and Makefile get modified in the future) at the time of compilation of C++ sources, please restart the docker from the system tray.
 
 [1]: https://github.com/Animeshz/keyboard-mouse-kt/issues/1

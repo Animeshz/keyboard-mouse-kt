@@ -3,13 +3,6 @@
 ## Status
 
 - [ ] Keyboard
-    - [ ] Windows
-        - [X] x86_64 (64 bit)
-        - [ ] x86    (32 bit)
-    - [ ] Linux
-        - [X] x86_64 (64 bit)
-        - [ ] x86    (32 bit)
-    - [ ] MacOS
     - [ ] JVM
         - [X] Windows x86_64 (64 bit)
         - [X] Windows x86    (32 bit)
@@ -17,6 +10,23 @@
         - [X] Linux x86    (32 bit)
         - [ ] Linux Arm32
         - [ ] Linux Arm64
+        - [ ] MacOS
+    - [ ] JS
+        - [X] Windows x86_64 (64 bit)
+        - [X] Windows x86    (32 bit)
+        - [X] Linux x86_64 (64 bit)
+        - [ ] Linux x86    (32 bit)
+        - [ ] Linux Arm32
+        - [ ] Linux Arm64
+        - [ ] MacOS
+    - [ ] Native
+        - [X] Windows x86_64 (64 bit)
+        - [ ] Windows x86    (32 bit)
+        - [X] Linux x86_64 (64 bit)
+        - [ ] Linux x86    (32 bit)
+        - [ ] Linux Arm32
+        - [ ] Linux Arm64
+        - [ ] MacOS
 - [ ] Mouse
     - [ ] Windows
     - [ ] Linux
@@ -54,6 +64,22 @@
             implementation("com.github.animeshz:mouse-kt-jvm:<version>")
         }
         ```
+
+    === "Kotlin/JS"
+        ```kotlin
+        plugins {
+            kotlin("js") version "<kotlin-version>"
+        }
+
+        repositories {
+            maven(url = "https://dl.bintray.com/animeshz/maven")
+        }
+
+        dependencies {
+            implementation("com.github.animeshz:keyboard-kt-js:<version>")
+            implementation("com.github.animeshz:mouse-kt-js:<version>")
+        }   
+        ```
     
     === "Java/JVM"
         ```kotlin
@@ -88,6 +114,7 @@
         kotlin {
             // Your targets
             jvm()
+            js()  // IR not supported right now, but will be soon.
             mingwX64 {
                 binaries { executable { entryPoint = "main" } }
             }
@@ -135,6 +162,22 @@
             implementation("com.github.animeshz:mouse-kt-jvm:<version>")
         }
         ```
+
+    === "Kotlin/JVM"
+        ```groovy
+        plugins {
+            id "kotlin-js" version "<kotlin-version>"
+        }
+
+        repositories {
+            maven { url "https://dl.bintray.com/animeshz/maven" }
+        }
+
+        dependencies {
+            implementation("com.github.animeshz:keyboard-kt-js:<version>")
+            implementation("com.github.animeshz:mouse-kt-js:<version>")
+        }
+        ```
     
     === "Java/JVM"
         ```groovy
@@ -169,6 +212,7 @@
         kotlin {
             // Your targets
             jvm()
+            js()  // IR not supported right now, but will be soon.
             mingwX64 {
                 binaries { executable { entryPoint = "main" } }
             }
@@ -257,6 +301,20 @@
           </dependencies>
 
         </project>
+        ```
+
+=== "NPM/NodeJS (package.json)"
+
+    === "JS/NodeJS"
+        ```json
+        {
+            "name": "<project-name>",
+            "version": "<project-version>",
+
+            "dependencies": {
+                "keyboard-kt": "^0.3.0"
+            }
+        }
         ```
 
 ## Use interactively with Jupyter Notebook

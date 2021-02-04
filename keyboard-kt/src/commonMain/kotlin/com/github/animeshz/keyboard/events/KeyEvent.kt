@@ -2,6 +2,8 @@ package com.github.animeshz.keyboard.events
 
 import com.github.animeshz.keyboard.ExperimentalKeyIO
 import com.github.animeshz.keyboard.entity.Key
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
 /**
  * When a user presses a key on a hardware keyboard, a [KeyEvent] is sent.

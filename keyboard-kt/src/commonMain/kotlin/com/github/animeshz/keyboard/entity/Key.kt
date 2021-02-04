@@ -1,6 +1,8 @@
 package com.github.animeshz.keyboard.entity
 
 import com.github.animeshz.keyboard.ExperimentalKeyIO
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
 /**
  * Represents corresponding key of the keyboard.
