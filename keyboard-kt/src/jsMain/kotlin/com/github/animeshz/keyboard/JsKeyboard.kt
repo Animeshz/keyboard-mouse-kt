@@ -29,6 +29,7 @@ public class TimedKeyEvent(
 public class JsKeyboard {
     private val delegate = Keyboard()
 
+    @JsName("handler")
     public val handler: JsKeyboardHandler = JsKeyboardHandler
 
     private fun parseKeySet(str: String): KeySet =
@@ -46,7 +47,7 @@ public class JsKeyboard {
     @JsName("addShortcut")
     public fun addShortcut(
         keySet: String,
-        triggerOnPressed: Boolean = true,
+        triggerOnPressed: Boolean,
         handler: () -> Unit
     ): Cancellable {
         return delegate.addShortcut(parseKeySet(keySet), triggerOnPressed.toKeyState()) { handler() }
@@ -63,6 +64,7 @@ public class JsKeyboard {
     /**
      * Writes the following [string] on the host machine.
      */
+    @JsName("write")
     public fun write(string: String) {
         delegate.write(string)
     }
@@ -84,6 +86,7 @@ public class JsKeyboard {
      * Records and returns a [KeyPressSequence] of all the keypress till a [keySet] is/are pressed.
      */
     @ExperimentalTime
+    @JsName("recordKeyPressesTill")
     public fun recordKeyPressesTill(
         keySet: String,
         triggerOnPressed: Boolean = true
@@ -100,6 +103,7 @@ public class JsKeyboard {
      * @return A [Promise] for subscribing to get notified when does play finishes.
      */
     @ExperimentalTime
+    @JsName("play")
     public fun play(orderedPresses: Array<TimedKeyEvent>, speedFactor: Double = 1.0): Promise<Nothing?> =
         GlobalScope.promise {
             val sequence = orderedPresses.map { it.durationInSeconds.seconds to KeyEvent(it.key.toKey(), it.isPressed.toKeyState()) }
@@ -110,6 +114,7 @@ public class JsKeyboard {
     /**
      * Disposes this [Keyboard] instance.
      */
+    @JsName("dispose")
     public fun dispose() {
         delegate.dispose()
     }
