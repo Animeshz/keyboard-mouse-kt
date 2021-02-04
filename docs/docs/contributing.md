@@ -49,7 +49,7 @@ Following are the future plans for the project:
 To build and publish to mavenLocal:
 `$ ./gradlew build publishToMavenLocal`
 
-The only requirement is to install Docker when building for JVM due to cross-compilation requirement of JNI native libs to be able to pack the full Jar from any platform that is supported cross-platform.
+The only requirement is to install Docker when building for JVM & JS due to cross-compilation requirement of JNI & NApi native libs.
 
 If you ever get clock gets skewed (and Makefile get modified in the future) at the time of compilation of C++ sources, please restart the docker from the system tray.
 

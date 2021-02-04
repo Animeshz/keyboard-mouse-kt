@@ -16,10 +16,10 @@ private val identifier = when(val platform = platform()) {
 
 @ExperimentalKeyIO
 internal val NApiNativeHandler: INApiNativeHandler =
-    require("./lib/KeyboardKt$identifier$suffix.node").unsafeCast<INApiNativeHandler>()
+    require("./KeyboardKt$identifier$suffix.node").unsafeCast<INApiNativeHandler>()
 
 @ExperimentalKeyIO
-internal interface INApiNativeHandler {
+internal external interface INApiNativeHandler {
     fun send(scanCode: Int, isPressed: Boolean)
     fun isPressed(scanCode: Int): Boolean
 

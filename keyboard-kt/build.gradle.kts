@@ -15,9 +15,12 @@ plugins {
 
 kotlin {
     jvm()
-    js {
+    js(IR) {
+        moduleName = "keyboard-kt"
+
         useCommonJs()
         nodejs()
+        binaries.library()
     }
     linuxX64 {
         val main by compilations.getting
@@ -92,6 +95,8 @@ publishingConfig {
 }
 
 npmPublishing {
+    readme = project.rootProject.file("README.md")
+
     repositories {
         repository("npmjs") {
             registry = uri("https://registry.npmjs.org")
@@ -110,7 +115,6 @@ npmPublishing {
             packageJsonTemplateFile = project.file("src/jsMain/package.template.json")
             packageJson {
                 version = project.version as String
-                readme = rootProject.file("README.md")
             }
         }
     }

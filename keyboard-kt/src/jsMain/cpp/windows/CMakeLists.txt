@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 project(KeyboardKt)
 
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s -static-libgcc -fdata-sections -ffunction-sections -Wl,--gc-sections")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s -static-libgcc -static-libstdc++ -fdata-sections -ffunction-sections -Wl,--gc-sections")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s -Os -fdata-sections -ffunction-sections -Wl,--gc-sections")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libstdc++ -s -Os -fno-rtti -fno-exceptions -fdata-sections -ffunction-sections -Wl,--gc-sections")
 
 option(ARCH "architecture")
 
@@ -12,6 +12,7 @@ set(TARGET ${PROJECT_NAME}Windows${ARCH})
 add_definitions(-D_WIN32_WINNT=0x600)
 add_definitions(-DNAPI_VERSION=5)
 add_definitions(-DARCH=${ARCH})
+add_definitions(-DNAPI_DISABLE_CPP_EXCEPTIONS)
 
 include_directories(${CMAKE_JS_INC})
 include_directories($ENV{NODE_ADDON_API_HEADERS_DIR})

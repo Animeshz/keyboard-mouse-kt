@@ -4,6 +4,8 @@ The Key enum class represents corresponding key of the Keyboard. It is fundament
 
 Note that these keys are aligned with the hardware scan codes to optimize the searching time (by doing a binary search).
 
+<sup>**Note: For NodeJS, strings are used instead of these enums, but their names are the same.**</sup>
+
 The full list of all the supported Keys are the following:
 
 ```kotlin
