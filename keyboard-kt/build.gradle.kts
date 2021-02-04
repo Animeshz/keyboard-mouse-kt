@@ -95,6 +95,8 @@ publishingConfig {
 }
 
 npmPublishing {
+    readme = project.rootProject.file("README.md")
+
     repositories {
         repository("npmjs") {
             registry = uri("https://registry.npmjs.org")
@@ -113,7 +115,6 @@ npmPublishing {
             packageJsonTemplateFile = project.file("src/jsMain/package.template.json")
             packageJson {
                 version = project.version as String
-                readme = rootProject.file("README.md")
             }
         }
     }

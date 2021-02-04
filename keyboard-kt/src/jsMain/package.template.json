@@ -4,9 +4,7 @@
   "dependencies": {
     "kotlinx-coroutines-core": "*",
     "kotlinx-atomicfu": "*",
-    "kotlin": "*",
-    "kotlin-test-js-runner": "*",
-    "kotlin-test": "*"
+    "kotlin": "*"
   },
   "devDependencies": {
     "dukat": "0.5.8-rc.3"
@@ -35,7 +33,7 @@
     "email": "animeshsahu19@yahoo.com"
   },
   "repository": {
-    "url": "git+https://animeshz.github.io/keyboard-mouse-kt.git"
+    "url": "https://animeshz.github.io/keyboard-mouse-kt"
   },
   "bugs": {
     "url": "https://animeshz.github.io/keyboard-mouse-kt/issues"
