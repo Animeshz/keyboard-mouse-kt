@@ -20,7 +20,7 @@ TSFN ts_callback;
 
 void Send(const Napi::CallbackInfo& info) {
     int scanCode = info[0].As<Napi::Number>().Int32Value();
-    bool isPressed = info[0].As<Napi::Boolean>().Value();
+    bool isPressed = info[1].As<Napi::Boolean>().Value();
 
     WindowsKeyboardHandler::getInstance()->sendEvent(scanCode, isPressed);
 }

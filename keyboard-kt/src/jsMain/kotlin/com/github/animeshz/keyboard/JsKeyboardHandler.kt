@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.onEach
 @ExperimentalKeyIO
 internal object KotlinJsKeyboardHandler : NativeKeyboardHandlerBase() {
     init {
-        if (NApiNativeHandler.init() != 0) {
+        if (NApiNativeHandler.init().toInt() != 0) {
             error("Native initialization failed")
         }
     }
@@ -34,7 +34,7 @@ internal object KotlinJsKeyboardHandler : NativeKeyboardHandlerBase() {
             eventsInternal.tryEmit(KeyEvent(Key.fromKeyCode(scanCode), isPressed.toKeyState()))
         }
 
-        if (code != 0) {
+        if (code.toInt() != 0) {
             error("Unable to set native hook. Error code: $code")
         }
     }

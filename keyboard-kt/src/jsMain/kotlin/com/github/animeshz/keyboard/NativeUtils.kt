@@ -27,7 +27,7 @@ internal external interface INApiNativeHandler {
     fun isNumLockOn(): Boolean
     fun isScrollLockOn(): Boolean
 
-    fun init(): Int
-    fun startReadingEvents(handler: (scanCode: Int, isPressed: Boolean) -> Unit): Int
+    fun init(): Number
+    fun startReadingEvents(handler: (scanCode: Int, isPressed: Boolean) -> Unit): Number
     fun stopReadingEvents()
 }
