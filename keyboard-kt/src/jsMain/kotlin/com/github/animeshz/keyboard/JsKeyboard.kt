@@ -30,7 +30,7 @@ public class JsKeyboard {
     private val delegate = Keyboard()
 
     @JsName("handler")
-    public val handler: JsKeyboardHandler = JsKeyboardHandler
+    public val handler: JsNativeKeyboardHandler = JsNativeKeyboardHandler
 
     private fun parseKeySet(str: String): KeySet =
         str.split(Regex("""\s*\+\s*"""))

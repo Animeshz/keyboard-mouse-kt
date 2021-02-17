@@ -6,6 +6,30 @@
 
 **NodeJS:** High Level API depends on [JsKeyboard][5].
 
+## Importing the package.
+
+=== "Kotlin (MPP)"
+    ```kotlin
+    import com.github.animeshz.keyboard.Keyboard
+
+    val keyboard = Keyboard()
+    ```
+
+=== "NodeJS"
+    ```js
+    const kbkt = require('keyboard-kt');
+
+    const keyboard = new kbkt.com.github.animeshz.keyboard.JsKeyboard();
+    ```
+    <sup>**Note: This large import is due to limitations of K/JS to not able to export to global namespace currently, see [KT-37710](https://youtrack.jetbrains.com/issue/KT-37710).**</sup>
+
+=== "Java 8 or above"
+    ```java
+    import com.github.animeshz.keyboard.JKeyboard;
+
+    JKeyboard handler = new JKeyboard();
+    ```
+
 ## Adding a shortcut (Hotkey).
 
 === "Kotlin"
@@ -130,12 +154,12 @@ Recorded KeyPresses is pushed into a [KeyPressSequence][1] (`List<Duration, KeyE
 
 === "Kotlin"
     ```kotlin
-    val records: KeyPressSequence = keyboard.recordTill(Key.LeftAlt + Key.A)
+    val records: KeyPressSequence = keyboard.recordTill(Key.LeftAlt + Key.A, trigger = KeyState.KeyDown)
     ```
 
 === "NodeJS"
     ```js
-    const records = await keyboard.recordKeyPressesTill('LeftCtrl + LeftShift + R');
+    const records = await keyboard.recordKeyPressesTill('LeftCtrl + LeftShift + R', true);
     ```
 
 === "Java 8"
@@ -145,7 +169,7 @@ Recorded KeyPresses is pushed into a [KeyPressSequence][1] (`List<Duration, KeyE
 
     // `trigger` defaults to KeyState.KeyDown when not provided.
     CompletableFuture<List<Duration, KeyEvent>> records =
-        keyboard.recordTill(new KeySet(keys));
+        keyboard.recordTill(new KeySet(keys), KeyState.KeyDown);
     ```
 
 === "Java 9 or above"
@@ -153,7 +177,7 @@ Recorded KeyPresses is pushed into a [KeyPressSequence][1] (`List<Duration, KeyE
     Set<Key> keys = Set.of(Key.LeftAlt, Key.A);
 
     CompletableFuture<List<Duration, KeyEvent>> records =
-        keyboard.recordTill(new KeySet(keys));
+        keyboard.recordTill(new KeySet(keys), KeyState.KeyDown);
     ```
 
 ## Play a recorded or created collection of Keys at defined order.
