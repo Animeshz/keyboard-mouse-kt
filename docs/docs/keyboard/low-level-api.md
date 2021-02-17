@@ -4,7 +4,31 @@
 
 **Java:** Low Level API depends on [JNativeKeyboardHandler][4] that can be obtained via `JNativeKeyboardHandler.INSTANCE`.
 
-**NodeJS:** Low Level API depends on [JsKeyboardHandler][5] that can be obtained via `JNativeKeyboardHandler` (`const handler = require('keyboard-kt').com.github.animeshz.keyboard.JsKeyboardHandler`). This large import is due to limitations of K/JS to not able to export to global namespace currently, see [KT-37710](https://youtrack.jetbrains.com/issue/KT-37710).
+**NodeJS:** Low Level API depends on [JsKeyboardHandler][5] that can be obtained via `JsNativeKeyboardHandler`.
+
+## Importing the package.
+
+=== "Kotlin (MPP)"
+    ```kotlin
+    import com.github.animeshz.keyboard.nativeKbHandlerForPlatform
+
+    val handler = nativeKbHandlerForPlatform()
+    ```
+
+=== "NodeJS"
+    ```js
+    const kbkt = require('keyboard-kt');
+
+    const handler = kbkt.com.github.animeshz.keyboard.JsNativeKeyboardHandler;
+    ```
+    <sup>**Note: This large import is due to limitations of K/JS to not able to export to global namespace currently, see [KT-37710](https://youtrack.jetbrains.com/issue/KT-37710).**</sup>
+
+=== "Java 8 or above"
+    ```java
+    import com.github.animeshz.keyboard.JKeyboardHandler;
+
+    JKeyboardHandler handler = JKeyboardHandler.INSTANCE;
+    ```
 
 ## Listening to events using Flow (Kotlin) or callback (Java).
 
@@ -19,8 +43,8 @@
 === "NodeJS"
     ```js
     handler.addHandler((key, pressed) => {
-        if (keyEvent.state == KeyState.KeyDown) {
-            console.log(keyEvent.key);
+        if (pressed) {
+            console.log(key);
         }
     });
     ```
@@ -43,7 +67,7 @@
 
 === "NodeJS"
     ```js
-    handler.sendEvent('A+KeyDown');
+    handler.sendEvent('A', true);
     ```
 
 === "Java 8 or above"
