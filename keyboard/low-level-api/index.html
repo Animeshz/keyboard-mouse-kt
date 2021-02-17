@@ -285,6 +285,13 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#importing-the-package" class="md-nav__link">
+    Importing the package.
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#listening-to-events-using-flow-kotlin-or-callback-java" class="md-nav__link">
     Listening to events using Flow (Kotlin) or callback (Java).
   </a>
@@ -390,6 +397,13 @@
     <ul class="md-nav__list" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#importing-the-package" class="md-nav__link">
+    Importing the package.
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#listening-to-events-using-flow-kotlin-or-callback-java" class="md-nav__link">
     Listening to events using Flow (Kotlin) or callback (Java).
   </a>
@@ -437,38 +451,68 @@
                 <h1 id="low-level-api">Low Level API</h1>
 <p><strong>Kotlin:</strong> Low Level API depends on <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard-kt/src/commonMain/kotlin/com/github/animeshz/keyboard/NativeKeyboardHandler.kt">NativeKeyboardHandler</a> that can be obtained via <code>nativeKbHandlerForPlatform()</code>.</p>
 <p><strong>Java:</strong> Low Level API depends on <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/integration/keyboard-kt-jdk8/src/main/kotlin/com/github/animeshz/keyboard/JNativeKeyboardHandler.kt">JNativeKeyboardHandler</a> that can be obtained via <code>JNativeKeyboardHandler.INSTANCE</code>.</p>
-<p><strong>NodeJS:</strong> Low Level API depends on <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard-kt/src/jsMain/kotlin/com/github/animeshz/keyboard/JsKeyboardHandler.kt#L63">JsKeyboardHandler</a> that can be obtained via <code>JNativeKeyboardHandler</code> (<code>const handler = require('keyboard-kt').com.github.animeshz.keyboard.JsKeyboardHandler</code>). This large import is due to limitations of K/JS to not able to export to global namespace currently, see <a href="https://youtrack.jetbrains.com/issue/KT-37710">KT-37710</a>.</p>
-<h2 id="listening-to-events-using-flow-kotlin-or-callback-java">Listening to events using Flow (Kotlin) or callback (Java).</h2>
-<div class="tabbed-set" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Kotlin</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
-2
-3
-4</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">handler</span><span class="p">.</span><span class="n">events</span>
-    <span class="p">.</span><span class="n">filter</span> <span class="p">{</span> <span class="n">it</span><span class="p">.</span><span class="n">state</span> <span class="p">==</span> <span class="n">KeyState</span><span class="p">.</span><span class="n">KeyDown</span> <span class="p">}</span>
-    <span class="p">.</span><span class="n">map</span> <span class="p">{</span> <span class="n">it</span><span class="p">.</span><span class="n">key</span> <span class="p">}</span>
-    <span class="p">.</span><span class="n">collect</span> <span class="p">{</span> <span class="n">println</span><span class="p">(</span><span class="n">it</span><span class="p">)</span> <span class="p">}</span>
+<p><strong>NodeJS:</strong> Low Level API depends on <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard-kt/src/jsMain/kotlin/com/github/animeshz/keyboard/JsKeyboardHandler.kt#L63">JsKeyboardHandler</a> that can be obtained via <code>JsNativeKeyboardHandler</code>.</p>
+<h2 id="importing-the-package">Importing the package.</h2>
+<div class="tabbed-set" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Kotlin (MPP)</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">import</span> <span class="nn">com.github.animeshz.keyboard.nativeKbHandlerForPlatform</span>
+
+<span class="kd">val</span> <span class="nv">handler</span> <span class="o">=</span> <span class="n">nativeKbHandlerForPlatform</span><span class="p">()</span>
 </code></pre></div>
 </td></tr></table>
 </div>
 <input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><label for="__tabbed_1_2">NodeJS</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
-2
-3
-4
-5</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nx">handler</span><span class="p">.</span><span class="nx">addHandler</span><span class="p">((</span><span class="nx">key</span><span class="p">,</span> <span class="nx">pressed</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nx">keyEvent</span><span class="p">.</span><span class="nx">state</span> <span class="o">==</span> <span class="nx">KeyState</span><span class="p">.</span><span class="nx">KeyDown</span><span class="p">)</span> <span class="p">{</span>
-        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">keyEvent</span><span class="p">.</span><span class="nx">key</span><span class="p">);</span>
+<p><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="kd">const</span> <span class="nx">kbkt</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;keyboard-kt&#39;</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">handler</span> <span class="o">=</span> <span class="nx">kbkt</span><span class="p">.</span><span class="nx">com</span><span class="p">.</span><span class="nx">github</span><span class="p">.</span><span class="nx">animeshz</span><span class="p">.</span><span class="nx">keyboard</span><span class="p">.</span><span class="nx">JsNativeKeyboardHandler</span><span class="p">;</span>
+</code></pre></div>
+</td></tr></table>
+<sup><strong>Note: This large import is due to limitations of K/JS to not able to export to global namespace currently, see <a href="https://youtrack.jetbrains.com/issue/KT-37710">KT-37710</a>.</strong></sup></p>
+</div>
+<input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><label for="__tabbed_1_3">Java 8 or above</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">com.github.animeshz.keyboard.JKeyboardHandler</span><span class="p">;</span>
+
+<span class="n">JKeyboardHandler</span> <span class="n">handler</span> <span class="o">=</span> <span class="n">JKeyboardHandler</span><span class="p">.</span><span class="na">INSTANCE</span><span class="p">;</span>
+</code></pre></div>
+</td></tr></table>
+</div>
+</div>
+<h2 id="listening-to-events-using-flow-kotlin-or-callback-java">Listening to events using Flow (Kotlin) or callback (Java).</h2>
+<div class="tabbed-set" data-tabs="2:3"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><label for="__tabbed_2_1">Kotlin</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">handler</span><span class="p">.</span><span class="na">events</span>
+    <span class="p">.</span><span class="na">filter</span> <span class="p">{</span> <span class="nb">it</span><span class="p">.</span><span class="na">state</span> <span class="o">==</span> <span class="n">KeyState</span><span class="p">.</span><span class="na">KeyDown</span> <span class="p">}</span>
+    <span class="p">.</span><span class="na">map</span> <span class="p">{</span> <span class="nb">it</span><span class="p">.</span><span class="na">key</span> <span class="p">}</span>
+    <span class="p">.</span><span class="na">collect</span> <span class="p">{</span> <span class="n">println</span><span class="p">(</span><span class="nb">it</span><span class="p">)</span> <span class="p">}</span>
+</code></pre></div>
+</td></tr></table>
+</div>
+<input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><label for="__tabbed_2_2">NodeJS</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nx">handler</span><span class="p">.</span><span class="nx">addHandler</span><span class="p">((</span><span class="nx">key</span><span class="p">,</span> <span class="nx">pressed</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">pressed</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">key</span><span class="p">);</span>
     <span class="p">}</span>
 <span class="p">});</span>
 </code></pre></div>
 </td></tr></table>
 </div>
-<input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><label for="__tabbed_1_3">Java 8 or above</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
-2
-3
-4
-5</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">handler</span><span class="p">.</span><span class="na">addHandler</span><span class="p">(</span><span class="n">keyEvent</span> <span class="o">-&gt;</span> <span class="p">{</span>
+<input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><label for="__tabbed_2_3">Java 8 or above</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">handler</span><span class="p">.</span><span class="na">addHandler</span><span class="p">(</span><span class="n">keyEvent</span> <span class="o">-&gt;</span> <span class="p">{</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">keyEvent</span><span class="p">.</span><span class="na">state</span> <span class="o">==</span> <span class="n">KeyState</span><span class="p">.</span><span class="na">KeyDown</span><span class="p">)</span> <span class="p">{</span>
         <span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="n">keyEvent</span><span class="p">.</span><span class="na">key</span><span class="p">);</span>
     <span class="p">}</span>
@@ -478,69 +522,69 @@
 </div>
 </div>
 <h2 id="sending-a-key-event">Sending a <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard-kt/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/Key.kt">Key</a> event.</h2>
-<div class="tabbed-set" data-tabs="2:3"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><label for="__tabbed_2_1">Kotlin</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">handler</span><span class="p">.</span><span class="n">sendEvent</span><span class="p">(</span><span class="n">KeyEvent</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="n">A</span><span class="p">,</span> <span class="n">KeyState</span><span class="p">.</span><span class="n">KeyDown</span><span class="p">))</span>
+<div class="tabbed-set" data-tabs="3:3"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><label for="__tabbed_3_1">Kotlin</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">handler</span><span class="p">.</span><span class="na">sendEvent</span><span class="p">(</span><span class="n">KeyEvent</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="na">A</span><span class="p">,</span> <span class="n">KeyState</span><span class="p">.</span><span class="na">KeyDown</span><span class="p">))</span>
 </code></pre></div>
 </td></tr></table>
 </div>
-<input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><label for="__tabbed_2_2">NodeJS</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nx">handler</span><span class="p">.</span><span class="nx">sendEvent</span><span class="p">(</span><span class="s1">&#39;A+KeyDown&#39;</span><span class="p">);</span>
+<input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><label for="__tabbed_3_2">NodeJS</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nx">handler</span><span class="p">.</span><span class="nx">sendEvent</span><span class="p">(</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
 </code></pre></div>
 </td></tr></table>
 </div>
-<input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><label for="__tabbed_2_3">Java 8 or above</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">handler</span><span class="p">.</span><span class="na">sendEvent</span><span class="p">(</span><span class="k">new</span> <span class="n">KeyEvent</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="na">A</span><span class="p">,</span> <span class="n">KeyState</span><span class="p">.</span><span class="na">KeyDown</span><span class="p">));</span>
+<input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><label for="__tabbed_3_3">Java 8 or above</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">handler</span><span class="p">.</span><span class="na">sendEvent</span><span class="p">(</span><span class="k">new</span> <span class="n">KeyEvent</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="na">A</span><span class="p">,</span> <span class="n">KeyState</span><span class="p">.</span><span class="na">KeyDown</span><span class="p">));</span>
 </code></pre></div>
 </td></tr></table>
 </div>
 </div>
 <h2 id="get-keystate-keydown-or-keyup-of-the-key">Get <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard-kt/src/commonMain/kotlin/com/github/animeshz/keyboard/events/KeyEvent.kt">KeyState</a> (KeyDown or KeyUp) of the <a href="../key/">Key</a>.</h2>
-<div class="tabbed-set" data-tabs="3:3"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><label for="__tabbed_3_1">Kotlin</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
-2</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">handler</span><span class="p">.</span><span class="n">getKeyState</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="n">A</span><span class="p">)</span>
-<span class="n">handler</span><span class="p">.</span><span class="n">getKeyState</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="n">RightAlt</span><span class="p">)</span>
+<div class="tabbed-set" data-tabs="4:3"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><label for="__tabbed_4_1">Kotlin</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">handler</span><span class="p">.</span><span class="na">getKeyState</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="na">A</span><span class="p">)</span>
+<span class="n">handler</span><span class="p">.</span><span class="na">getKeyState</span><span class="p">(</span><span class="n">Key</span><span class="p">.</span><span class="na">RightAlt</span><span class="p">)</span>
 </code></pre></div>
 </td></tr></table>
 </div>
-<input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><label for="__tabbed_3_2">NodeJS</label><div class="tabbed-content">
-<p><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
-2</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">handler</span><span class="p">.</span><span class="n">getKeyState</span><span class="p">(</span><span class="sc">&#39;A&#39;</span><span class="p">);</span>
-<span class="n">handler</span><span class="p">.</span><span class="n">getKeyState</span><span class="p">(</span><span class="err">&#39;</span><span class="n">RightAlt</span><span class="err">&#39;</span><span class="p">);</span>
+<input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><label for="__tabbed_4_2">NodeJS</label><div class="tabbed-content">
+<p><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">handler</span><span class="p">.</span><span class="na">getKeyState</span><span class="p">(</span><span class="sc">&#39;A&#39;</span><span class="p">);</span>
+<span class="n">handler</span><span class="p">.</span><span class="na">getKeyState</span><span class="p">(</span><span class="err">&#39;</span><span class="n">RightAlt</span><span class="err">&#39;</span><span class="p">);</span>
 </code></pre></div>
 </td></tr></table>
 <sup><strong>Note: In JS it returns a boolean</strong></sup></p>
 </div>
-<input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><label for="__tabbed_3_3">Java 8 or above</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
-2</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nx">handler</span><span class="p">.</span><span class="nx">getKeyState</span><span class="p">(</span><span class="nx">Key</span><span class="p">.</span><span class="nx">A</span><span class="p">);</span>
+<input id="__tabbed_4_3" name="__tabbed_4" type="radio" /><label for="__tabbed_4_3">Java 8 or above</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nx">handler</span><span class="p">.</span><span class="nx">getKeyState</span><span class="p">(</span><span class="nx">Key</span><span class="p">.</span><span class="nx">A</span><span class="p">);</span>
 <span class="nx">handler</span><span class="p">.</span><span class="nx">getKeyState</span><span class="p">(</span><span class="nx">Key</span><span class="p">.</span><span class="nx">RightAlt</span><span class="p">);</span>
 </code></pre></div>
 </td></tr></table>
 </div>
 </div>
 <h2 id="get-states-of-toggleable-keys-returns-a-boolean">Get States of Toggleable Keys (returns a Boolean).</h2>
-<div class="tabbed-set" data-tabs="4:3"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><label for="__tabbed_4_1">Kotlin</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
-2
-3</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">handler</span><span class="p">.</span><span class="n">isCapsLockOn</span><span class="p">()</span>
-<span class="n">handler</span><span class="p">.</span><span class="n">isNumLockOn</span><span class="p">()</span>
-<span class="n">handler</span><span class="p">.</span><span class="n">isScrollLockOn</span><span class="p">()</span>
+<div class="tabbed-set" data-tabs="5:3"><input checked="checked" id="__tabbed_5_1" name="__tabbed_5" type="radio" /><label for="__tabbed_5_1">Kotlin</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">handler</span><span class="p">.</span><span class="na">isCapsLockOn</span><span class="p">()</span>
+<span class="n">handler</span><span class="p">.</span><span class="na">isNumLockOn</span><span class="p">()</span>
+<span class="n">handler</span><span class="p">.</span><span class="na">isScrollLockOn</span><span class="p">()</span>
 </code></pre></div>
 </td></tr></table>
 </div>
-<input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><label for="__tabbed_4_2">NodeJS</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
-2
-3</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nx">handler</span><span class="p">.</span><span class="nx">isCapsLockOn</span><span class="p">();</span>
+<input id="__tabbed_5_2" name="__tabbed_5" type="radio" /><label for="__tabbed_5_2">NodeJS</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nx">handler</span><span class="p">.</span><span class="nx">isCapsLockOn</span><span class="p">();</span>
 <span class="nx">handler</span><span class="p">.</span><span class="nx">isNumLockOn</span><span class="p">();</span>
 <span class="nx">handler</span><span class="p">.</span><span class="nx">isScrollLockOn</span><span class="p">();</span>
 </code></pre></div>
 </td></tr></table>
 </div>
-<input id="__tabbed_4_3" name="__tabbed_4" type="radio" /><label for="__tabbed_4_3">Java 8 or above</label><div class="tabbed-content">
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span>1
-2
-3</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">handler</span><span class="p">.</span><span class="na">isCapsLockOn</span><span class="p">();</span>
+<input id="__tabbed_5_3" name="__tabbed_5" type="radio" /><label for="__tabbed_5_3">Java 8 or above</label><div class="tabbed-content">
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">handler</span><span class="p">.</span><span class="na">isCapsLockOn</span><span class="p">();</span>
 <span class="n">handler</span><span class="p">.</span><span class="na">isNumLockOn</span><span class="p">();</span>
 <span class="n">handler</span><span class="p">.</span><span class="na">isScrollLockOn</span><span class="p">();</span>
 </code></pre></div>
