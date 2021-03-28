@@ -1,8 +1,6 @@
 package com.github.animeshz.keyboard.entity
 
 import com.github.animeshz.keyboard.ExperimentalKeyIO
-import kotlin.js.ExperimentalJsExport
-import kotlin.js.JsExport
 
 /**
  * Represents corresponding key of the keyboard.
@@ -206,7 +204,34 @@ public enum class Key(public val keyCode: Int) {
             '?' to Pair(Slash, true),
         )
 
-        private val alphabetOrdinalRange = 16..50
+        private val ALPHABET_MAPPING = mapOf(
+            'A' to A,
+            'B' to B,
+            'C' to C,
+            'D' to D,
+            'E' to E,
+            'F' to F,
+            'G' to G,
+            'H' to H,
+            'I' to I,
+            'J' to J,
+            'K' to K,
+            'L' to L,
+            'M' to M,
+            'N' to N,
+            'O' to O,
+            'P' to P,
+            'Q' to Q,
+            'R' to R,
+            'S' to S,
+            'T' to T,
+            'U' to U,
+            'V' to V,
+            'W' to W,
+            'X' to X,
+            'Y' to Y,
+            'Z' to Z,
+        )
 
         /**
          * Resolves [Key] and should the Shift Key be pressed for sending the [char] to the host.
@@ -218,23 +243,11 @@ public enum class Key(public val keyCode: Int) {
             val symbolKey = SYMBOL_MAPPING[char]
             if (symbolKey != null) return symbolKey
 
-            when (char) {
-                in 'A'..'Z' -> {
-                    val values = values()
-                    for (i in alphabetOrdinalRange) {
-                        if (values[i].name.length == 1 && values[i].name[0] == char) return values[i] to true
-                    }
-                }
-                in 'a'..'z' -> {
-                    val c = char.toUpperCase()
-                    val values = values()
-                    for (i in alphabetOrdinalRange) {
-                        if (values[i].name.length == 1 && values[i].name[0] == c) return values[i] to false
-                    }
-                }
-            }
+            val ch = char.toUpperCase()
+            if (ch !in 'A'..'Z') return Unknown to false
 
-            return Unknown to false
+            val isCapital = char in 'A'..'Z'
+            return ALPHABET_MAPPING[ch]!! to isCapital
         }
 
         /**
