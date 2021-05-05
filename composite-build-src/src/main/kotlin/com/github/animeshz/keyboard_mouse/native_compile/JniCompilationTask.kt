@@ -13,7 +13,8 @@ import javax.inject.Inject
  * For building shared libraries out of C/C++ sources for JVM
  */
 open class JniCompilationTask @Inject constructor(
-    private val target: Target
+    private val targets: List<Target>,
+    private val dockerImage: String
 ) : DefaultTask() {
     init {
         group = "nativeCompilation"
@@ -37,22 +38,27 @@ open class JniCompilationTask @Inject constructor(
         val work: () -> Pair<Int, String> = {
             ByteArrayOutputStream().use {
                 project.exec {
+                    val command = buildString {
+                        append("mkdir -p \$WORK_DIR/project/build/jni && ")
+                        for (i in targets.indices) {
+                            val target = targets[i]
+
+                            append(target.preRunScript + " && ")
+                            append("mkdir -p \$WORK_DIR/project/build/tmp/compile-jni-${target.os}-${target.arch} && ")
+                            append("cd \$WORK_DIR/project/build/tmp/compile-jni-${target.os}-${target.arch} && ")
+                            append("\$CMAKE -DARCH=${target.arch} \$WORK_DIR/project/src/jvmMain/cpp/${target.os} && ")
+                            append("\$CMAKE --build . ${if (isVerbose) "--verbose " else ""}--config Release && ")
+                            append("cp -rf libKeyboardKt${target.arch}.{dll,so,dylib} \$WORK_DIR/project/build/jni 2>/dev/null || : && ")
+                            append("cd .. && rm -rf compile-jni-${target.os}-${target.arch}")
+
+                            if (i != targets.lastIndex) append(" && ")
+                        }
+                    }
+                    // /work/project/src/jvmMain/cpp/windows
+                    // /work/project/src/jvmMain/cpp/windows
+
                     commandLine(
-                        "docker",
-                        "run",
-                        "--rm",
-                        "-v",
-                        "$path:/work/project",
-                        target.dockerImage,
-                        "bash",
-                        "-c",
-                        "mkdir -p \$WORK_DIR/project/build/jni && " +
-                            "mkdir -p \$WORK_DIR/project/build/tmp/compile-jni-${target.os}-${target.arch} && " +
-                            "cd \$WORK_DIR/project/build/tmp/compile-jni-${target.os}-${target.arch} && " +
-                            "cmake -DARCH=${target.arch} \$WORK_DIR/project/src/jvmMain/cpp/${target.os} && " +
-                            "cmake --build . ${if (isVerbose) "--verbose " else ""}--config Release && " +
-                            "cp -rf libKeyboardKt${target.arch}.{dll,so,dylib} \$WORK_DIR/project/build/jni 2>/dev/null || : && " +
-                            "cd .. && rm -rf compile-jni-${target.os}-${target.arch}"
+                        "docker", "run", "--rm", "-v", "$path:/work/project", dockerImage, "bash", "-c", command
                     )
 
                     isIgnoreExitValue = true

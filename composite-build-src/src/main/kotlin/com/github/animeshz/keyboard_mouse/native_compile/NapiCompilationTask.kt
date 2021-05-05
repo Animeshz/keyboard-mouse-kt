@@ -13,7 +13,8 @@ import javax.inject.Inject
  * For building shared libraries out of C/C++ sources for NodeJS
  */
 open class NapiCompilationTask @Inject constructor(
-    private val target: Target
+    private val targets: List<Target>,
+    private val dockerImage: String
 ) : DefaultTask() {
     init {
         group = "nativeCompilation"
@@ -37,19 +38,23 @@ open class NapiCompilationTask @Inject constructor(
         val work: () -> Pair<Int, String> = {
             ByteArrayOutputStream().use {
                 project.exec {
+                    val command = buildString {
+                        append("mkdir -p \$WORK_DIR/project/build/napi && ")
+                        for (i in targets.indices) {
+                            val target = targets[i]
+
+                            append(target.preRunScript + " && ")
+                            // Pass cmake toolchain file
+                            append("cmake-js compile --CDARCH=${target.arch} --arch=${target.arch} ${if (isVerbose) "-l=verbose " else ""} -d=\$WORK_DIR/project/src/jsMain/cpp/${target.os} && ")
+                            append("cp -rf \$WORK_DIR/project/src/jsMain/cpp/${target.os}/build/{,Release/}KeyboardKt${target.os.capitalize()}${target.arch}.node \$WORK_DIR/project/build/napi 2>/dev/null || : && ")
+                            append("rm -rf \$WORK_DIR/project/src/jsMain/cpp/${target.os}/build")
+
+                            if (i != targets.lastIndex) append(" && ")
+                        }
+                    }
+
                     commandLine(
-                        "docker",
-                        "run",
-                        "--rm",
-                        "-v",
-                        "$path:/work/project",
-                        target.dockerImage,
-                        "bash",
-                        "-c",
-                        "mkdir -p \$WORK_DIR/project/build/napi && " +
-                            "cmake-js compile --CDARCH=${target.arch} --arch=${target.arch} ${if (isVerbose) "-l=verbose " else ""} -d=\$WORK_DIR/project/src/jsMain/cpp/${target.os} && " +
-                            "cp -rf \$WORK_DIR/project/src/jsMain/cpp/${target.os}/build/{,Release/}KeyboardKt${target.os.capitalize()}${target.arch}.node \$WORK_DIR/project/build/napi 2>/dev/null || : && " +
-                            "rm -rf \$WORK_DIR/project/src/jsMain/cpp/${target.os}/build"
+                        "docker", "run", "--rm", "-v", "$path:/work/project", dockerImage, "bash", "-c", command
                     )
 
                     isIgnoreExitValue = true

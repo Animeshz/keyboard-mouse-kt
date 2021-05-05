@@ -3,9 +3,6 @@ package com.github.animeshz.keyboard_mouse.native_compile
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.apply
-import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.creating
-import org.gradle.kotlin.dsl.getValue
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 import org.gradle.language.jvm.tasks.ProcessResources
@@ -15,65 +12,59 @@ class NativeCompilationPlugin : Plugin<Project> {
         target.apply(plugin = "org.jetbrains.kotlin.multiplatform")
         val ext = target.extensions.create("nativeCompilation", NativeConfiguration::class.java)
 
-        setupJni(target, ext.jni)
-        setupNapi(target, ext.napi)
-    }
-
-    private fun setupJni(project: Project, extension: JniConfiguration) {
-        project.afterEvaluate {
-            with(extension.headers) {
-                if (inputDir.isEmpty() || outputDir.isEmpty()) return@afterEvaluate
-            }
-
-            val compileJniAll by project.tasks.creating { group = "nativeCompilation" }
-            val headersTask = project.tasks
-                .register<JniHeaderGenerationTask>("generateJniHeaders", extension.headers).get()
-
-            with(extension.compilation) {
-                if (baseInputPaths.isEmpty() || outputDir.isEmpty() || targets.isEmpty()) return@afterEvaluate
-            }
-
-            extension.compilation.targets.forEach { target ->
-                project.tasks
-                    .register<JniCompilationTask>("compileJni${target.os.capitalize()}${target.arch.capitalize()}", target)
-                    .also { compileJniAll.dependsOn(it.get()) }
-                    .configure {
-                        for (path in extension.compilation.baseInputPaths) inputs.dir(path / target.os)
-                        outputs.dir(extension.compilation.outputDir)
-
-                        dependsOn(headersTask)
-                    }
-            }
-
-            tasks.withType<ProcessResources>().named("jvmProcessResources") {
-                dependsOn(compileJniAll)
-                from(project.file(extension.compilation.outputDir))
-            }
+        target.afterEvaluate {
+            setupJni(target, ext.jni, ext.dockerImage)
+            setupNapi(target, ext.napi, ext.dockerImage)
         }
     }
 
-    private fun setupNapi(project: Project, extension: JsCompilationConfiguration) {
-        project.afterEvaluate {
-            val compileNapiAll by project.tasks.creating { group = "nativeCompilation" }
+    private fun setupJni(project: Project, extension: JniConfiguration, dockerImage: String) {
+        with(extension.headers) {
+            if (inputDir.isEmpty() || outputDir.isEmpty()) return
+        }
 
-            with(extension) {
-                if (baseInputPaths.isEmpty() || outputDir.isEmpty() || targets.isEmpty()) return@afterEvaluate
-            }
+        val headersTask = project.tasks
+            .register<JniHeaderGenerationTask>("generateJniHeaders", extension.headers).get()
 
-            extension.targets.forEach { target ->
-                project.tasks
-                    .register<NapiCompilationTask>("compileNapi${target.os.capitalize()}${target.arch.capitalize()}", target)
-                    .also { compileNapiAll.dependsOn(it.get()) }
-                    .configure {
-                        for (path in extension.baseInputPaths) inputs.dir(path / target.os)
-                        outputs.dir(extension.outputDir)
-                    }
-            }
+        with(extension.compilation) {
+            if (baseInputPaths.isEmpty() || outputDir.isEmpty() || targets.isEmpty()) return
+        }
 
-            tasks.withType<ProcessResources>().named("jsProcessResources") {
-                dependsOn(compileNapiAll)
-                from(project.file(extension.outputDir))
+        val compileJni = project.tasks
+            .register<JniCompilationTask>("compileJni", extension.compilation.targets, dockerImage).apply {
+                configure {
+                    for (path in extension.compilation.baseInputPaths) for (target in extension.compilation.targets) inputs.dir(path / target.os)
+                    outputs.dir(extension.compilation.outputDir)
+
+//                    dependsOn(headersTask)
+                }
+            }.get()
+
+
+        project.tasks.withType<ProcessResources>().named("jvmProcessResources") {
+            dependsOn(compileJni)
+            from(project.file(extension.compilation.outputDir))
+        }
+    }
+
+    private fun setupNapi(project: Project, extension: JsCompilationConfiguration, dockerImage: String) {
+        with(extension) {
+            if (baseInputPaths.isEmpty() || outputDir.isEmpty() || targets.isEmpty()) return
+        }
+
+        val compileNapi = project.tasks
+            .register<NapiCompilationTask>("compileNapi", extension.targets, dockerImage)
+            .apply {
+                configure {
+                    for (path in extension.baseInputPaths) for (target in extension.targets) inputs.dir(path / target.os)
+                    outputs.dir(extension.outputDir)
+                }
             }
+            .get()
+
+        project.tasks.withType<ProcessResources>().named("jsProcessResources") {
+            dependsOn(compileNapi)
+            from(project.file(extension.outputDir))
         }
     }
 
