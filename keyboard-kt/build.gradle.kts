@@ -132,10 +132,10 @@ nativeCompilation {
             baseInputPaths = listOf("src/jvmMain/cpp", "src/nativeCommon")
             outputDir = "build/jni"
             targets = listOf(
-                Target("windows", "x64", "source windows64")
-//                Target("windows", "x86", "source windows32"),
-//                Target("linux", "x64", "source linux64"),
-//                Target("linux", "x86", "source linux32")
+                Target("windows", "x64", "source windows64"),
+                Target("windows", "x86", "source windows32"),
+                Target("linux", "x64", "source linux64 && apt install -y --no-install-recommends libx11-dev libxi-dev libxtst-dev"),
+                Target("linux", "x86", "source linux32 && apt install -y --no-install-recommends libx11-dev:i386 libxi-dev:i386 libxtst-dev:i386")
             )
         }
     }

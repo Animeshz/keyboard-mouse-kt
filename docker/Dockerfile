@@ -6,25 +6,21 @@ ENV JNI_HEADERS_DIR=${WORK_DIR}/support-files/headers/jni \
 ENV X11_HEADERS_DIR=/usr/include/X11/ \
     WINDOWS_NODE_LINK_DIR=${WORK_DIR}/support-files/link/node
 
+LABEL maintainer="Animesh Sahu animeshsahu19@yahoo.com"
+
 COPY keyboard-kt/src/jsMain/cpp/windows/node.def ${WINDOWS_NODE_LINK_DIR}/node.def
 
 RUN \
-apt update && \
-curl -sL https://deb.nodesource.com/setup_lts.x | bash - && \
-apt install --no-install-recommends --yes \
+apt-get update && \
+apt-get install --no-install-recommends --yes \
+    ca-certificates \
     curl \
-    libx11-dev \
-    libx11-dev:i386 \
-    libxi-dev \
-    libxi-dev:i386 \
-    libxtst-dev \
-    libxtst-dev:i386 && \
     python3 \
-    unzip \
+    unzip && \
+curl -sL https://deb.nodesource.com/setup_lts.x | bash - && \
 #
 # Install Node and Cmake-JS
-curl -sL https://deb.nodesource.com/setup_lts.x | bash - && \
-apt install --no-install-recommends -y nodejs && \
+apt-get install --no-install-recommends -y nodejs && \
 npm install -g cmake-js && \
 #
 # Download JNI Headers
@@ -49,6 +45,7 @@ curl -LO 'https://nodejs.org/dist/v14.15.4/node-v14.15.4-win-x64.zip' && \
 unzip node-v14.15.4-win-x64.zip "node-v14.15.4-win-x64/node.exe" && \
 x86_64-w64-mingw32.shared-dlltool -d node.def -y node.a && \
 rm -rf node-v14.15.4-win-x64 node-v14.15.4-win-x64.zip node64.def && \
+#
 # Download, build and pack linkable object file
 cd ${WINDOWS_NODE_LINK_DIR} && \
 curl -LO 'https://nodejs.org/dist/v14.15.4/node-v14.15.4-win-x86.zip' && \
@@ -56,4 +53,7 @@ unzip node-v14.15.4-win-x86.zip "node-v14.15.4-win-x86/node.exe" && \
 i686-w64-mingw32.shared-dlltool -d node.def -y node32.a && \
 rm node-v14.15.4-win-x86.zip && \
 rm -rf node-v14.15.4-win-x86 && \
-rm node.def
+rm node.def && \
+#
+# Add 32 bit arch for further use if needed
+dpkg --add-architecture i386
