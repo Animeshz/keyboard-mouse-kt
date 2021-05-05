@@ -7,6 +7,10 @@ on:
         description: 'Tag for the image'
         required: true
         default: SNAPSHOT
+      cache:
+        description: 'Run the build with cache'
+        required: false
+        default: true
       debug_enabled:
         description: 'Run the build with tmate debugging enabled (https://github.com/marketplace/actions/debugging-with-tmate)'
         required: false
@@ -22,6 +26,7 @@ jobs:
       # Loads cache if it exists and creates cache in the post run
       - uses: satackey/action-docker-layer-caching@v0
         continue-on-error: true
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug_enabled }}
 
       - name: Build the tagged Docker image
         run: docker build . --progress=plain --file docker/Dockerfile --tag animeshz/keyboard-mouse-kt:${{github.event.inputs.tag}}
