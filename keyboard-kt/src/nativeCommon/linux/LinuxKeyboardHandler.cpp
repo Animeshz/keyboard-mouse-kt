@@ -31,6 +31,9 @@ BaseKeyboardHandler *getInstance() {
 
             type = NONE;
             return NULL;
+
+        default:
+            return NULL;  // Never reached
     }
 }
 

@@ -33,10 +33,10 @@ class NativeCompilationPlugin : Plugin<Project> {
         val compileJni = project.tasks
             .register<JniCompilationTask>("compileJni", extension.compilation.targets, dockerImage).apply {
                 configure {
-                    for (path in extension.compilation.baseInputPaths) for (target in extension.compilation.targets) inputs.dir(path / target.os)
+                    inputs.dir(".")
                     outputs.dir(extension.compilation.outputDir)
 
-//                    dependsOn(headersTask)
+                    dependsOn(headersTask)
                 }
             }.get()
 

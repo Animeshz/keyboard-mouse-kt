@@ -35,50 +35,49 @@ open class NapiCompilationTask @Inject constructor(
             tmpVar
         }
 
-        val work: () -> Pair<Int, String> = {
-            ByteArrayOutputStream().use {
-                project.exec {
-                    val command = buildString {
-                        append("mkdir -p \$WORK_DIR/project/build/napi && ")
-                        for (i in targets.indices) {
-                            val target = targets[i]
-
-                            append(target.preRunScript + " && ")
-                            // Pass cmake toolchain file
-                            append("cmake-js compile --CDARCH=${target.arch} --arch=${target.arch} ${if (isVerbose) "-l=verbose " else ""} -d=\$WORK_DIR/project/src/jsMain/cpp/${target.os} && ")
-                            append("cp -rf \$WORK_DIR/project/src/jsMain/cpp/${target.os}/build/{,Release/}KeyboardKt${target.os.capitalize()}${target.arch}.node \$WORK_DIR/project/build/napi 2>/dev/null || : && ")
-                            append("rm -rf \$WORK_DIR/project/src/jsMain/cpp/${target.os}/build")
-
-                            if (i != targets.lastIndex) append(" && ")
-                        }
-                    }
-
-                    commandLine(
-                        "docker", "run", "--rm", "-v", "$path:/work/project", dockerImage, "bash", "-c", command
-                    )
-
-                    isIgnoreExitValue = true
-                    standardOutput = System.out
-                    errorOutput = it
-                }.exitValue to it.toString()
-            }
+        for (target in targets) {
+            work(path, target)
         }
-        var (exit, error) = work()
+    }
 
-        // Fix non-daemon docker on Docker for Windows
-        val nonDaemonError = "docker: error during connect: This error may indicate that the docker daemon is not running."
-        if (Os.isFamily(Os.FAMILY_WINDOWS) && error.startsWith(nonDaemonError)) {
+    private fun work(path: String, target: Target) {
+        val errorStream = ByteArrayOutputStream()
+        val interceptors = listOf(System.err, errorStream)
+
+        val exitCode = MultiplexOutputStream(interceptors).use {
+            project.exec {
+                val command = buildString {
+                    append("mkdir -p \$WORK_DIR/project/build/napi && ")
+                    append("echo ==================================== && ")
+                    append("echo Building ${target.os}-${target.arch} && ")
+                    append("${target.preRunScript} && ")
+                    append("cmake-js compile --CDARCH=${target.arch} --CDNODE_DEF_LINK_SUFFIX=${if (target.arch == "x86") "32" else "64"} --arch=${target.arch} ${if (isVerbose) "-l=verbose" else ""} -d=\$WORK_DIR/project/src/jsMain/cpp/${target.os} && ")
+                    append("cp -rf \$WORK_DIR/project/src/jsMain/cpp/${target.os}/build/{,Release/}KeyboardKt${target.os.capitalize()}${target.arch}.node \$WORK_DIR/project/build/napi 2>/dev/null || : && ")
+                    append("rm -rf \$WORK_DIR/project/src/jsMain/cpp/${target.os}/build")
+                }
+
+                commandLine(
+                    "docker", "run", "--rm", "-v", "$path:/work/project", "-v", "/etc/localtime:/etc/localtime:ro", dockerImage, "bash", "-c", command
+                )
+
+                isIgnoreExitValue = true
+                standardOutput = System.out
+                errorOutput = it
+            }.exitValue
+        }
+
+        val errorOutput = errorStream.toString()
+
+        if (Os.isFamily(Os.FAMILY_WINDOWS) && errorOutput.startsWith("docker: error during connect: This error may indicate that the docker daemon is not running.")) {
+            // Fix non-daemon docker on Docker for Windows
             project.exec { commandLine("C:\\Program Files\\Docker\\Docker\\DockerCli.exe", "-SwitchDaemon") }.assertNormalExitValue()
+            Thread.sleep(500)
 
-            do {
-                Thread.sleep(500)
-                val result = work()
-                exit = result.first
-                error = result.second
-            } while (error.startsWith(nonDaemonError))
+            return work(path, target)
+        } else if ("Clock skew detected" in errorOutput) {
+            throw GradleException("Docker's time does not match with host's file system time. Please restart docker from system tray or docker-machine and run the build again.")
         }
 
-        System.err.println(error)
-        if (exit != 0) throw GradleException("An error occured while running the command, see the stderr for more details.")
+        if (exitCode != 0) throw GradleException("An error occured while running the command, see the stderr for more details.")
     }
 }

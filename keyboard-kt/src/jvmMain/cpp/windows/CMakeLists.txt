@@ -10,6 +10,7 @@ option(ARCH "architecture")
 add_definitions(-D_WIN32_WINNT=0x600)
 
 include_directories($ENV{JNI_HEADERS_DIR})
+include_directories($ENV{JNI_HEADERS_DIR}/windows)
 include_directories("../../generated/jni")
 include_directories("../../../nativeCommon/windows")
 
