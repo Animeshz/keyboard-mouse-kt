@@ -121,6 +121,8 @@ npmPublishing {
 }
 
 nativeCompilation {
+    dockerImage = "animeshz/keyboard-mouse-kt:latest"
+
     jni {
         headers {
             inputDir = "src/jvmMain/kotlin"
@@ -129,12 +131,11 @@ nativeCompilation {
         compilation {
             baseInputPaths = listOf("src/jvmMain/cpp", "src/nativeCommon")
             outputDir = "build/jni"
-
             targets = listOf(
-                Target("windows", "x64", "animeshz/keyboard-mouse-kt:cross-build-windows-x64"),
-                Target("windows", "x86", "animeshz/keyboard-mouse-kt:cross-build-windows-x86"),
-                Target("linux", "x64", "animeshz/keyboard-mouse-kt:cross-build-linux-x64"),
-                Target("linux", "x86", "animeshz/keyboard-mouse-kt:cross-build-linux-x86")
+                Target("windows", "x64", "source windows64"),
+                Target("windows", "x86", "source windows32"),
+                Target("linux", "x64", "source linux64"),
+                Target("linux", "x86", "source linux32")
             )
         }
     }
@@ -144,11 +145,11 @@ nativeCompilation {
         outputDir = "build/napi"
 
         targets = listOf(
-            Target("windows", "x64", "animeshz/keyboard-mouse-kt:cross-build-windows-x64"),
-            Target("windows", "x86", "animeshz/keyboard-mouse-kt:cross-build-windows-x86"),
-            Target("linux", "x64", "animeshz/keyboard-mouse-kt:cross-build-linux-x64")
+            Target("windows", "x64", "source windows64"),
+            Target("windows", "x86", "source windows32"),
+            Target("linux", "x64", "source linux64")
             // NodeJS doesn't ship in x86, so people must be building the nodejs their selves, so supporting it is not really necessary for now
-            // Target("linux", "x86", "animeshz/keyboard-mouse-kt:cross-build-linux-x86")
+            // Target("linux", "x86", "source linux32")
         )
     }
 }

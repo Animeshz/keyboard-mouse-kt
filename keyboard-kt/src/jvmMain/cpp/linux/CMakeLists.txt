@@ -8,6 +8,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s -Os -fdata-sections -ffunction-sectio
 option(ARCH "architecture")
 
 include_directories($ENV{JNI_HEADERS_DIR})
+include_directories($ENV{JNI_HEADERS_DIR}/linux)
 include_directories("../../generated/jni")
 include_directories("../../../nativeCommon/linux")
 

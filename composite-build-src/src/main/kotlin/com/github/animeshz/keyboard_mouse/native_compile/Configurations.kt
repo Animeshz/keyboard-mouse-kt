@@ -3,12 +3,13 @@ package com.github.animeshz.keyboard_mouse.native_compile
 class Target(
     val os: String,
     val arch: String,
-    val dockerImage: String
+    val preRunScript: String
 )
 
 open class NativeConfiguration {
     val jni = JniConfiguration()
     val napi = JsCompilationConfiguration()
+    var dockerImage: String = ""
 
     fun jni(configuration: JniConfiguration.() -> Unit) {
         jni.apply(configuration)

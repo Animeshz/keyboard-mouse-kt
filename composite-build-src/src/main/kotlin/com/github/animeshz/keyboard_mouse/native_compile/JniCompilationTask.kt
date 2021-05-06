@@ -13,7 +13,8 @@ import javax.inject.Inject
  * For building shared libraries out of C/C++ sources for JVM
  */
 open class JniCompilationTask @Inject constructor(
-    private val target: Target
+    private val targets: List<Target>,
+    private val dockerImage: String
 ) : DefaultTask() {
     init {
         group = "nativeCompilation"
@@ -34,49 +35,52 @@ open class JniCompilationTask @Inject constructor(
             tmpVar
         }
 
-        val work: () -> Pair<Int, String> = {
-            ByteArrayOutputStream().use {
-                project.exec {
-                    commandLine(
-                        "docker",
-                        "run",
-                        "--rm",
-                        "-v",
-                        "$path:/work/project",
-                        target.dockerImage,
-                        "bash",
-                        "-c",
-                        "mkdir -p \$WORK_DIR/project/build/jni && " +
-                            "mkdir -p \$WORK_DIR/project/build/tmp/compile-jni-${target.os}-${target.arch} && " +
-                            "cd \$WORK_DIR/project/build/tmp/compile-jni-${target.os}-${target.arch} && " +
-                            "cmake -DARCH=${target.arch} \$WORK_DIR/project/src/jvmMain/cpp/${target.os} && " +
-                            "cmake --build . ${if (isVerbose) "--verbose " else ""}--config Release && " +
-                            "cp -rf libKeyboardKt${target.arch}.{dll,so,dylib} \$WORK_DIR/project/build/jni 2>/dev/null || : && " +
-                            "cd .. && rm -rf compile-jni-${target.os}-${target.arch}"
-                    )
-
-                    isIgnoreExitValue = true
-                    standardOutput = System.out
-                    errorOutput = it
-                }.exitValue to it.toString()
-            }
+        for (target in targets) {
+            work(path, target)
         }
-        var (exit, error) = work()
+    }
 
-        // Fix non-daemon docker on Docker for Windows
-        val nonDaemonError = "docker: error during connect: This error may indicate that the docker daemon is not running."
-        if (Os.isFamily(Os.FAMILY_WINDOWS) && error.startsWith(nonDaemonError)) {
+    private fun work(path: String, target: Target) {
+        val errorStream = ByteArrayOutputStream()
+        val interceptors = listOf(System.err, errorStream)
+
+        val exitCode = MultiplexOutputStream(interceptors).use {
+            project.exec {
+                val command = buildString(capacity = 800) {
+                    append("mkdir -p \$WORK_DIR/project/build/jni && ")
+                    append("echo ==================================== && ")
+                    append("echo Building ${target.os}-${target.arch} && ")
+                    append("${target.preRunScript} && ")
+                    append("mkdir -p \$WORK_DIR/project/build/tmp/compile-jni-${target.os}-${target.arch} && ")
+                    append("cd \$WORK_DIR/project/build/tmp/compile-jni-${target.os}-${target.arch} && ")
+                    append("\$CMAKE -DARCH=${target.arch} \$WORK_DIR/project/src/jvmMain/cpp/${target.os} && ")
+                    append("\$CMAKE --build . ${if (isVerbose) "--verbose" else ""} --config Release && ")
+                    append("cp -rf libKeyboardKt${target.arch}.{dll,so,dylib} \$WORK_DIR/project/build/jni 2>/dev/null || : && ")
+                    append("cd .. && rm -rf compile-jni-${target.os}-${target.arch}")
+                }
+
+                commandLine(
+                    "docker", "run", "--rm", "-v", "$path:/work/project", "-v", "/etc/localtime:/etc/localtime:ro",  dockerImage, "bash", "-c", command
+                )
+
+                isIgnoreExitValue = true
+                standardOutput = System.out
+                errorOutput = it
+            }.exitValue
+        }
+
+        val errorOutput = errorStream.toString()
+
+        if (Os.isFamily(Os.FAMILY_WINDOWS) && errorOutput.startsWith("docker: error during connect: This error may indicate that the docker daemon is not running.")) {
+            // Fix non-daemon docker on Docker for Windows
             project.exec { commandLine("C:\\Program Files\\Docker\\Docker\\DockerCli.exe", "-SwitchDaemon") }.assertNormalExitValue()
+            Thread.sleep(500)
 
-            do {
-                Thread.sleep(500)
-                val result = work()
-                exit = result.first
-                error = result.second
-            } while (error.startsWith(nonDaemonError))
+            return work(path, target)
+        } else if ("Clock skew detected" in errorOutput) {
+            throw GradleException("Docker's time does not match with host's file system time. Please restart docker from system tray or docker-machine and run the build again.")
         }
 
-        System.err.println(error)
-        if (exit != 0) throw GradleException("An error occured while running the command, see the stderr for more details.")
+        if (exitCode != 0) throw GradleException("An error occured while running the command, see the stderr for more details.")
     }
 }
