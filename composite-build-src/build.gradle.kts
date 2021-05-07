@@ -14,11 +14,11 @@ dependencies {
 gradlePlugin {
     plugins.register("keyboard-mouse-publishing") {
         id = "keyboard-mouse-publishing"
-        implementationClass = "com.github.animeshz.keyboard_mouse.publishing.PublishingPlugin"
+        implementationClass = "io.github.animeshz.keyboard_mouse.publishing.PublishingPlugin"
     }
 
     plugins.register("keyboard-mouse-native-compile") {
         id = "keyboard-mouse-native-compile"
-        implementationClass = "com.github.animeshz.keyboard_mouse.native_compile.NativeCompilationPlugin"
+        implementationClass = "io.github.animeshz.keyboard_mouse.native_compile.NativeCompilationPlugin"
     }
 }

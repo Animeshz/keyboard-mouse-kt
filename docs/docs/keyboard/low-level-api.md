@@ -10,7 +10,7 @@
 
 === "Kotlin (MPP)"
     ```kotlin
-    import com.github.animeshz.keyboard.nativeKbHandlerForPlatform
+    import io.github.animeshz.keyboard.nativeKbHandlerForPlatform
 
     val handler = nativeKbHandlerForPlatform()
     ```
@@ -19,13 +19,13 @@
     ```js
     const kbkt = require('keyboard-kt');
 
-    const handler = kbkt.com.github.animeshz.keyboard.JsNativeKeyboardHandler;
+    const handler = kbkt.io.github.animeshz.keyboard.JsNativeKeyboardHandler;
     ```
     <sup>**Note: This large import is due to limitations of K/JS to not able to export to global namespace currently, see [KT-37710](https://youtrack.jetbrains.com/issue/KT-37710).**</sup>
 
 === "Java 8 or above"
     ```java
-    import com.github.animeshz.keyboard.JKeyboardHandler;
+    import io.github.animeshz.keyboard.JKeyboardHandler;
 
     JKeyboardHandler handler = JKeyboardHandler.INSTANCE;
     ```

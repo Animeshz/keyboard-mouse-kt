@@ -1,4 +1,4 @@
-package com.github.animeshz.keyboard;
+package io.github.animeshz.keyboard;
 
 /**
  * SAM interface for handling shortcuts.

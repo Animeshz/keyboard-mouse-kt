@@ -60,8 +60,8 @@
         }
 
         dependencies {
-            implementation("com.github.animeshz:keyboard-kt-jvm:<version>")
-            implementation("com.github.animeshz:mouse-kt-jvm:<version>")
+            implementation("io.github.animeshz:keyboard-kt-jvm:<version>")
+            implementation("io.github.animeshz:mouse-kt-jvm:<version>")
         }
         ```
 
@@ -76,8 +76,8 @@
         }
 
         dependencies {
-            implementation("com.github.animeshz:keyboard-kt-js:<version>")
-            implementation("com.github.animeshz:mouse-kt-js:<version>")
+            implementation("io.github.animeshz:keyboard-kt-js:<version>")
+            implementation("io.github.animeshz:mouse-kt-js:<version>")
         }   
         ```
     
@@ -93,11 +93,11 @@
 
         dependencies {
             // Using from Java 8 or above (with complete Java support)
-            implementation("com.github.animeshz:keyboard-kt-jvm:<version>")
-            implementation("com.github.animeshz:keyboard-kt-jdk8:<version>")
+            implementation("io.github.animeshz:keyboard-kt-jvm:<version>")
+            implementation("io.github.animeshz:keyboard-kt-jdk8:<version>")
 
-            implementation("com.github.animeshz:mouse-kt-jvm:<version>")
-            implementation("com.github.animeshz:mouse-kt-jdk8:<version>")
+            implementation("io.github.animeshz:mouse-kt-jvm:<version>")
+            implementation("io.github.animeshz:mouse-kt-jdk8:<version>")
         }   
         ```
 
@@ -128,8 +128,8 @@
                 val commonMain by getting {
                     dependencies {
                         implementation(kotlin("stdlib-common"))
-                        implementation("com.github.animeshz:keyboard-kt:<version>")
-                        implementation("com.github.animeshz:mouse-kt:<version>")
+                        implementation("io.github.animeshz:keyboard-kt:<version>")
+                        implementation("io.github.animeshz:mouse-kt:<version>")
                     }
                 }
                 
@@ -137,8 +137,8 @@
                 val jvmMain by getting {
                     dependsOn(commonMain)
                     dependencies {
-                        implementation("com.github.animeshz:keyboard-kt-jvm:<version>")
-                        implementation("com.github.animeshz:mouse-kt-jvm:<version>")
+                        implementation("io.github.animeshz:keyboard-kt-jvm:<version>")
+                        implementation("io.github.animeshz:mouse-kt-jvm:<version>")
                     }
                 }
             }
@@ -158,8 +158,8 @@
         }
 
         dependencies {
-            implementation("com.github.animeshz:keyboard-kt-jvm:<version>")
-            implementation("com.github.animeshz:mouse-kt-jvm:<version>")
+            implementation("io.github.animeshz:keyboard-kt-jvm:<version>")
+            implementation("io.github.animeshz:mouse-kt-jvm:<version>")
         }
         ```
 
@@ -174,8 +174,8 @@
         }
 
         dependencies {
-            implementation("com.github.animeshz:keyboard-kt-js:<version>")
-            implementation("com.github.animeshz:mouse-kt-js:<version>")
+            implementation("io.github.animeshz:keyboard-kt-js:<version>")
+            implementation("io.github.animeshz:mouse-kt-js:<version>")
         }
         ```
     
@@ -191,11 +191,11 @@
 
         dependencies {
             // Using from Java 8 or above (with complete Java support)
-            implementation("com.github.animeshz:keyboard-kt-jvm:<version>")
-            implementation("com.github.animeshz:keyboard-kt-jdk8:<version>")
+            implementation("io.github.animeshz:keyboard-kt-jvm:<version>")
+            implementation("io.github.animeshz:keyboard-kt-jdk8:<version>")
 
-            implementation("com.github.animeshz:mouse-kt-jvm:<version>")
-            implementation("com.github.animeshz:mouse-kt-jdk8:<version>")
+            implementation("io.github.animeshz:mouse-kt-jvm:<version>")
+            implementation("io.github.animeshz:mouse-kt-jdk8:<version>")
         }   
         ```
 
@@ -226,8 +226,8 @@
                 commonMain {
                     dependencies {
                         implementation(kotlin("stdlib-common"))
-                        implementation("com.github.animeshz:keyboard-kt:<version>")
-                        implementation("com.github.animeshz:mouse-kt:<version>")
+                        implementation("io.github.animeshz:keyboard-kt:<version>")
+                        implementation("io.github.animeshz:mouse-kt:<version>")
                     }
                 }
                 
@@ -235,8 +235,8 @@
                 jvmMain {
                     dependsOn(commonMain)
                     dependencies {
-                        implementation("com.github.animeshz:keyboard-kt-jvm:<version>")
-                        implementation("com.github.animeshz:mouse-kt-jvm:<version>")
+                        implementation("io.github.animeshz:keyboard-kt-jvm:<version>")
+                        implementation("io.github.animeshz:mouse-kt-jvm:<version>")
                     }
                 }
             }
@@ -261,7 +261,7 @@
 
           <dependencies>
             <dependency>
-              <groupId>com.github.animeshz</groupId>
+              <groupId>io.github.animeshz</groupId>
               <artifactId>keyboard-kt-jvm</artifactId>
               <version>0.2.2</version>
               <type>pom</type>
@@ -287,13 +287,13 @@
 
           <dependencies>
             <dependency>
-              <groupId>com.github.animeshz</groupId>
+              <groupId>io.github.animeshz</groupId>
               <artifactId>keyboard-kt-jvm</artifactId>
               <version>0.2.2</version>
               <type>pom</type>
             </dependency>
             <dependency>
-              <groupId>com.github.animeshz</groupId>
+              <groupId>io.github.animeshz</groupId>
               <artifactId>keyboard-kt-jdk8</artifactId>
               <version>0.2.2</version>
               <type>pom</type>

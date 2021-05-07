@@ -3,7 +3,7 @@ plugins {
 }
 
 allprojects {
-    this.group = "com.github.animeshz"
+    this.group = "io.github.animeshz"
     this.version = "0.3.3"
 
     repositories {

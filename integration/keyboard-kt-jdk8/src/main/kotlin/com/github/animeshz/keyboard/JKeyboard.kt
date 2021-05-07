@@ -1,8 +1,8 @@
-package com.github.animeshz.keyboard
+package io.github.animeshz.keyboard
 
-import com.github.animeshz.keyboard.entity.KeySet
-import com.github.animeshz.keyboard.events.KeyEvent
-import com.github.animeshz.keyboard.events.KeyState
+import io.github.animeshz.keyboard.entity.KeySet
+import io.github.animeshz.keyboard.events.KeyEvent
+import io.github.animeshz.keyboard.events.KeyState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async

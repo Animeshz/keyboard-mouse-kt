@@ -1,6 +1,6 @@
 @file:Suppress("UNUSED_VARIABLE")
 
-import com.github.animeshz.keyboard_mouse.native_compile.Target
+import io.github.animeshz.keyboard_mouse.native_compile.Target
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompile

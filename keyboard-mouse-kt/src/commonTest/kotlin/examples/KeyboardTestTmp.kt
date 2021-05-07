@@ -3,9 +3,9 @@ package examples
 /**
  * Tests can be tried out after enabling granular source-set metadata in gradle.properties
 
-import com.github.animeshz.keyboard.entity.Key
-import com.github.animeshz.keyboard.entity.KeySet
-import com.github.animeshz.keyboard.entity.plus
+import io.github.animeshz.keyboard.entity.Key
+import io.github.animeshz.keyboard.entity.KeySet
+import io.github.animeshz.keyboard.entity.plus
 import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
