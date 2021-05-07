@@ -13,7 +13,7 @@ repositories {
 dependencies {
     implementation(kotlin("stdlib"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.4.2-native-mt")
-    api(project(":keyboard-kt"))
+    api(project(":keyboard-mouse-kt"))
 }
 
 kotlin {

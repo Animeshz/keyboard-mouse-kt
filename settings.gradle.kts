@@ -8,6 +8,5 @@ fun module(path: String) {
 
 includeBuild("composite-build-src")
 
-module("keyboard-kt")
+module("keyboard-mouse-kt")
 module("integration/keyboard-kt-jdk8")
-// include("mouse-kt")

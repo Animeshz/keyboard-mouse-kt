@@ -8,7 +8,7 @@ ENV X11_HEADERS_DIR=/usr/include/X11/ \
 
 LABEL maintainer="Animesh Sahu animeshsahu19@yahoo.com"
 
-COPY keyboard-kt/src/jsMain/cpp/windows/node.def ${WINDOWS_NODE_LINK_DIR}/node.def
+COPY keyboard-mouse-kt/src/jsMain/cpp/windows/node.def ${WINDOWS_NODE_LINK_DIR}/node.def
 
 RUN \
 apt-get update && \
