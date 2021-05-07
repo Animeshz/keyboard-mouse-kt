@@ -1,20 +1,16 @@
 package io.github.animeshz.keyboard_mouse.native_compile
 
-import org.apache.tools.ant.taskdefs.condition.Os
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import org.gradle.internal.jvm.Jvm
-import org.gradle.kotlin.dsl.configure
-import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import java.io.ByteArrayOutputStream
 import javax.inject.Inject
-import kotlin.system.exitProcess
 
 open class JniHeaderGenerationTask @Inject constructor(
     private val configuration: JniHeaderConfiguration
 ) : DefaultTask() {
-    private val metaRegex = """public \w*\s*class (.+)\.(\w+) (?:implements|extends).*\{\R([^}]*)}""".toRegex()
-    private val methodRegex = """.*\bnative\b.*""".toRegex()
+    private val metaRegex = """public \w*\s*class (.+)\.(\w+) (?:implements|extends)?.*\{\R([^}]*)}""".toRegex()
+    private val methodRegex = """.*\bnative\b.*\(.*\);""".toRegex()
 
     init {
         group = "nativeCompilation"

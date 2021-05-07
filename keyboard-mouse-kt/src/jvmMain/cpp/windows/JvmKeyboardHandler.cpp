@@ -1,5 +1,5 @@
 #include "WindowsKeyboardHandler.cpp"
-#include "com_github_animeshz_keyboard_JvmKeyboardHandler.h"
+#include "io_github_animeshz_keyboard_NativeKeyboard.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -11,19 +11,19 @@ JavaVM *jvm = NULL;
 jobject JvmKeyboardHandler = NULL;
 jmethodID emitEvent = NULL;
 
-JNIEXPORT jboolean JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_isCapsLockOn(JNIEnv *env, jobject obj) { return WindowsKeyboardHandler::getInstance()->isCapsLockOn(); }
+JNIEXPORT jboolean JNICALL Java_io_github_animeshz_keyboard_NativeKeyboard_isCapsLockOn(JNIEnv *env, jobject obj) { return WindowsKeyboardHandler::getInstance()->isCapsLockOn(); }
 
-JNIEXPORT jboolean JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_isNumLockOn(JNIEnv *env, jobject obj) { return WindowsKeyboardHandler::getInstance()->isNumLockOn(); }
+JNIEXPORT jboolean JNICALL Java_io_github_animeshz_keyboard_NativeKeyboard_isNumLockOn(JNIEnv *env, jobject obj) { return WindowsKeyboardHandler::getInstance()->isNumLockOn(); }
 
-JNIEXPORT jboolean JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_isScrollLockOn(JNIEnv *env, jobject obj) { return WindowsKeyboardHandler::getInstance()->isScrollLockOn(); }
+JNIEXPORT jboolean JNICALL Java_io_github_animeshz_keyboard_NativeKeyboard_isScrollLockOn(JNIEnv *env, jobject obj) { return WindowsKeyboardHandler::getInstance()->isScrollLockOn(); }
 
-JNIEXPORT jint JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeInit(JNIEnv *env, jobject obj) { return 0; }
+JNIEXPORT jint JNICALL Java_io_github_animeshz_keyboard_NativeKeyboard_nativeInit(JNIEnv *env, jobject obj) { return 0; }
 
-JNIEXPORT void JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeSendEvent(JNIEnv *env, jobject obj, jint scanCode, jboolean isDown) {
+JNIEXPORT void JNICALL Java_io_github_animeshz_keyboard_NativeKeyboard_nativeSendEvent(JNIEnv *env, jobject obj, jint scanCode, jboolean isDown) {
     WindowsKeyboardHandler::getInstance()->sendEvent(scanCode, isDown);
 }
 
-JNIEXPORT jboolean JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeIsPressed(JNIEnv *env, jobject obj, jint scanCode) {
+JNIEXPORT jboolean JNICALL Java_io_github_animeshz_keyboard_NativeKeyboard_nativeIsPressed(JNIEnv *env, jobject obj, jint scanCode) {
     return WindowsKeyboardHandler::getInstance()->isPressed(scanCode);
 }
 
@@ -34,7 +34,7 @@ void emitEventToJvm(int scanCode, bool isPressed) {
     }
 }
 
-JNIEXPORT jint JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeStartReadingEvents(JNIEnv *env, jobject obj) {
+JNIEXPORT jint JNICALL Java_io_github_animeshz_keyboard_NativeKeyboard_nativeStartReadingEvents(JNIEnv *env, jobject obj) {
     env->GetJavaVM(&jvm);
     JvmKeyboardHandler = env->NewGlobalRef(obj);
     emitEvent = env->GetMethodID(env->GetObjectClass(obj), "emitEvent", "(IZ)V");
@@ -42,7 +42,7 @@ JNIEXPORT jint JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nati
     return WindowsKeyboardHandler::getInstance()->startReadingEvents(emitEventToJvm);
 }
 
-JNIEXPORT void JNICALL Java_com_github_animeshz_keyboard_JvmKeyboardHandler_nativeStopReadingEvents(JNIEnv *env, jobject obj) {
+JNIEXPORT void JNICALL Java_io_github_animeshz_keyboard_NativeKeyboard_nativeStopReadingEvents(JNIEnv *env, jobject obj) {
     if (JvmKeyboardHandler == NULL) return;
 
     WindowsKeyboardHandler::getInstance()->stopReadingEvents();

@@ -38,7 +38,6 @@ kotlin {
             }
         }
         val commonTest by getting {
-            dependsOn(commonMain)
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))

@@ -4,10 +4,15 @@ import io.github.animeshz.keyboard.entity.Key
 import io.kotest.matchers.comparables.shouldNotBeEqualComparingTo
 import io.kotest.matchers.should
 import io.kotest.matchers.shouldBe
+import kotlinx.atomicfu.atomic
 import kotlin.js.ExperimentalJsExport
 import kotlin.js.JsName
 import kotlin.test.Test
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
+import kotlin.time.milliseconds
 
+@ExperimentalTime
 @ExperimentalJsExport
 @ExperimentalKeyIO
 class NativeKeyboardHandlerTest {
@@ -36,6 +41,7 @@ class NativeKeyboardHandlerTest {
         val native = NativeKeyboard
 
         val events = ArrayList<Pair<Int, Boolean>>(2)
+
         native.addEventHandler { id, keyCode, isPressed ->
             if (events.size == 2) return@addEventHandler native.removeEventHandler(id)
             if(keyCode != Key.LeftCtrl.keyCode) return@addEventHandler
@@ -46,13 +52,15 @@ class NativeKeyboardHandlerTest {
         native.sendEvent(Key.LeftCtrl.keyCode, true)
         native.sendEvent(Key.LeftCtrl.keyCode, false)
 
-        events[0] should {
-            it.first shouldBe Key.LeftCtrl.keyCode
-            it.second shouldBe true
-        }
-        events[1] should {
-            it.first shouldBe Key.LeftCtrl.keyCode
-            it.second shouldBe false
+        callAfter(400.milliseconds) {
+            events[0] should {
+                it.first shouldBe Key.LeftCtrl.keyCode
+                it.second shouldBe true
+            }
+            events[1] should {
+                it.first shouldBe Key.LeftCtrl.keyCode
+                it.second shouldBe false
+            }
         }
     }
 }

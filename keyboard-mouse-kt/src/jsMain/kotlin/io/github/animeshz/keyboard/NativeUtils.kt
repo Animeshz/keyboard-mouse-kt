@@ -18,7 +18,7 @@ internal external fun setTimeout(handler: dynamic, timeout: Int = definedExterna
 
 @ExperimentalKeyIO
 internal val NApiNativeHandler: INApiNativeHandler =
-    require("./KeyboardKt$identifier$suffix.node").unsafeCast<INApiNativeHandler>()
+    require("./KeyboardMouseKt$identifier$suffix.node").unsafeCast<INApiNativeHandler>()
 
 @ExperimentalKeyIO
 internal external interface INApiNativeHandler {

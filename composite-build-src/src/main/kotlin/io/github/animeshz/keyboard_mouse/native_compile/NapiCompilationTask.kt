@@ -52,7 +52,7 @@ open class NapiCompilationTask @Inject constructor(
                     append("echo Building ${target.os}-${target.arch} && ")
                     append("${target.preRunScript} && ")
                     append("cmake-js compile --CDARCH=${target.arch} --CDNODE_DEF_LINK_SUFFIX=${if (target.arch == "x86") "32" else "64"} --arch=${target.arch} ${if (isVerbose) "-l=verbose" else ""} -d=\$WORK_DIR/project/src/jsMain/cpp/${target.os} && ")
-                    append("cp -rf \$WORK_DIR/project/src/jsMain/cpp/${target.os}/build/{,Release/}KeyboardKt${target.os.capitalize()}${target.arch}.node \$WORK_DIR/project/build/napi 2>/dev/null || : && ")
+                    append("cp -rf \$WORK_DIR/project/src/jsMain/cpp/${target.os}/build/{,Release/}KeyboardMouseKt${target.os.capitalize()}${target.arch}.node \$WORK_DIR/project/build/napi 2>/dev/null || : && ")
                     append("rm -rf \$WORK_DIR/project/src/jsMain/cpp/${target.os}/build")
                 }
 
