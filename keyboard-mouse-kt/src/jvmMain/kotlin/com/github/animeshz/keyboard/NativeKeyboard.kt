@@ -1,8 +1,13 @@
 package com.github.animeshz.keyboard
 
 import com.github.animeshz.keyboard.entity.Key
+import kotlin.js.ExperimentalJsExport
 import kotlin.random.Random
+import kotlin.time.Duration
+import kotlin.time.DurationUnit
+import kotlin.time.ExperimentalTime
 
+@ExperimentalJsExport
 @ExperimentalKeyIO
 public actual object NativeKeyboard {
     private val handlers: MutableMap<Int, KeyboardEventHandler> = mutableMapOf()
@@ -70,4 +75,10 @@ public actual object NativeKeyboard {
             handler.handle(id, keyCode, isPressed)
         }
     }
+}
+
+@ExperimentalTime
+internal actual fun callAfter(duration: Duration, callback: () -> Unit) {
+    Thread.sleep(duration.toLong(DurationUnit.MILLISECONDS))
+    callback()
 }

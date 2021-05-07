@@ -5,7 +5,10 @@ import kotlinx.atomicfu.AtomicInt
 import kotlinx.atomicfu.atomic
 import kotlin.random.Random
 
+@Suppress("unused")
+@ExperimentalJsExport
 @ExperimentalKeyIO
+@JsExport
 public actual object NativeKeyboard {
     private val handlers: MutableMap<Int, KeyboardEventHandler> = mutableMapOf()
     private var id = atomic(0)

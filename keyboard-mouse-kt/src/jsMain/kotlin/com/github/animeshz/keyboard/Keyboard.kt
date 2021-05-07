@@ -11,7 +11,9 @@ import kotlin.time.ExperimentalTime
 
 private val byPlus = Regex("""\s*\+\s*""")
 
+@ExperimentalJsExport
 @ExperimentalKeyIO
+@JsExport
 public fun parseKey(str: String): Key = Key.values().first { it.name == str }
 
 @ExperimentalJsExport

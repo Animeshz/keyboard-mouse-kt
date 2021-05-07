@@ -1,8 +1,12 @@
 package com.github.animeshz.keyboard
 
 import com.github.animeshz.keyboard.entity.Key
+import kotlin.js.ExperimentalJsExport
+import kotlin.js.JsExport
 
+@ExperimentalJsExport
 @ExperimentalKeyIO
+@JsExport
 public fun interface KeyboardEventHandler {
     public fun handle(id: Int, keyCode: Int, isPressed: Boolean)
 }
@@ -10,6 +14,7 @@ public fun interface KeyboardEventHandler {
 /**
  * A low-level implementation for handling key events (sending and receiving).
  */
+@ExperimentalJsExport
 @ExperimentalKeyIO
 public expect object NativeKeyboard {
     /**
