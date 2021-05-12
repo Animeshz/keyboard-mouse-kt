@@ -2,7 +2,6 @@ package io.github.animeshz.keyboard
 
 import io.github.animeshz.keyboard.entity.Key
 import kotlin.js.ExperimentalJsExport
-import kotlin.random.Random
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
 import kotlin.time.ExperimentalTime
@@ -11,6 +10,7 @@ import kotlin.time.ExperimentalTime
 @ExperimentalKeyIO
 public actual object NativeKeyboard {
     private val handlers: MutableMap<Int, KeyboardEventHandler> = mutableMapOf()
+    private val idCount = AtomicInt(0)
 
     init {
         NativeUtils.loadLibraryFromJar("KeyboardMouseKt")
@@ -24,8 +24,7 @@ public actual object NativeKeyboard {
      * Returns unique id of the handler which can be used to cancel the subscription.
      */
     public actual fun addEventHandler(handler: KeyboardEventHandler): Int {
-        val id = Random.nextInt()
-        handlers[id] = handler
+        handlers[idCount.value] = handler
 
         if (handlers.size == 1) {
             val code = nativeStartReadingEvents()
@@ -34,7 +33,7 @@ public actual object NativeKeyboard {
             }
         }
 
-        return id
+        return idCount.value++
     }
 
     /**
@@ -81,4 +80,12 @@ public actual object NativeKeyboard {
 internal actual fun callAfter(duration: Duration, callback: () -> Unit) {
     Thread.sleep(duration.toLong(DurationUnit.MILLISECONDS))
     callback()
+}
+
+public actual class AtomicInt actual constructor(value_: Int) {
+    private val backing = java.util.concurrent.atomic.AtomicInteger(value_)
+
+    public actual var value: Int
+        get() = backing.get()
+        set(value) = backing.set(value)
 }

@@ -1,8 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm")
-    `java-library`
+    kotlin("jvm")  // mpp
     id("maven-publish")
 }
 
@@ -18,10 +17,6 @@ dependencies {
 
 kotlin {
     explicitApi()
-}
-
-java {
-    withSourcesJar()
 }
 
 tasks.withType<KotlinCompile> {
@@ -75,8 +70,8 @@ afterEvaluate {
             }
 
             artifactId = project.name
-            artifact(file("$buildDir/libs/keyboard-kt-jdk8-$version.jar"))
-            artifact(file("$buildDir/libs/keyboard-kt-jdk8-$version-sources.jar")) { classifier = "sources" }
+            artifact(file("$buildDir/libs/keyboard-mouse-kt-coroutines-$version.jar"))
+            artifact(file("$buildDir/libs/keyboard-mouse-kt-coroutines-$version-sources.jar")) { classifier = "sources" }
         }
     }
 }

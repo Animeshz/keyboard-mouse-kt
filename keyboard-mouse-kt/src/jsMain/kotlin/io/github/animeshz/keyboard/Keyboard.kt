@@ -40,3 +40,7 @@ public fun onPressed(yes: Boolean): KeyState =
 internal actual fun callAfter(duration: Duration, callback: () -> Unit) {
     setTimeout(callback, duration.toInt(DurationUnit.MILLISECONDS))
 }
+
+public actual class AtomicInt actual constructor(value_: Int) {
+    public actual var value: Int = value_
+}

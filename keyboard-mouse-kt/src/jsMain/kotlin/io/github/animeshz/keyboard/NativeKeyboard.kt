@@ -1,9 +1,6 @@
 package io.github.animeshz.keyboard
 
 import io.github.animeshz.keyboard.entity.Key
-import kotlinx.atomicfu.AtomicInt
-import kotlinx.atomicfu.atomic
-import kotlin.random.Random
 
 @Suppress("unused")
 @ExperimentalJsExport
@@ -11,14 +8,14 @@ import kotlin.random.Random
 @JsExport
 public actual object NativeKeyboard {
     private val handlers: MutableMap<Int, KeyboardEventHandler> = mutableMapOf()
-    private var id = atomic(0)
+    private var idCount = 0
 
     /**
      * Adds a [KeyboardEventHandler] to the event queue.
      * Returns unique id of the handler which can be used to cancel the subscription.
      */
     public actual fun addEventHandler(handler: KeyboardEventHandler): Int {
-        handlers[id.value] = handler
+        handlers[idCount] = handler
 
         if (handlers.size == 1) {
             val code = NApiNativeHandler.nativeStartReadingEvents { keyCode, isPressed ->
@@ -31,7 +28,7 @@ public actual object NativeKeyboard {
             }
         }
 
-        return id.value++
+        return idCount++
     }
 
     /**

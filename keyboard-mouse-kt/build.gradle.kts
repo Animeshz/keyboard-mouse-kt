@@ -13,6 +13,11 @@ plugins {
     id("org.jlleitschuh.gradle.ktlint") version "9.4.1"
 }
 
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
 kotlin {
     jvm()
     js(IR) {
@@ -22,39 +27,38 @@ kotlin {
         nodejs()
         binaries.library()
     }
-//    linuxX64 {
-//        val main by compilations.getting
-//
-//        main.cinterops.create("device") { defFile("src/linuxX64Main/cinterop/device.def") }
-//        main.cinterops.create("x11") { defFile("src/linuxX64Main/cinterop/x11.def") }
-//    }
-//    mingwX64()
+
+    val linuxSettings: org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget.() -> Unit = {
+        val main by compilations.getting
+
+        main.cinterops.create("device") { defFile("src/linuxCommonMain/cinterop/device.def") }
+        main.cinterops.create("x11") { defFile("src/linuxCommonMain/cinterop/x11.def") }
+    }
+    // https://github.com/touchlab/Stately/issues/62
+    linuxX64(configure = linuxSettings)
+    // linuxArm64(configure = linuxSettings)
+    linuxArm32Hfp(configure = linuxSettings)
+
+    mingwX64()
+    // https://github.com/touchlab/Stately/issues/62
+    // mingwX86()
 
     sourceSets {
         val commonMain by getting {
             dependencies {
                 api(kotlin("stdlib-common"))
-                implementation("org.jetbrains.kotlinx:atomicfu:0.14.4")
+                implementation("co.touchlab:stately-isolate:1.1.7-a1")
             }
         }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
-                implementation("io.mockk:mockk-common:1.10.3")
-                implementation("io.kotest:kotest-assertions-core:4.4.0.RC2")
             }
         }
 
         val jvmMain by sourceSets.getting { dependsOn(commonMain) }
-        val jvmTest by sourceSets.getting {
-            dependsOn(commonTest)
-            dependencies {
-                implementation(kotlin("test-junit5"))
-                runtimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
-                implementation("io.kotest:kotest-assertions-core:4.3.2")
-            }
-        }
+        val jvmTest by sourceSets.getting { dependsOn(commonTest) }
 
         val jsMain by sourceSets.getting { dependsOn(commonMain) }
         val jsTest by sourceSets.getting {
@@ -64,11 +68,23 @@ kotlin {
             }
         }
 
-//        val linuxX64Main by sourceSets.getting { dependsOn(commonMain) }
-//        val linuxX64Test by sourceSets.getting { dependsOn(commonTest) }
-//
-//        val mingwX64Main by sourceSets.getting { dependsOn(commonMain) }
-//        val mingwX64Test by sourceSets.getting { dependsOn(commonTest) }
+        val linuxCommonMain by sourceSets.creating { dependsOn(commonMain) }
+        val linuxCommonTest by sourceSets.creating { dependsOn(commonTest) }
+
+        val linuxX64Main by sourceSets.getting { dependsOn(linuxCommonMain) }
+        // val linuxArm64Main by sourceSets.getting { dependsOn(linuxCommonMain) }
+        val linuxArm32HfpMain by sourceSets.getting { dependsOn(linuxCommonMain) }
+        val linuxX64Test by sourceSets.getting { dependsOn(linuxCommonTest) }
+//         val linuxArm64Test by sourceSets.getting { dependsOn(linuxCommonTest) }
+        val linuxArm32HfpTest by sourceSets.getting { dependsOn(linuxCommonTest) }
+
+        val mingwCommonMain by sourceSets.creating { dependsOn(commonMain) }
+        val mingwCommonTest by sourceSets.creating { dependsOn(commonTest) }
+
+        val mingwX64Main by sourceSets.getting { dependsOn(mingwCommonMain) }
+        // val mingwX86Main by sourceSets.getting { dependsOn(mingwCommonMain) }
+        val mingwX64Test by sourceSets.getting { dependsOn(mingwCommonTest) }
+        // val mingwX86Test by sourceSets.getting { dependsOn(mingwCommonTest) }
 
         all {
             languageSettings.useExperimentalAnnotation("kotlin.RequiresOptIn")
@@ -79,9 +95,9 @@ kotlin {
 }
 
 publishingConfig {
-    repository = "https://api.bintray.com/maven/animeshz/maven/keyboard-kt/;publish=1;override=1"
-    username = System.getenv("BINTRAY_USER")
-    password = System.getenv("BINTRAY_KEY")
+    repository = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2"
+    username = System.getenv("SONATYPE_USER")
+    password = System.getenv("SONATYPE_KEY")
 }
 
 npmPublishing {

@@ -236,7 +236,7 @@ public enum class Key(public val keyCode: Int) {
         /**
          * Resolves [Key] and should the Shift Key be pressed for sending the [char] to the host.
          */
-        public fun fromChar(char: Char): Pair<Key, Boolean> {
+        internal fun fromChar(char: Char): Pair<Key, Boolean> {
             if (char == '0') return Number0 to false
             if (char in '1'..'9') return values()[char - '0' + 2] to false
 

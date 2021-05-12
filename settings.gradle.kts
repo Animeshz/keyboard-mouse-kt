@@ -6,7 +6,14 @@ fun module(path: String) {
     project(":$name").projectDir = file(path)
 }
 
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap")
+    }
+}
+
 includeBuild("composite-build-src")
 
 module("keyboard-mouse-kt")
-module("integration/keyboard-kt-jdk8")
+//module("integration/keyboard-mouse-kt-coroutines")

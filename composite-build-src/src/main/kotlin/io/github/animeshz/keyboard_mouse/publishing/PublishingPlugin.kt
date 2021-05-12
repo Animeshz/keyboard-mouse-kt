@@ -19,6 +19,7 @@ class PublishingPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         val ext = target.extensions.create("publishingConfig", PublishingConfigurationExtension::class.java)
         target.apply(plugin = "maven-publish")
+        target.apply(plugin = "signing")
 
         target.afterEvaluate {
             val repository = ext.repository ?: return@afterEvaluate println("publishingConfig.repository is missing, skipping...")
@@ -33,6 +34,10 @@ class PublishingPlugin : Plugin<Project> {
                         }
                     }
                 }
+
+//                signing {
+//                    sign(publications)
+//                }
 
                 publications.withType<MavenPublication> {
                     pom {

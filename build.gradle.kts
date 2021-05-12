@@ -1,5 +1,6 @@
 plugins {
-    kotlin("multiplatform") version "1.4.32" apply false
+    kotlin("multiplatform") version "1.5.20-dev-5753" apply false
+    id("io.codearte.nexus-staging") version "0.30.0"
 }
 
 allprojects {
@@ -9,6 +10,7 @@ allprojects {
     repositories {
         mavenCentral()
         jcenter()
+        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap")
     }
 }
 
@@ -22,4 +24,10 @@ subprojects {
                 .forEach { evaluationDependsOn(it.path) }
         }
     }
+}
+
+nexusStaging {
+    username = System.getenv("SONATYPE_USER")
+    password = System.getenv("SONATYPE_KEY")
+    packageGroup = group as String
 }

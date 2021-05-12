@@ -1,0 +1,133 @@
+package = x11
+---
+
+/*
+Copyright 1985, 1986, 1987, 1991, 1998  The Open Group
+
+Permission to use, copy, modify, distribute, and sell this software and its
+documentation for any purpose is hereby granted without fee, provided that
+the above copyright notice appear in all copies and that both that
+copyright notice and this permission notice appear in supporting
+documentation.
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+OPEN GROUP BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN
+AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Except as contained in this notice, the name of The Open Group shall not be
+used in advertising or otherwise to promote the sale, use or other dealings
+in this Software without prior written authorization from The Open Group.
+*/
+
+/* This contains required structures from XLib and XInput2 for our purpose */
+
+/*
+ * Display datatype maintaining display specific data.
+ * The contents of this structure are implementation dependent.
+ * A Display should be treated as opaque by application code.
+ */
+typedef void *Display;
+
+/*
+ * Definitions of specific events.
+ */
+typedef struct {
+    int type;                /* of event */
+    unsigned long serial;    /* # of last request processed by server */
+    int send_event;          /* true if this came from a SendEvent request */
+    Display *display;        /* Display the event was read from */
+    unsigned long window;    /* "event" window it is reported relative to */
+    unsigned long root;      /* root window that the event occurred on */
+    unsigned long subwindow; /* child window */
+    unsigned long time;      /* milliseconds */
+    int x, y;                /* pointer x, y coordinates in event window */
+    int x_root, y_root;      /* coordinates relative to root */
+    unsigned int state;      /* key or button mask */
+    unsigned int keycode;    /* detail */
+    int same_screen;         /* same screen flag */
+} XKeyEvent;
+
+/***************************************************************
+ *
+ * GenericEvent.  This event is the standard event for all newer extensions.
+ */
+typedef struct {
+    int type;             /* of event. Always GenericEvent */
+    unsigned long serial; /* # of last request processed */
+    int send_event;       /* true if from SendEvent request */
+    Display *display;     /* Display the event was read from */
+    int extension;        /* major opcode of extension that caused the event */
+    int evtype;           /* actual event type. */
+    unsigned int cookie;
+    void *data;
+} XGenericEventCookie;
+
+/*
+ * this union is defined so Xlib can always use the same sized
+ * event structure internally, to avoid memory fragmentation.
+ */
+typedef union _XEvent {
+    int type; /* must not be changed; first element */
+    XKeyEvent xkey;
+    XGenericEventCookie xcookie;
+    long pad[24];
+} XEvent;
+
+typedef struct {
+    int mask_len;
+    unsigned char *mask;
+    double *values;
+} XIValuatorState;
+
+/* Data structure for XGetKeyboardControl */
+typedef struct {
+    int key_click_percent;
+    int bell_percent;
+    unsigned int bell_pitch, bell_duration;
+    unsigned long led_mask;
+    int global_auto_repeat;
+    char auto_repeats[32];
+} XKeyboardState;
+
+typedef struct {
+    int deviceid;
+    int mask_len;
+    unsigned char *mask;
+} XIEventMask;
+
+typedef struct {
+    int type;             /* GenericEvent */
+    unsigned long serial; /* # of last request processed by server */
+    int send_event;       /* true if this came from a SendEvent request */
+    Display *display;     /* Display the event was read from */
+    int extension;        /* XI extension offset */
+    int evtype;           /* XI_RawKeyPress, XI_RawKeyRelease, etc. */
+    unsigned long time;
+    int deviceid;
+    int sourceid;
+    int detail;
+    int flags;
+    XIValuatorState valuators;
+    double *raw_values;
+} XIRawEvent;
+
+typedef struct {
+    int type;    /* ClientMessage */
+    unsigned long serial;        /* # of last request processed by server */
+    int send_event;        /* true if this came from a SendEvent request */
+    Display *display;        /* Display the event was read from */
+    unsigned long window;
+    unsigned long message_type;
+    int format;
+    union {
+        char b[20];
+        short s[10];
+        long l[5];
+    } data;
+} XClientMessageEvent;
