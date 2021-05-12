@@ -9,8 +9,8 @@
     <a href="https://github.com/Animeshz/keyboard-mouse-kt/releases">
         <img src="https://img.shields.io/github/release-date/Animeshz/keyboard-mouse-kt?style=flat-square&label=Latest%20Release" alt="Latest Release" />
     </a>
-    <a href="https://bintray.com/animeshz/maven/keyboard-kt">
-        <img src="https://img.shields.io/bintray/v/animeshz/maven/keyboard-kt?color=blue&style=flat-square" alt="Bintray Version">
+    <a href="">
+        <img src="https://img.shields.io/nexus/r/io.github.animeshz/keyboard-mouse-kt?label=version&nexusVersion=3&server=https%3A%2F%2Fs01.oss.sonatype.org&style=flat-square" alt="Latest Version">
     </a>
     <img src="https://img.shields.io/github/languages/code-size/Animeshz/keyboard-mouse-kt?style=flat-square" alt="Code Size"/>
     <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/LICENSE">
@@ -30,9 +30,7 @@ We aim to provide high-level as well as high-performant low-level access to such
 
 The most basic motivation (or use case) comes from trying to make our GUI app to hide on background and pop it back. Since most GUI frameworks only allow you to listen to events that are happening on the current window and when focus lost you don't get any, we've designed this lightweight library to easily control that.
 
-Another not quite good but a use-case is to simulate key-presses.
-
-We can integrate the Mouse and Keyboard API together, to for example simulate a click or something, it really depends on the personal use case.
+Another not quite good but a use-case is to simulate key-presses. We can integrate the Mouse and Keyboard API together, to for example simulate a click or something, it really depends on the personal use case.
 
 ## Contributing and future plans
 

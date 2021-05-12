@@ -51,6 +51,6 @@ To build and publish to mavenLocal:
 
 The only requirement is to install Docker when building for JVM & JS due to cross-compilation requirement of JNI & NApi native libs.
 
-If you ever get clock gets skewed (and Makefile get modified in the future) at the time of compilation of C++ sources, please restart the docker from the system tray.
+If you ever get clock gets skewed (and Makefile get modified in the future) at the time of compilation of C++ sources, please restart the docker from the system tray. If it does not help and you're on windows then update WSL kernel to 5.10 or higher.
 
 [1]: https://github.com/Animeshz/keyboard-mouse-kt/issues/1

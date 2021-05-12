@@ -1,34 +1,30 @@
 # High Level API
 
-**Kotlin:** High Level API depends on [Keyboard][1] which is a wrapper around the [NativeKeyboardHandler][2].
-
-**Java:** High Level API depends on [JKeyboard][4].
-
-**NodeJS:** High Level API depends on [JsKeyboard][5].
+High Level API depends on [Keyboard][1] which is a wrapper around the [NativeKeyboard][2].
 
 ## Importing the package.
 
-=== "Kotlin (MPP)"
+=== "Kotlin"
     ```kotlin
     import io.github.animeshz.keyboard.Keyboard
 
-    val keyboard = Keyboard()
+    val keyboard = Keyboard
+    ```
+
+=== "Java 8 or above"
+    ```java
+    import io.github.animeshz.keyboard.Keyboard;
+
+    Keyboard keyboard = Keyboard.INSTANCE;
     ```
 
 === "NodeJS"
     ```js
-    const kbkt = require('keyboard-kt');
+    const kt = require('keyboard-mouse-kt');
 
-    const keyboard = new kbkt.io.github.animeshz.keyboard.JsKeyboard();
+    const keyboard = kbkt.io.github.animeshz.keyboard.Keyboard;
     ```
     <sup>**Note: This large import is due to limitations of K/JS to not able to export to global namespace currently, see [KT-37710](https://youtrack.jetbrains.com/issue/KT-37710).**</sup>
-
-=== "Java 8 or above"
-    ```java
-    import io.github.animeshz.keyboard.JKeyboard;
-
-    JKeyboard handler = new JKeyboard();
-    ```
 
 ## Adding a shortcut (Hotkey).
 
@@ -42,7 +38,7 @@
 
 === "NodeJS"
     ```js
-    keyboard.addShortcut('LeftCtrl + E', true,
+    keyboard.addShortcut(parseKeySet('LeftCtrl + E'), onPressed(true),
         () => console.log("triggered")
     );
     ```
@@ -77,7 +73,7 @@
 
 === "NodeJS"
     ```js
-    keyboard.send('LeftAlt + M');
+    keyboard.send(parseKeySet('LeftAlt + M'));
     ```
 
 === "Java 8"
@@ -112,18 +108,20 @@
     keyboard.write("Hello Keyboard!");
     ```
 
-## Wait till a [KeySet][3] is pressed.
-
-Suspensive wait in Kotlin, whereas asynchronous `CompletableFuture<>` for Java
+## Trigger one time once when a [KeySet][3] is pressed.
 
 === "Kotlin"
     ```kotlin
-    keyboard.awaitTill(Key.LeftCtrl + Key.LeftShift + Key.R, trigger = KeyState.KeyDown)
+    keyboard.triggerWhen(Key.LeftCtrl + Key.LeftShift + Key.R, trigger = KeyState.KeyDown) {
+        // ...
+    }
     ```
 
 === "NodeJS"
     ```js
-    await keyboard.completeWhenPressed('LeftCtrl + LeftShift + R');
+    keyboard.triggerWhen(parseKeySet('LeftCtrl + LeftShift + R'), onPressed(true), () => {
+        // ...
+    });
     ```
 
 === "Java 8"
@@ -131,35 +129,38 @@ Suspensive wait in Kotlin, whereas asynchronous `CompletableFuture<>` for Java
     Set<Key> keys = new HashSet<>();
     Collections.addAll(keys, Key.LeftCtrl + Key.LeftShift + Key.R);
 
-    keyboard.completeWhenPressed(new KeySet(keys), KeyState.KeyDown)
-        .thenApply(unit -> {...});
+    keyboard.triggerWhen(new KeySet(keys), KeyState.KeyDown, () -> {
+        // ...
+    });
     ```
-    <sup>**Note: Unit is similar to java.lang.Void, a singleton object which has nothing to do for us.**</sup>
 
 === "Java 9 or above"
     ```java
     Set<Key> keys = Set.of(Key.LeftCtrl + Key.LeftShift + Key.R);
 
-    keyboard.completeWhenPressed(new KeySet(keys), KeyState.KeyDown)
-        .thenApply(unit -> {...});
+    keyboard.triggerWhen(new KeySet(keys), KeyState.KeyDown, () -> {
+        // ...
+    });
     ```
-    <sup>**Note: Unit is similar to java.lang.Void, a singleton object which has nothing to do for us.**</sup>
-
 
 <sup>**Note: `trigger` defaults to KeyState.KeyDown when not provided.**</sup>
 
 ## Record Key presses till specific [KeySet][3].
 
-Recorded KeyPresses is pushed into a [KeyPressSequence][1] (`List<Duration, KeyEvent>`)
+Recorded KeyPresses is pushed into a [KeyPressSequence][1] (`Array<Triple<Duration, Key, KeyState>>`)
 
 === "Kotlin"
     ```kotlin
-    val records: KeyPressSequence = keyboard.recordTill(Key.LeftAlt + Key.A, trigger = KeyState.KeyDown)
+    val records: KeyPressSequence = keyboard.recordTill(Key.LeftAlt + Key.A, trigger = KeyState.KeyDown) { records ->
+        // ...
+    }
     ```
 
 === "NodeJS"
     ```js
-    const records = await keyboard.recordKeyPressesTill('LeftCtrl + LeftShift + R', true);
+    keyboard.recordKeyPressesTill('LeftCtrl + LeftShift + R', true. (records) => {
+
+    });
     ```
 
 === "Java 8"
@@ -168,8 +169,9 @@ Recorded KeyPresses is pushed into a [KeyPressSequence][1] (`List<Duration, KeyE
     Collections.addAll(keys, Key.LeftAlt, Key.A);
 
     // `trigger` defaults to KeyState.KeyDown when not provided.
-    CompletableFuture<List<Duration, KeyEvent>> records =
-        keyboard.recordTill(new KeySet(keys), KeyState.KeyDown);
+    keyboard.recordTill(new KeySet(keys), KeyState.KeyDown, (records) -> {
+        // ...
+    });
     ```
 
 === "Java 9 or above"
@@ -180,7 +182,11 @@ Recorded KeyPresses is pushed into a [KeyPressSequence][1] (`List<Duration, KeyE
         keyboard.recordTill(new KeySet(keys), KeyState.KeyDown);
     ```
 
+<sup>**Note: Trigger here is to stop recording.**</sup>
+
 ## Play a recorded or created collection of Keys at defined order.
+
+Blocks in JVM and Native targets, whereas enqueues the task to the event loop using `setTimeout` in JS.
 
 === "Kotlin"
     ```kotlin
@@ -189,7 +195,7 @@ Recorded KeyPresses is pushed into a [KeyPressSequence][1] (`List<Duration, KeyE
 
 === "NodeJS"
     ```js
-    await keyboard.play(records, 1.0);
+    keyboard.play(records, 1.25);
     ```
 
 === "Java 8 or above"
@@ -199,12 +205,8 @@ Recorded KeyPresses is pushed into a [KeyPressSequence][1] (`List<Duration, KeyE
 
 <sup>**Note: `speedFactor` defaults to 1.0 when not provided.**</sup>
 
-[1]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/Keyboard.kt
+[1]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/io/github/animeshz/keyboard/Keyboard.kt
 
-[2]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/NativeKeyboardHandler.kt
+[2]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/io/github/animeshz/keyboard/NativeKeyboard.kt
 
-[3]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/KeySet.kt
-
-[4]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/integration/keyboard-kt-jdk8/src/main/kotlin/com/github/animeshz/keyboard/JKeyboard.kt
-
-[5]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard-kt/src/jsMain/kotlin/com/github/animeshz/keyboard/JsKeyboard.kt
+[3]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard/src/commonMain/kotlin/io/github/animeshz/keyboard/entity/KeySet.kt

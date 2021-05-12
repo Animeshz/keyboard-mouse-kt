@@ -15,17 +15,17 @@
         - [X] Windows x86_64 (64 bit)
         - [X] Windows x86    (32 bit)
         - [X] Linux x86_64 (64 bit)
-        - [ ] Linux x86    (32 bit)
+        - [ ] Linux x86    (32 bit)  <- Not intended as node doesn't ship directly to this
         - [ ] Linux Arm32
         - [ ] Linux Arm64
         - [ ] MacOS
     - [ ] Native
         - [X] Windows x86_64 (64 bit)
-        - [ ] Windows x86    (32 bit)
+        - [X] Windows x86    (32 bit)
         - [X] Linux x86_64 (64 bit)
-        - [ ] Linux x86    (32 bit)
-        - [ ] Linux Arm32
-        - [ ] Linux Arm64
+        - [X] Linux x86    (32 bit)
+        - [X] Linux Arm32Hfp
+        - [X] Linux Arm64
         - [ ] MacOS
 - [ ] Mouse
     - [ ] Windows
@@ -38,8 +38,8 @@
     <a href="https://github.com/Animeshz/keyboard-mouse-kt/releases">
         <img src="https://img.shields.io/github/release-date/Animeshz/keyboard-mouse-kt?style=flat-square&label=Latest%20Release" alt="Latest Release" />
     </a>
-    <a href="https://bintray.com/animeshz/maven/keyboard-kt">
-        <img src="https://img.shields.io/bintray/v/animeshz/maven/keyboard-kt?color=blue&style=flat-square" alt="Bintray Version">
+    <a href="">
+        <img src="https://img.shields.io/nexus/r/io.github.animeshz/keyboard-mouse-kt?label=version&nexusVersion=3&server=https%3A%2F%2Fs01.oss.sonatype.org&style=flat-square" alt="Latest Version">
     </a>
     <img src="https://img.shields.io/github/languages/code-size/Animeshz/keyboard-mouse-kt?style=flat-square" alt="Code Size"/>
     <a href="https://github.com/Animeshz/keyboard-mouse-kt/blob/master/LICENSE">
@@ -56,12 +56,11 @@
         }
 
         repositories {
-            maven(url = "https://dl.bintray.com/animeshz/maven")
+            mavenCentral()
         }
 
         dependencies {
-            implementation("io.github.animeshz:keyboard-kt-jvm:<version>")
-            implementation("io.github.animeshz:mouse-kt-jvm:<version>")
+            implementation("io.github.animeshz:keyboard=mouse-kt-jvm:<version>")
         }
         ```
 
@@ -72,12 +71,11 @@
         }
 
         repositories {
-            maven(url = "https://dl.bintray.com/animeshz/maven")
+            mavenCentral()
         }
 
         dependencies {
-            implementation("io.github.animeshz:keyboard-kt-js:<version>")
-            implementation("io.github.animeshz:mouse-kt-js:<version>")
+            implementation("io.github.animeshz:keyboard=mouse-kt-js:<version>")
         }   
         ```
     
@@ -88,16 +86,14 @@
         }
 
         repositories {
-            maven(url = "https://dl.bintray.com/animeshz/maven")
+            mavenCentral()
         }
 
         dependencies {
             // Using from Java 8 or above (with complete Java support)
-            implementation("io.github.animeshz:keyboard-kt-jvm:<version>")
-            implementation("io.github.animeshz:keyboard-kt-jdk8:<version>")
+            implementation("io.github.animeshz:keyboard=mouse-kt-jvm:<version>")
 
             implementation("io.github.animeshz:mouse-kt-jvm:<version>")
-            implementation("io.github.animeshz:mouse-kt-jdk8:<version>")
         }   
         ```
 
@@ -108,7 +104,7 @@
         }
 
         repositories {
-            maven(url = "https://dl.bintray.com/animeshz/maven")
+            mavenCentral()
         }
 
         kotlin {
@@ -128,8 +124,7 @@
                 val commonMain by getting {
                     dependencies {
                         implementation(kotlin("stdlib-common"))
-                        implementation("io.github.animeshz:keyboard-kt:<version>")
-                        implementation("io.github.animeshz:mouse-kt:<version>")
+                        implementation("io.github.animeshz:keyboard=mouse-kt:<version>")
                     }
                 }
                 
@@ -137,8 +132,7 @@
                 val jvmMain by getting {
                     dependsOn(commonMain)
                     dependencies {
-                        implementation("io.github.animeshz:keyboard-kt-jvm:<version>")
-                        implementation("io.github.animeshz:mouse-kt-jvm:<version>")
+                        implementation("io.github.animeshz:keyboard=mouse-kt-jvm:<version>")
                     }
                 }
             }
@@ -154,12 +148,11 @@
         }
 
         repositories {
-            maven { url "https://dl.bintray.com/animeshz/maven" }
+            mavenCentral()
         }
 
         dependencies {
-            implementation("io.github.animeshz:keyboard-kt-jvm:<version>")
-            implementation("io.github.animeshz:mouse-kt-jvm:<version>")
+            implementation("io.github.animeshz:keyboard=mouse-kt-jvm:<version>")
         }
         ```
 
@@ -170,12 +163,11 @@
         }
 
         repositories {
-            maven { url "https://dl.bintray.com/animeshz/maven" }
+            mavenCentral()
         }
 
         dependencies {
-            implementation("io.github.animeshz:keyboard-kt-js:<version>")
-            implementation("io.github.animeshz:mouse-kt-js:<version>")
+            implementation("io.github.animeshz:keyboard=mouse-kt-js:<version>")
         }
         ```
     
@@ -186,16 +178,11 @@
         }
 
         repositories {
-            maven { url "https://dl.bintray.com/animeshz/maven" }
+            mavenCentral()
         }
 
         dependencies {
-            // Using from Java 8 or above (with complete Java support)
-            implementation("io.github.animeshz:keyboard-kt-jvm:<version>")
-            implementation("io.github.animeshz:keyboard-kt-jdk8:<version>")
-
-            implementation("io.github.animeshz:mouse-kt-jvm:<version>")
-            implementation("io.github.animeshz:mouse-kt-jdk8:<version>")
+            implementation("io.github.animeshz:keyboard=mouse-kt-jvm:<version>")
         }   
         ```
 
@@ -206,7 +193,7 @@
         }
 
         repositories {
-            maven { url "https://dl.bintray.com/animeshz/maven" }
+            mavenCentral()
         }
 
         kotlin {
@@ -226,8 +213,7 @@
                 commonMain {
                     dependencies {
                         implementation(kotlin("stdlib-common"))
-                        implementation("io.github.animeshz:keyboard-kt:<version>")
-                        implementation("io.github.animeshz:mouse-kt:<version>")
+                        implementation("io.github.animeshz:keyboard=mouse-kt:<version>")
                     }
                 }
                 
@@ -235,8 +221,7 @@
                 jvmMain {
                     dependsOn(commonMain)
                     dependencies {
-                        implementation("io.github.animeshz:keyboard-kt-jvm:<version>")
-                        implementation("io.github.animeshz:mouse-kt-jvm:<version>")
+                        implementation("io.github.animeshz:keyboard=mouse-kt-jvm:<version>")
                     }
                 }
             }
@@ -251,19 +236,11 @@
           xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
           <modelVersion>4.0.0</modelVersion>
 
-          <repositories>
-            <repository>
-              <id>bintray-animeshz-maven</id>
-              <name>bintray</name>
-              <url>https://dl.bintray.com/animeshz/maven</url>
-            </repository>
-          </repositories>
-
           <dependencies>
             <dependency>
               <groupId>io.github.animeshz</groupId>
-              <artifactId>keyboard-kt-jvm</artifactId>
-              <version>0.2.2</version>
+              <artifactId>keyboard=mouse-kt-jvm</artifactId>
+              <version>{version}</version>
               <type>pom</type>
             </dependency>
           </dependencies>
@@ -288,14 +265,8 @@
           <dependencies>
             <dependency>
               <groupId>io.github.animeshz</groupId>
-              <artifactId>keyboard-kt-jvm</artifactId>
-              <version>0.2.2</version>
-              <type>pom</type>
-            </dependency>
-            <dependency>
-              <groupId>io.github.animeshz</groupId>
-              <artifactId>keyboard-kt-jdk8</artifactId>
-              <version>0.2.2</version>
+              <artifactId>keyboard=mouse-kt-jvm</artifactId>
+              <version>{version}</version>
               <type>pom</type>
             </dependency>
           </dependencies>
@@ -312,7 +283,7 @@
             "version": "<project-version>",
 
             "dependencies": {
-                "keyboard-kt": "^0.3.0"
+                "keyboard=mouse-kt": "^0.3.0"
             }
         }
         ```
@@ -351,4 +322,4 @@ A browser will open with current directory, open the `getting_started.ipynb` and
 
 A simple demo gif:
 
-![keyboard-kt-jupyter-sample.gif](https://i.imgur.com/QTVcMp1.gif)
+![keyboard=mouse-kt-jupyter-sample.gif](https://i.imgur.com/QTVcMp1.gif)

@@ -1,60 +1,78 @@
 # Low Level API
 
-**Kotlin:** Low Level API depends on [NativeKeyboardHandler][1] that can be obtained via `nativeKbHandlerForPlatform()`.
-
-**Java:** Low Level API depends on [JNativeKeyboardHandler][4] that can be obtained via `JNativeKeyboardHandler.INSTANCE`.
-
-**NodeJS:** Low Level API depends on [JsKeyboardHandler][5] that can be obtained via `JsNativeKeyboardHandler`.
+Low Level API depends on [NativeKeyboard][1] that can be obtained via `NativeKeyboard` in Kotlin and `NativeKeyboard.INSTANCE` in JS and Java.
 
 ## Importing the package.
 
-=== "Kotlin (MPP)"
+=== "Kotlin"
     ```kotlin
-    import io.github.animeshz.keyboard.nativeKbHandlerForPlatform
+    import io.github.animeshz.keyboard.NativeKeyboard
 
-    val handler = nativeKbHandlerForPlatform()
+    val native = NativeKeyboard
     ```
 
 === "NodeJS"
     ```js
-    const kbkt = require('keyboard-kt');
+    const kt = require('keyboard-mouse-kt');
 
-    const handler = kbkt.io.github.animeshz.keyboard.JsNativeKeyboardHandler;
+    const native = kt.io.github.animeshz.keyboard.NativeKeyboard;
     ```
     <sup>**Note: This large import is due to limitations of K/JS to not able to export to global namespace currently, see [KT-37710](https://youtrack.jetbrains.com/issue/KT-37710).**</sup>
 
+
 === "Java 8 or above"
     ```java
-    import io.github.animeshz.keyboard.JKeyboardHandler;
+    import io.github.animeshz.keyboard.NativeKeyboard;
 
-    JKeyboardHandler handler = JKeyboardHandler.INSTANCE;
+    NativeKeyboard native = NativeKeyboard.INSTANCE;
     ```
 
 ## Listening to events using Flow (Kotlin) or callback (Java).
 
 === "Kotlin"
     ```kotlin
-    handler.events
-        .filter { it.state == KeyState.KeyDown }
+    val id = native.addEventHandler { id, keyCode, isPressed ->
+        if (isPressed) {
+            println(Key.fromKeyCode(keyCode))
+        }
+
+        if (keyCode == Key.J.keyCode) native.removeEventHandler(id)
+    }
+
+    // or here
+    native.removeEventHandler(id)
+    ```
+
+=== "Kotlin (with coroutines)"
+    ```kotlin
+    native.events
+        .filter { it.isPressed }
         .map { it.key }
+        .takeWhile { it.key == Key.J }
         .collect { println(it) }
     ```
 
 === "NodeJS"
     ```js
-    handler.addHandler((key, pressed) => {
-        if (pressed) {
+    let id = native.addHandler((id, keyCode, isPressed) => {
+        if (isPressed) {
             console.log(key);
         }
+
+        if (keyCode == parseKey("J").keyCode) native.removeEventHandler(id);
+        // or
+        if (parseKeyCode(keyCode) == parseKey("J")) native.removeEventHandler(id);
     });
     ```
 
 === "Java 8 or above"
     ```java
-    handler.addHandler(keyEvent -> {
-        if (keyEvent.state == KeyState.KeyDown) {
-            System.out.println(keyEvent.key);
+    int id = native.addEventHandler((id, keyCode, isPressed) -> {
+        if (isPressed) {
+            System.out.println(Key.fromKeyCode(keyCode));
         }
+
+        if (keyCode == Key.J.keyCode) native.removeEventHandler(id);
     });
     ```
 
@@ -62,70 +80,64 @@
     
 === "Kotlin"
     ```kotlin
-    handler.sendEvent(KeyEvent(Key.A, KeyState.KeyDown))
+    native.sendEvent(Key.A.keyCode, isPressed = true)
     ```
 
 === "NodeJS"
     ```js
-    handler.sendEvent('A', true);
+    native.sendEvent(parseKey('A').keyCode, true);
     ```
 
 === "Java 8 or above"
     ```java
-    handler.sendEvent(new KeyEvent(Key.A, KeyState.KeyDown));
+    native.sendEvent(Key.A.keyCode, true);
     ```
 
 
-## Get [KeyState][3] (KeyDown or KeyUp) of the [Key](key.md).
+## Check if the [Key][2] is pressed or not.
 
 === "Kotlin"
     ```kotlin
-    handler.getKeyState(Key.A)
-    handler.getKeyState(Key.RightAlt)
+    native.isPressed(Key.A.keyCode)
+    native.isPressed(Key.RightAlt.keyCode)
     ```
 
 === "NodeJS"
     ```kotlin
-    handler.getKeyState('A');
-    handler.getKeyState('RightAlt');
+    native.isPressed(parseKey('A').keyCode);
+    native.isPressed(parseKey('RightAlt').keyCode);
     ```
     <sup>**Note: In JS it returns a boolean**</sup>
 
 === "Java 8 or above"
     ```js
-    handler.getKeyState(Key.A);
-    handler.getKeyState(Key.RightAlt);
+    native.isPressed(Key.A.keyCode);
+    native.isPressed(Key.RightAlt.keyCode);
     ```
 
 ## Get States of Toggleable Keys (returns a Boolean).
 
 === "Kotlin"
     ```kotlin
-    handler.isCapsLockOn()
-    handler.isNumLockOn()
-    handler.isScrollLockOn()
+    native.isCapsLockOn()
+    native.isNumLockOn()
+    native.isScrollLockOn()
     ```
 
 === "NodeJS"
     ```js
-    handler.isCapsLockOn();
-    handler.isNumLockOn();
-    handler.isScrollLockOn();
+    native.isCapsLockOn();
+    native.isNumLockOn();
+    native.isScrollLockOn();
     ```
 
 === "Java 8 or above"
     ```java
-    handler.isCapsLockOn();
-    handler.isNumLockOn();
-    handler.isScrollLockOn();
+    native.isCapsLockOn();
+    native.isNumLockOn();
+    native.isScrollLockOn();
     ```
 
-[1]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard-kt/src/commonMain/kotlin/com/github/animeshz/keyboard/NativeKeyboardHandler.kt
+[1]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard-mouse-kt/src/commonMain/kotlin/io/github/animeshz/keyboard/NativeKeyboard.kt
 
-[2]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard-kt/src/commonMain/kotlin/com/github/animeshz/keyboard/entity/Key.kt
-
-[3]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard-kt/src/commonMain/kotlin/com/github/animeshz/keyboard/events/KeyEvent.kt
-
-[4]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/integration/keyboard-kt-jdk8/src/main/kotlin/com/github/animeshz/keyboard/JNativeKeyboardHandler.kt
-
-[5]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard-kt/src/jsMain/kotlin/com/github/animeshz/keyboard/JsKeyboardHandler.kt#L63
+[2]: https://github.com/Animeshz/keyboard-mouse-kt/blob/master/keyboard-mouse-kt/src/commonMain/kotlin/io/github/animeshz/keyboard/entity/Key.kt

@@ -162,6 +162,25 @@ public enum class Key(public val keyCode: Int) {
     F23(193),
     F24(194),
     ;
+
+    public fun fromKeyCode(keyCode: Int): Key {...}
     // ...
 }
 ```
+
+Some JS bindings because enums can't be exported to JS are:
+
+=== "NodeJS"
+    ```js
+    // Takes exact name as listed above
+    parseKey(str: String): Key
+    
+    // Parses Key from corresponding keyCode
+    parseKeyCode(keyCode: Int): Key
+
+    // Creates KeySet from str containing keys with + symbols (with optional whitespaces)
+    parseKeySet(str: String): KeySet
+
+    // KeyState from boolean (true: pressed -> KeyState.KeyDown)
+    onPressed(yes: Boolean): KeyState
+    ```
