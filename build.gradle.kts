@@ -1,5 +1,5 @@
 plugins {
-    kotlin("multiplatform") version "1.5.20-dev-5753" apply false
+    kotlin("multiplatform") version "1.6.0" apply false
     id("io.codearte.nexus-staging") version "0.30.0"
 }
 
@@ -9,8 +9,6 @@ allprojects {
 
     repositories {
         mavenCentral()
-        jcenter()
-        maven("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/bootstrap")
     }
 }
 

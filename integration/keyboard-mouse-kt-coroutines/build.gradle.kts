@@ -7,11 +7,12 @@ plugins {
 
 repositories {
     mavenCentral()
+    maven(url = "https://maven.pkg.jetbrains.space/public/p/kotlinx-coroutines/maven")
 }
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.4.2-native-mt")
+    api("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1-new-mm-dev2")
     api(project(":keyboard-mouse-kt"))
 }
 

@@ -1,0 +1,7 @@
+package = native.kbkt
+
+```
+// https://github.com/Kotlin/kotlinx-datetime/blob/master/core/build.gradle.kts
+// https://github.com/Kotlin/kotlinx-datetime/blob/master/core/native/cinterop_actuals/TimeZoneNative.kt
+// https://github.com/Kotlin/kotlinx-datetime/blob/master/core/native/cinterop/public/cdate.h
+// https://github.com/Kotlin/kotlinx-datetime/blob/master/core/native/cinterop/cpp/cdate.cpp

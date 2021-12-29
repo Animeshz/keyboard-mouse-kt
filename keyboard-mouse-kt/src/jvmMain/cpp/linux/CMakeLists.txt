@@ -12,9 +12,6 @@ include_directories($ENV{JNI_HEADERS_DIR}/linux)
 include_directories("../../generated/jni")
 include_directories("../../../nativeCommon/linux")
 
-include_directories($ENV{X11_HEADERS_DIR})
-include_directories($ENV{X11_HEADERS_DIR}/extensions)
-
 add_library(
     ${PROJECT_NAME}${ARCH} SHARED
     JvmKeyboardHandler.cpp

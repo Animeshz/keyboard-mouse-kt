@@ -3,7 +3,7 @@ package examples
 /**
  * Tests can be tried out after enabling granular source-set metadata in gradle.properties
 
-import io.github.animeshz.keyboard.entity.Key
+import io.github.animeshz.kbms.entity.Key
 import kotlin.test.Test
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect

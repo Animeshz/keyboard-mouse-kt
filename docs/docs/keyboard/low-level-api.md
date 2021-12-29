@@ -6,7 +6,7 @@ Low Level API depends on [NativeKeyboard][1] that can be obtained via `NativeKey
 
 === "Kotlin"
     ```kotlin
-    import io.github.animeshz.keyboard.NativeKeyboard
+    import io.github.animeshz.kbms.keyboard.NativeKeyboard
 
     val native = NativeKeyboard
     ```
@@ -15,14 +15,14 @@ Low Level API depends on [NativeKeyboard][1] that can be obtained via `NativeKey
     ```js
     const kt = require('keyboard-mouse-kt');
 
-    const native = kt.io.github.animeshz.keyboard.NativeKeyboard;
+    const native = kt.io.github.animeshz.kbms.keyboard.NativeKeyboard;
     ```
     <sup>**Note: This large import is due to limitations of K/JS to not able to export to global namespace currently, see [KT-37710](https://youtrack.jetbrains.com/issue/KT-37710).**</sup>
 
 
 === "Java 8 or above"
     ```java
-    import io.github.animeshz.keyboard.NativeKeyboard;
+    import io.github.animeshz.kbms.keyboard.NativeKeyboard;
 
     NativeKeyboard native = NativeKeyboard.INSTANCE;
     ```

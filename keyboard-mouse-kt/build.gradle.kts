@@ -9,13 +9,11 @@ plugins {
     kotlin("multiplatform")
     id("keyboard-mouse-native-compile")
     id("keyboard-mouse-publishing")
-    id("lt.petuska.npm.publish") version "1.1.1"
-    id("org.jlleitschuh.gradle.ktlint") version "9.4.1"
+    id("org.jlleitschuh.gradle.ktlint") version "10.2.0"
 }
 
 repositories {
     mavenCentral()
-    jcenter()
 }
 
 kotlin {
@@ -31,15 +29,33 @@ kotlin {
     val linuxSettings: org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget.() -> Unit = {
         val main by compilations.getting
 
-        main.cinterops.create("device") { defFile("src/linuxCommonMain/cinterop/device.def") }
-        main.cinterops.create("x11") { defFile("src/linuxCommonMain/cinterop/x11.def") }
+        main.cinterops.create("native") {
+            defFile("src/nativeMain/cinterop/native.def")
+            extraOpts("-Xsource-compiler-option", "-Isrc/nativeCommon")
+            extraOpts("-Xsource-compiler-option", "-Isrc/nativeCommon/linux")
+            extraOpts("-Xsource-compiler-option", "-Isrc/nativeMain/cinterop")
+            extraOpts("-Xcompile-source", "src/nativeMain/cinterop/exports.cpp")
+        }
     }
+
+    val mingwSettings: org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget.() -> Unit = {
+        val main by compilations.getting
+
+        main.cinterops.create("native") {
+            defFile("src/nativeMain/cinterop/native.def")
+            extraOpts("-Xsource-compiler-option", "-Isrc/nativeCommon")
+            extraOpts("-Xsource-compiler-option", "-Isrc/nativeCommon/windows")
+            extraOpts("-Xsource-compiler-option", "-Isrc/nativeMain/cinterop")
+            extraOpts("-Xcompile-source", "src/nativeMain/cinterop/exports.cpp")
+        }
+    }
+
     // https://github.com/touchlab/Stately/issues/62
     linuxX64(configure = linuxSettings)
     // linuxArm64(configure = linuxSettings)
     linuxArm32Hfp(configure = linuxSettings)
 
-    mingwX64()
+    mingwX64(configure = mingwSettings)
     // https://github.com/touchlab/Stately/issues/62
     // mingwX86()
 
@@ -47,7 +63,6 @@ kotlin {
         val commonMain by getting {
             dependencies {
                 api(kotlin("stdlib-common"))
-                implementation("co.touchlab:stately-isolate:1.1.7-a1")
             }
         }
         val commonTest by getting {
@@ -68,23 +83,19 @@ kotlin {
             }
         }
 
-        val linuxCommonMain by sourceSets.creating { dependsOn(commonMain) }
-        val linuxCommonTest by sourceSets.creating { dependsOn(commonTest) }
+//        val linuxMain by sourceSets.creating { dependsOn(commonMain) }
+//        val linuxX64Main by sourceSets.getting { dependsOn(linuxMain) }
+//        // val linuxArm64Main by sourceSets.getting { dependsOn(linuxMain) }
+//        val linuxArm32HfpMain by sourceSets.getting { dependsOn(linuxMain) }
+//
+//        val mingwMain by sourceSets.creating { dependsOn(commonMain) }
+//        val mingwX64Main by sourceSets.getting { dependsOn(mingwMain) }
+//        // val mingwX86Main by sourceSets.getting { dependsOn(mingwMain) }
 
-        val linuxX64Main by sourceSets.getting { dependsOn(linuxCommonMain) }
-        // val linuxArm64Main by sourceSets.getting { dependsOn(linuxCommonMain) }
-        val linuxArm32HfpMain by sourceSets.getting { dependsOn(linuxCommonMain) }
-        val linuxX64Test by sourceSets.getting { dependsOn(linuxCommonTest) }
-//         val linuxArm64Test by sourceSets.getting { dependsOn(linuxCommonTest) }
-        val linuxArm32HfpTest by sourceSets.getting { dependsOn(linuxCommonTest) }
-
-        val mingwCommonMain by sourceSets.creating { dependsOn(commonMain) }
-        val mingwCommonTest by sourceSets.creating { dependsOn(commonTest) }
-
-        val mingwX64Main by sourceSets.getting { dependsOn(mingwCommonMain) }
-        // val mingwX86Main by sourceSets.getting { dependsOn(mingwCommonMain) }
-        val mingwX64Test by sourceSets.getting { dependsOn(mingwCommonTest) }
-        // val mingwX86Test by sourceSets.getting { dependsOn(mingwCommonTest) }
+        val nativeMain by sourceSets.creating { dependsOn(commonMain) }
+        val linuxX64Main by sourceSets.getting { dependsOn(nativeMain) }
+        val linuxArm32HfpMain by sourceSets.getting { dependsOn(nativeMain) }
+        val mingwX64Main by sourceSets.getting { dependsOn(nativeMain) }
 
         all {
             languageSettings.useExperimentalAnnotation("kotlin.RequiresOptIn")
@@ -98,32 +109,6 @@ publishingConfig {
     repository = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2"
     username = System.getenv("SONATYPE_USER")
     password = System.getenv("SONATYPE_KEY")
-}
-
-npmPublishing {
-    readme = project.rootProject.file("README.md")
-
-    repositories {
-        repository("npmjs") {
-            registry = uri("https://registry.npmjs.org")
-            authToken = System.getenv("NPM_TOKEN")
-        }
-    }
-
-    publications {
-        val js by getting {
-            files {
-                from(project.file("build/napi"))
-            }
-
-            bundleKotlinDependencies = false
-            shrinkwrapBundledDependencies = false
-            packageJsonTemplateFile = project.file("src/jsMain/package.template.json")
-            packageJson {
-                version = project.version as String
-            }
-        }
-    }
 }
 
 nativeCompilation {

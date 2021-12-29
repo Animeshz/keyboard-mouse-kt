@@ -6,14 +6,14 @@ High Level API depends on [Keyboard][1] which is a wrapper around the [NativeKey
 
 === "Kotlin"
     ```kotlin
-    import io.github.animeshz.keyboard.Keyboard
+    import io.github.animeshz.kbms.keyboard.Keyboard
 
     val keyboard = Keyboard
     ```
 
 === "Java 8 or above"
     ```java
-    import io.github.animeshz.keyboard.Keyboard;
+    import io.github.animeshz.kbms.keyboard.Keyboard;
 
     Keyboard keyboard = Keyboard.INSTANCE;
     ```
@@ -22,7 +22,7 @@ High Level API depends on [Keyboard][1] which is a wrapper around the [NativeKey
     ```js
     const kt = require('keyboard-mouse-kt');
 
-    const keyboard = kbkt.io.github.animeshz.keyboard.Keyboard;
+    const keyboard = kbkt.io.github.animeshz.kbms.keyboard.Keyboard;
     ```
     <sup>**Note: This large import is due to limitations of K/JS to not able to export to global namespace currently, see [KT-37710](https://youtrack.jetbrains.com/issue/KT-37710).**</sup>
 

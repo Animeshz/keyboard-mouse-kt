@@ -44,17 +44,17 @@ rm node-addon-api-3.1.0.tgz && \
 #
 # Download, build and pack linkable object file for node in windows
 cd ${WINDOWS_NODE_LINK_DIR} && \
-curl -LO 'https://nodejs.org/dist/v14.15.4/node-v14.15.4-win-x64.zip' && \
-unzip node-v14.15.4-win-x64.zip "node-v14.15.4-win-x64/node.exe" && \
+curl -LO 'https://nodejs.org/dist/v14.18.1/node-v14.18.1-win-x64.zip' && \
+unzip node-v14.18.1-win-x64.zip "node-v14.18.1-win-x64/node.exe" && \
 /opt/mxe/usr/bin/x86_64-w64-mingw32.shared-dlltool -d node.def -y node64.a && \
-rm -rf node-v14.15.4-win-x64 node-v14.15.4-win-x64.zip && \
+rm -rf node-v14.18.1-win-x64 node-v14.18.1-win-x64.zip && \
 #
 # Download, build and pack linkable object file
 cd ${WINDOWS_NODE_LINK_DIR} && \
-curl -LO 'https://nodejs.org/dist/v14.15.4/node-v14.15.4-win-x86.zip' && \
-unzip node-v14.15.4-win-x86.zip "node-v14.15.4-win-x86/node.exe" && \
+curl -LO 'https://nodejs.org/dist/v14.18.1/node-v14.18.1-win-x86.zip' && \
+unzip node-v14.18.1-win-x86.zip "node-v14.18.1-win-x86/node.exe" && \
 /opt/mxe/usr/bin/i686-w64-mingw32.shared-dlltool -d node.def -y node32.a && \
-rm -rf node-v14.15.4-win-x86 node-v14.15.4-win-x86.zip && \
+rm -rf node-v14.18.1-win-x86 node-v14.18.1-win-x86.zip && \
 rm node.def && \
 #
 apt-get -y autoremove
