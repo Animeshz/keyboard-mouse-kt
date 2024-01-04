@@ -8,11 +8,17 @@
       
       
       
-      
         <link rel="canonical" href="https://animeshz.github.io/keyboard-mouse-kt/keyboard/key/">
       
+      
+        <link rel="prev" href="../high-level-api/">
+      
+      
+        <link rel="next" href="../../contributing/">
+      
+      
       <link rel="icon" href="../../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.3">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.3">
     
     
       
@@ -20,26 +26,33 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.e35208c4.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.ef6f36e2.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
         
-      
-    
-    
-    
-      
         
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
-        <style>:root{--md-text-font-family:"Roboto";--md-code-font-family:"Roboto Mono"}</style>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
     
-    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
+
+    
     
     
   </head>
@@ -50,10 +63,8 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="preference" data-md-color-primary="" data-md-color-accent="">
+    <body dir="ltr" data-md-color-scheme="preference" data-md-color-primary="indigo" data-md-color-accent="indigo">
   
-    
-    <script>function __prefix(e){return new URL("../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -70,16 +81,22 @@
       
     </div>
     
-      <header class="md-header" data-md-component="header">
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../.." title="KeyboardMouse.kt" class="md-header__button md-logo" aria-label="KeyboardMouse.kt" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
@@ -98,24 +115,34 @@
       </div>
     </div>
     
+      
+    
+    
     
     
       <label class="md-header__button md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
       </label>
-      
-<div class="md-search" data-md-component="search" role="dialog">
+      <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
   <div class="md-search__inner" role="search">
     <form class="md-search__form" name="search">
-      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
       </label>
-      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
-      </button>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
     </form>
     <div class="md-search__output">
       <div class="md-search__scrollwrap" data-md-scrollfix>
@@ -123,7 +150,7 @@
           <div class="md-search-result__meta">
             Initializing search
           </div>
-          <ol class="md-search-result__list"></ol>
+          <ol class="md-search-result__list" role="presentation"></ol>
         </div>
       </div>
     </div>
@@ -132,11 +159,10 @@
     
     
       <div class="md-header__source">
-        
-<a href="https://github.com/Animeshz/keyboard-mouse-kt/" title="Go to repository" class="md-source" data-md-component="source">
+        <a href="https://github.com/Animeshz/keyboard-mouse-kt" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
   </div>
   <div class="md-source__repository">
     Animeshz/KeyboardMouse.kt
@@ -145,11 +171,14 @@
       </div>
     
   </nav>
+  
 </header>
     
     <div class="md-container" data-md-component="container">
       
       
+        
+          
         
       
       <main class="md-main" data-md-component="main">
@@ -163,23 +192,23 @@
                     
 
 
+
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="KeyboardMouse.kt" class="md-nav__button md-logo" aria-label="KeyboardMouse.kt" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
 
     </a>
     KeyboardMouse.kt
   </label>
   
     <div class="md-nav__source">
-      
-<a href="https://github.com/Animeshz/keyboard-mouse-kt/" title="Go to repository" class="md-source" data-md-component="source">
+      <a href="https://github.com/Animeshz/keyboard-mouse-kt" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
   </div>
   <div class="md-source__repository">
     Animeshz/KeyboardMouse.kt
@@ -191,14 +220,19 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../.." class="md-nav__link">
-        Home
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
       </a>
     </li>
   
@@ -206,14 +240,19 @@
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../status-and-installation/" class="md-nav__link">
-        Status and Installation
+        
+  
+  <span class="md-ellipsis">
+    Status and Installation
+  </span>
+  
+
       </a>
     </li>
   
@@ -221,92 +260,138 @@
     
       
       
-      
-
   
   
     
   
   
+  
+    
+    
+    
+    
     
     <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
-      
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
-      
-      <label class="md-nav__link" for="__nav_3">
-        Keyboard
-        <span class="md-nav__icon md-icon"></span>
-      </label>
-      <nav class="md-nav" aria-label="Keyboard" data-md-level="1">
-        <label class="md-nav__title" for="__nav_3">
-          <span class="md-nav__icon md-icon"></span>
-          Keyboard
-        </label>
-        <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
           
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
             
+  
+  <span class="md-ellipsis">
+    Keyboard
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Keyboard
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../low-level-api/" class="md-nav__link">
-        Low Level API
+        
+  
+  <span class="md-ellipsis">
+    Low Level API
+  </span>
+  
+
       </a>
     </li>
   
 
-          
+              
             
+              
+                
+  
   
   
   
     <li class="md-nav__item">
       <a href="../high-level-api/" class="md-nav__link">
-        High Level API
+        
+  
+  <span class="md-ellipsis">
+    High Level API
+  </span>
+  
+
       </a>
     </li>
   
 
-          
+              
             
+              
+                
   
   
     
   
   
+  
     <li class="md-nav__item md-nav__item--active">
       
-      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
         
       
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        Key Enum
+        
+  
+  <span class="md-ellipsis">
+    Key Enum
+  </span>
+  
+
       </a>
       
     </li>
   
 
-          
-        </ul>
-      </nav>
+              
+            
+          </ul>
+        </nav>
+      
     </li>
   
 
     
       
       
-      
-
+  
   
   
   
     <li class="md-nav__item">
       <a href="../../contributing/" class="md-nav__link">
-        Contributing and future plans
+        
+  
+  <span class="md-ellipsis">
+    Contributing and future plans
+  </span>
+  
+
       </a>
     </li>
   
@@ -324,6 +409,7 @@
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
+
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
@@ -337,21 +423,22 @@
               </div>
             
           
-          <div class="md-content" data-md-component="content">
-            <article class="md-content__inner md-typeset">
-              
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
                 
-                  <a href="https://github.com/Animeshz/keyboard-mouse-kt/edit/master/docs/keyboard/key.md" title="Edit this page" class="md-content__button md-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
-                  </a>
-                
-                
-                <h1 id="key-enum">Key Enum</h1>
+                  
+
+  
+  
+
+
+<h1 id="key-enum">Key Enum</h1>
 <p>The Key enum class represents corresponding key of the Keyboard. It is fundamentally used everywhere in this module.</p>
 <p>Note that these keys are aligned with the hardware scan codes to optimize the searching time (by doing a binary search).</p>
 <p><sup><strong>Note: For NodeJS, strings are used instead of these enums, but their names are the same.</strong></sup></p>
 <p>The full list of all the supported Keys are the following:</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">  1</span>
+<div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">  1</span>
 <span class="normal">  2</span>
 <span class="normal">  3</span>
 <span class="normal">  4</span>
@@ -505,249 +592,228 @@
 <span class="normal">152</span>
 <span class="normal">153</span>
 <span class="normal">154</span>
-<span class="normal">155</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kd">class</span> <span class="nc">Key</span><span class="p">(</span><span class="kd">public</span> <span class="kd">val</span> <span class="nv">keyCode</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span> <span class="p">{</span>
-    <span class="n">Unknown</span><span class="p">(</span><span class="o">-</span><span class="m">1</span><span class="p">),</span>
-    <span class="n">Esc</span><span class="p">(</span><span class="m">1</span><span class="p">),</span>
-    <span class="n">Number1</span><span class="p">(</span><span class="m">2</span><span class="p">),</span>
-    <span class="n">Number2</span><span class="p">(</span><span class="m">3</span><span class="p">),</span>
-    <span class="n">Number3</span><span class="p">(</span><span class="m">4</span><span class="p">),</span>
-    <span class="n">Number4</span><span class="p">(</span><span class="m">5</span><span class="p">),</span>
-    <span class="n">Number5</span><span class="p">(</span><span class="m">6</span><span class="p">),</span>
-    <span class="n">Number6</span><span class="p">(</span><span class="m">7</span><span class="p">),</span>
-    <span class="n">Number7</span><span class="p">(</span><span class="m">8</span><span class="p">),</span>
-    <span class="n">Number8</span><span class="p">(</span><span class="m">9</span><span class="p">),</span>
-    <span class="n">Number9</span><span class="p">(</span><span class="m">10</span><span class="p">),</span>
-    <span class="n">Number0</span><span class="p">(</span><span class="m">11</span><span class="p">),</span>
-    <span class="n">Minus</span><span class="p">(</span><span class="m">12</span><span class="p">),</span>
-    <span class="n">Equal</span><span class="p">(</span><span class="m">13</span><span class="p">),</span>
-    <span class="n">Backspace</span><span class="p">(</span><span class="m">14</span><span class="p">),</span>
-    <span class="n">Tab</span><span class="p">(</span><span class="m">15</span><span class="p">),</span>
-    <span class="n">Q</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
-    <span class="n">W</span><span class="p">(</span><span class="m">17</span><span class="p">),</span>
-    <span class="n">E</span><span class="p">(</span><span class="m">18</span><span class="p">),</span>
-    <span class="n">R</span><span class="p">(</span><span class="m">19</span><span class="p">),</span>
-    <span class="n">T</span><span class="p">(</span><span class="m">20</span><span class="p">),</span>
-    <span class="n">Y</span><span class="p">(</span><span class="m">21</span><span class="p">),</span>
-    <span class="n">U</span><span class="p">(</span><span class="m">22</span><span class="p">),</span>
-    <span class="n">I</span><span class="p">(</span><span class="m">23</span><span class="p">),</span>
-    <span class="n">O</span><span class="p">(</span><span class="m">24</span><span class="p">),</span>
-    <span class="n">P</span><span class="p">(</span><span class="m">25</span><span class="p">),</span>
-    <span class="n">LeftBrace</span><span class="p">(</span><span class="m">26</span><span class="p">),</span>
-    <span class="n">RightBrace</span><span class="p">(</span><span class="m">27</span><span class="p">),</span>
-    <span class="n">Enter</span><span class="p">(</span><span class="m">28</span><span class="p">),</span>
-    <span class="n">LeftCtrl</span><span class="p">(</span><span class="m">29</span><span class="p">),</span>
-    <span class="n">A</span><span class="p">(</span><span class="m">30</span><span class="p">),</span>
-    <span class="n">S</span><span class="p">(</span><span class="m">31</span><span class="p">),</span>
-    <span class="n">D</span><span class="p">(</span><span class="m">32</span><span class="p">),</span>
-    <span class="n">F</span><span class="p">(</span><span class="m">33</span><span class="p">),</span>
-    <span class="n">G</span><span class="p">(</span><span class="m">34</span><span class="p">),</span>
-    <span class="n">H</span><span class="p">(</span><span class="m">35</span><span class="p">),</span>
-    <span class="n">J</span><span class="p">(</span><span class="m">36</span><span class="p">),</span>
-    <span class="n">K</span><span class="p">(</span><span class="m">37</span><span class="p">),</span>
-    <span class="n">L</span><span class="p">(</span><span class="m">38</span><span class="p">),</span>
-    <span class="n">Semicolon</span><span class="p">(</span><span class="m">39</span><span class="p">),</span>
-    <span class="n">Apostrophe</span><span class="p">(</span><span class="m">40</span><span class="p">),</span>
-    <span class="n">Backtick</span><span class="p">(</span><span class="m">41</span><span class="p">),</span>
-    <span class="n">LeftShift</span><span class="p">(</span><span class="m">42</span><span class="p">),</span>
-    <span class="n">Backslash</span><span class="p">(</span><span class="m">43</span><span class="p">),</span>
-    <span class="n">Z</span><span class="p">(</span><span class="m">44</span><span class="p">),</span>
-    <span class="n">X</span><span class="p">(</span><span class="m">45</span><span class="p">),</span>
-    <span class="n">C</span><span class="p">(</span><span class="m">46</span><span class="p">),</span>
-    <span class="n">V</span><span class="p">(</span><span class="m">47</span><span class="p">),</span>
-    <span class="n">B</span><span class="p">(</span><span class="m">48</span><span class="p">),</span>
-    <span class="n">N</span><span class="p">(</span><span class="m">49</span><span class="p">),</span>
-    <span class="n">M</span><span class="p">(</span><span class="m">50</span><span class="p">),</span>
-    <span class="n">Comma</span><span class="p">(</span><span class="m">51</span><span class="p">),</span>
-    <span class="n">Dot</span><span class="p">(</span><span class="m">52</span><span class="p">),</span>
-    <span class="n">Slash</span><span class="p">(</span><span class="m">53</span><span class="p">),</span>
-    <span class="n">RightShift</span><span class="p">(</span><span class="m">54</span><span class="p">),</span>
-    <span class="n">KeypadAsterisk</span><span class="p">(</span><span class="m">55</span><span class="p">),</span>
-    <span class="n">LeftAlt</span><span class="p">(</span><span class="m">56</span><span class="p">),</span>
-    <span class="n">Space</span><span class="p">(</span><span class="m">57</span><span class="p">),</span>
-    <span class="n">CapsLock</span><span class="p">(</span><span class="m">58</span><span class="p">),</span>
-    <span class="n">F1</span><span class="p">(</span><span class="m">59</span><span class="p">),</span>
-    <span class="n">F2</span><span class="p">(</span><span class="m">60</span><span class="p">),</span>
-    <span class="n">F3</span><span class="p">(</span><span class="m">61</span><span class="p">),</span>
-    <span class="n">F4</span><span class="p">(</span><span class="m">62</span><span class="p">),</span>
-    <span class="n">F5</span><span class="p">(</span><span class="m">63</span><span class="p">),</span>
-    <span class="n">F6</span><span class="p">(</span><span class="m">64</span><span class="p">),</span>
-    <span class="n">F7</span><span class="p">(</span><span class="m">65</span><span class="p">),</span>
-    <span class="n">F8</span><span class="p">(</span><span class="m">66</span><span class="p">),</span>
-    <span class="n">F9</span><span class="p">(</span><span class="m">67</span><span class="p">),</span>
-    <span class="n">F10</span><span class="p">(</span><span class="m">68</span><span class="p">),</span>
-    <span class="n">NumLock</span><span class="p">(</span><span class="m">69</span><span class="p">),</span>
-    <span class="n">ScrollLock</span><span class="p">(</span><span class="m">70</span><span class="p">),</span>
-    <span class="n">Keypad7</span><span class="p">(</span><span class="m">71</span><span class="p">),</span>
-    <span class="n">Keypad8</span><span class="p">(</span><span class="m">72</span><span class="p">),</span>
-    <span class="n">Keypad9</span><span class="p">(</span><span class="m">73</span><span class="p">),</span>
-    <span class="n">KeypadMinus</span><span class="p">(</span><span class="m">74</span><span class="p">),</span>
-    <span class="n">Keypad4</span><span class="p">(</span><span class="m">75</span><span class="p">),</span>
-    <span class="n">Keypad5</span><span class="p">(</span><span class="m">76</span><span class="p">),</span>
-    <span class="n">Keypad6</span><span class="p">(</span><span class="m">77</span><span class="p">),</span>
-    <span class="n">KeypadPlus</span><span class="p">(</span><span class="m">78</span><span class="p">),</span>
-    <span class="n">Keypad1</span><span class="p">(</span><span class="m">79</span><span class="p">),</span>
-    <span class="n">Keypad2</span><span class="p">(</span><span class="m">80</span><span class="p">),</span>
-    <span class="n">Keypad3</span><span class="p">(</span><span class="m">81</span><span class="p">),</span>
-    <span class="n">Keypad0</span><span class="p">(</span><span class="m">82</span><span class="p">),</span>
-    <span class="n">KeypadDot</span><span class="p">(</span><span class="m">83</span><span class="p">),</span>
-    <span class="n">F11</span><span class="p">(</span><span class="m">87</span><span class="p">),</span>
-    <span class="n">F12</span><span class="p">(</span><span class="m">88</span><span class="p">),</span>
-    <span class="n">KeypadEnter</span><span class="p">(</span><span class="m">96</span><span class="p">),</span>
-    <span class="n">RightCtrl</span><span class="p">(</span><span class="m">97</span><span class="p">),</span>
-    <span class="n">KeypadSlash</span><span class="p">(</span><span class="m">98</span><span class="p">),</span>
-    <span class="n">RightAlt</span><span class="p">(</span><span class="m">100</span><span class="p">),</span>
-    <span class="n">Home</span><span class="p">(</span><span class="m">102</span><span class="p">),</span>
-    <span class="n">Up</span><span class="p">(</span><span class="m">103</span><span class="p">),</span>
-    <span class="n">PageUp</span><span class="p">(</span><span class="m">104</span><span class="p">),</span>
-    <span class="n">Left</span><span class="p">(</span><span class="m">105</span><span class="p">),</span>
-    <span class="n">Right</span><span class="p">(</span><span class="m">106</span><span class="p">),</span>
-    <span class="n">End</span><span class="p">(</span><span class="m">107</span><span class="p">),</span>
-    <span class="n">Down</span><span class="p">(</span><span class="m">108</span><span class="p">),</span>
-    <span class="n">PageDown</span><span class="p">(</span><span class="m">109</span><span class="p">),</span>
-    <span class="n">Insert</span><span class="p">(</span><span class="m">110</span><span class="p">),</span>
-    <span class="n">Delete</span><span class="p">(</span><span class="m">111</span><span class="p">),</span>
-    <span class="n">Mute</span><span class="p">(</span><span class="m">113</span><span class="p">),</span>
-    <span class="n">VolumeDown</span><span class="p">(</span><span class="m">114</span><span class="p">),</span>
-    <span class="n">VolumeUp</span><span class="p">(</span><span class="m">115</span><span class="p">),</span>
-    <span class="n">Power</span><span class="p">(</span><span class="m">116</span><span class="p">),</span>
-    <span class="n">KeypadEqual</span><span class="p">(</span><span class="m">117</span><span class="p">),</span>
-    <span class="n">Pause</span><span class="p">(</span><span class="m">119</span><span class="p">),</span>
-    <span class="n">KeypadComma</span><span class="p">(</span><span class="m">121</span><span class="p">),</span>
-    <span class="n">LeftSuper</span><span class="p">(</span><span class="m">125</span><span class="p">),</span>
-    <span class="n">RightSuper</span><span class="p">(</span><span class="m">126</span><span class="p">),</span>
-    <span class="n">Compose</span><span class="p">(</span><span class="m">127</span><span class="p">),</span>
-    <span class="n">Stop</span><span class="p">(</span><span class="m">128</span><span class="p">),</span>
-    <span class="n">Again</span><span class="p">(</span><span class="m">129</span><span class="p">),</span>
-    <span class="n">Props</span><span class="p">(</span><span class="m">130</span><span class="p">),</span>
-    <span class="n">Undo</span><span class="p">(</span><span class="m">131</span><span class="p">),</span>
-    <span class="n">Front</span><span class="p">(</span><span class="m">132</span><span class="p">),</span>
-    <span class="n">Copy</span><span class="p">(</span><span class="m">133</span><span class="p">),</span>
-    <span class="n">Open</span><span class="p">(</span><span class="m">134</span><span class="p">),</span>
-    <span class="n">Paste</span><span class="p">(</span><span class="m">135</span><span class="p">),</span>
-    <span class="n">Find</span><span class="p">(</span><span class="m">136</span><span class="p">),</span>
-    <span class="n">Cut</span><span class="p">(</span><span class="m">137</span><span class="p">),</span>
-    <span class="n">Help</span><span class="p">(</span><span class="m">138</span><span class="p">),</span>
-    <span class="n">Menu</span><span class="p">(</span><span class="m">139</span><span class="p">),</span>
-    <span class="n">Calc</span><span class="p">(</span><span class="m">140</span><span class="p">),</span>
-    <span class="n">Setup</span><span class="p">(</span><span class="m">141</span><span class="p">),</span>
-    <span class="n">Sleep</span><span class="p">(</span><span class="m">142</span><span class="p">),</span>
-    <span class="n">Wakeup</span><span class="p">(</span><span class="m">143</span><span class="p">),</span>
-    <span class="n">Mail</span><span class="p">(</span><span class="m">155</span><span class="p">),</span>
-    <span class="n">Bookmarks</span><span class="p">(</span><span class="m">156</span><span class="p">),</span>
-    <span class="n">Computer</span><span class="p">(</span><span class="m">157</span><span class="p">),</span>
-    <span class="n">Back</span><span class="p">(</span><span class="m">158</span><span class="p">),</span>
-    <span class="n">Forward</span><span class="p">(</span><span class="m">159</span><span class="p">),</span>
-    <span class="n">NextSong</span><span class="p">(</span><span class="m">163</span><span class="p">),</span>
-    <span class="n">PlayPause</span><span class="p">(</span><span class="m">164</span><span class="p">),</span>
-    <span class="n">PreviousSong</span><span class="p">(</span><span class="m">165</span><span class="p">),</span>
-    <span class="n">StopCd</span><span class="p">(</span><span class="m">166</span><span class="p">),</span>
-    <span class="n">Record</span><span class="p">(</span><span class="m">167</span><span class="p">),</span>
-    <span class="n">Rewind</span><span class="p">(</span><span class="m">168</span><span class="p">),</span>
-    <span class="n">Phone</span><span class="p">(</span><span class="m">169</span><span class="p">),</span>
-    <span class="n">Refresh</span><span class="p">(</span><span class="m">173</span><span class="p">),</span>
-    <span class="n">F13</span><span class="p">(</span><span class="m">183</span><span class="p">),</span>
-    <span class="n">F14</span><span class="p">(</span><span class="m">184</span><span class="p">),</span>
-    <span class="n">F15</span><span class="p">(</span><span class="m">185</span><span class="p">),</span>
-    <span class="n">F16</span><span class="p">(</span><span class="m">186</span><span class="p">),</span>
-    <span class="n">F17</span><span class="p">(</span><span class="m">187</span><span class="p">),</span>
-    <span class="n">F18</span><span class="p">(</span><span class="m">188</span><span class="p">),</span>
-    <span class="n">F19</span><span class="p">(</span><span class="m">189</span><span class="p">),</span>
-    <span class="n">F20</span><span class="p">(</span><span class="m">190</span><span class="p">),</span>
-    <span class="n">F21</span><span class="p">(</span><span class="m">191</span><span class="p">),</span>
-    <span class="n">F22</span><span class="p">(</span><span class="m">192</span><span class="p">),</span>
-    <span class="n">F23</span><span class="p">(</span><span class="m">193</span><span class="p">),</span>
-    <span class="n">F24</span><span class="p">(</span><span class="m">194</span><span class="p">),</span>
-    <span class="p">;</span>
-    <span class="c1">// ...</span>
+<span class="normal">155</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">enum</span><span class="w"> </span><span class="kd">class</span><span class="w"> </span><span class="nc">Key</span><span class="p">(</span><span class="kd">public</span><span class="w"> </span><span class="kd">val</span><span class="w"> </span><span class="nv">keyCode</span><span class="p">:</span><span class="w"> </span><span class="kt">Int</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Unknown</span><span class="p">(</span><span class="o">-</span><span class="m">1</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Esc</span><span class="p">(</span><span class="m">1</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Number1</span><span class="p">(</span><span class="m">2</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Number2</span><span class="p">(</span><span class="m">3</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Number3</span><span class="p">(</span><span class="m">4</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Number4</span><span class="p">(</span><span class="m">5</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Number5</span><span class="p">(</span><span class="m">6</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Number6</span><span class="p">(</span><span class="m">7</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Number7</span><span class="p">(</span><span class="m">8</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Number8</span><span class="p">(</span><span class="m">9</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Number9</span><span class="p">(</span><span class="m">10</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Number0</span><span class="p">(</span><span class="m">11</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Minus</span><span class="p">(</span><span class="m">12</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Equal</span><span class="p">(</span><span class="m">13</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Backspace</span><span class="p">(</span><span class="m">14</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Tab</span><span class="p">(</span><span class="m">15</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Q</span><span class="p">(</span><span class="m">16</span><span class="p">),</span>
+<span class="w">    </span><span class="n">W</span><span class="p">(</span><span class="m">17</span><span class="p">),</span>
+<span class="w">    </span><span class="n">E</span><span class="p">(</span><span class="m">18</span><span class="p">),</span>
+<span class="w">    </span><span class="n">R</span><span class="p">(</span><span class="m">19</span><span class="p">),</span>
+<span class="w">    </span><span class="n">T</span><span class="p">(</span><span class="m">20</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Y</span><span class="p">(</span><span class="m">21</span><span class="p">),</span>
+<span class="w">    </span><span class="n">U</span><span class="p">(</span><span class="m">22</span><span class="p">),</span>
+<span class="w">    </span><span class="n">I</span><span class="p">(</span><span class="m">23</span><span class="p">),</span>
+<span class="w">    </span><span class="n">O</span><span class="p">(</span><span class="m">24</span><span class="p">),</span>
+<span class="w">    </span><span class="n">P</span><span class="p">(</span><span class="m">25</span><span class="p">),</span>
+<span class="w">    </span><span class="n">LeftBrace</span><span class="p">(</span><span class="m">26</span><span class="p">),</span>
+<span class="w">    </span><span class="n">RightBrace</span><span class="p">(</span><span class="m">27</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Enter</span><span class="p">(</span><span class="m">28</span><span class="p">),</span>
+<span class="w">    </span><span class="n">LeftCtrl</span><span class="p">(</span><span class="m">29</span><span class="p">),</span>
+<span class="w">    </span><span class="n">A</span><span class="p">(</span><span class="m">30</span><span class="p">),</span>
+<span class="w">    </span><span class="n">S</span><span class="p">(</span><span class="m">31</span><span class="p">),</span>
+<span class="w">    </span><span class="n">D</span><span class="p">(</span><span class="m">32</span><span class="p">),</span>
+<span class="w">    </span><span class="n">F</span><span class="p">(</span><span class="m">33</span><span class="p">),</span>
+<span class="w">    </span><span class="n">G</span><span class="p">(</span><span class="m">34</span><span class="p">),</span>
+<span class="w">    </span><span class="n">H</span><span class="p">(</span><span class="m">35</span><span class="p">),</span>
+<span class="w">    </span><span class="n">J</span><span class="p">(</span><span class="m">36</span><span class="p">),</span>
+<span class="w">    </span><span class="n">K</span><span class="p">(</span><span class="m">37</span><span class="p">),</span>
+<span class="w">    </span><span class="n">L</span><span class="p">(</span><span class="m">38</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Semicolon</span><span class="p">(</span><span class="m">39</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Apostrophe</span><span class="p">(</span><span class="m">40</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Backtick</span><span class="p">(</span><span class="m">41</span><span class="p">),</span>
+<span class="w">    </span><span class="n">LeftShift</span><span class="p">(</span><span class="m">42</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Backslash</span><span class="p">(</span><span class="m">43</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Z</span><span class="p">(</span><span class="m">44</span><span class="p">),</span>
+<span class="w">    </span><span class="n">X</span><span class="p">(</span><span class="m">45</span><span class="p">),</span>
+<span class="w">    </span><span class="n">C</span><span class="p">(</span><span class="m">46</span><span class="p">),</span>
+<span class="w">    </span><span class="n">V</span><span class="p">(</span><span class="m">47</span><span class="p">),</span>
+<span class="w">    </span><span class="n">B</span><span class="p">(</span><span class="m">48</span><span class="p">),</span>
+<span class="w">    </span><span class="n">N</span><span class="p">(</span><span class="m">49</span><span class="p">),</span>
+<span class="w">    </span><span class="n">M</span><span class="p">(</span><span class="m">50</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Comma</span><span class="p">(</span><span class="m">51</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Dot</span><span class="p">(</span><span class="m">52</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Slash</span><span class="p">(</span><span class="m">53</span><span class="p">),</span>
+<span class="w">    </span><span class="n">RightShift</span><span class="p">(</span><span class="m">54</span><span class="p">),</span>
+<span class="w">    </span><span class="n">KeypadAsterisk</span><span class="p">(</span><span class="m">55</span><span class="p">),</span>
+<span class="w">    </span><span class="n">LeftAlt</span><span class="p">(</span><span class="m">56</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Space</span><span class="p">(</span><span class="m">57</span><span class="p">),</span>
+<span class="w">    </span><span class="n">CapsLock</span><span class="p">(</span><span class="m">58</span><span class="p">),</span>
+<span class="w">    </span><span class="n">F1</span><span class="p">(</span><span class="m">59</span><span class="p">),</span>
+<span class="w">    </span><span class="n">F2</span><span class="p">(</span><span class="m">60</span><span class="p">),</span>
+<span class="w">    </span><span class="n">F3</span><span class="p">(</span><span class="m">61</span><span class="p">),</span>
+<span class="w">    </span><span class="n">F4</span><span class="p">(</span><span class="m">62</span><span class="p">),</span>
+<span class="w">    </span><span class="n">F5</span><span class="p">(</span><span class="m">63</span><span class="p">),</span>
+<span class="w">    </span><span class="n">F6</span><span class="p">(</span><span class="m">64</span><span class="p">),</span>
+<span class="w">    </span><span class="n">F7</span><span class="p">(</span><span class="m">65</span><span class="p">),</span>
+<span class="w">    </span><span class="n">F8</span><span class="p">(</span><span class="m">66</span><span class="p">),</span>
+<span class="w">    </span><span class="n">F9</span><span class="p">(</span><span class="m">67</span><span class="p">),</span>
+<span class="w">    </span><span class="n">F10</span><span class="p">(</span><span class="m">68</span><span class="p">),</span>
+<span class="w">    </span><span class="n">NumLock</span><span class="p">(</span><span class="m">69</span><span class="p">),</span>
+<span class="w">    </span><span class="n">ScrollLock</span><span class="p">(</span><span class="m">70</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Keypad7</span><span class="p">(</span><span class="m">71</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Keypad8</span><span class="p">(</span><span class="m">72</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Keypad9</span><span class="p">(</span><span class="m">73</span><span class="p">),</span>
+<span class="w">    </span><span class="n">KeypadMinus</span><span class="p">(</span><span class="m">74</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Keypad4</span><span class="p">(</span><span class="m">75</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Keypad5</span><span class="p">(</span><span class="m">76</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Keypad6</span><span class="p">(</span><span class="m">77</span><span class="p">),</span>
+<span class="w">    </span><span class="n">KeypadPlus</span><span class="p">(</span><span class="m">78</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Keypad1</span><span class="p">(</span><span class="m">79</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Keypad2</span><span class="p">(</span><span class="m">80</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Keypad3</span><span class="p">(</span><span class="m">81</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Keypad0</span><span class="p">(</span><span class="m">82</span><span class="p">),</span>
+<span class="w">    </span><span class="n">KeypadDot</span><span class="p">(</span><span class="m">83</span><span class="p">),</span>
+<span class="w">    </span><span class="n">F11</span><span class="p">(</span><span class="m">87</span><span class="p">),</span>
+<span class="w">    </span><span class="n">F12</span><span class="p">(</span><span class="m">88</span><span class="p">),</span>
+<span class="w">    </span><span class="n">KeypadEnter</span><span class="p">(</span><span class="m">96</span><span class="p">),</span>
+<span class="w">    </span><span class="n">RightCtrl</span><span class="p">(</span><span class="m">97</span><span class="p">),</span>
+<span class="w">    </span><span class="n">KeypadSlash</span><span class="p">(</span><span class="m">98</span><span class="p">),</span>
+<span class="w">    </span><span class="n">RightAlt</span><span class="p">(</span><span class="m">100</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Home</span><span class="p">(</span><span class="m">102</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Up</span><span class="p">(</span><span class="m">103</span><span class="p">),</span>
+<span class="w">    </span><span class="n">PageUp</span><span class="p">(</span><span class="m">104</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Left</span><span class="p">(</span><span class="m">105</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Right</span><span class="p">(</span><span class="m">106</span><span class="p">),</span>
+<span class="w">    </span><span class="n">End</span><span class="p">(</span><span class="m">107</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Down</span><span class="p">(</span><span class="m">108</span><span class="p">),</span>
+<span class="w">    </span><span class="n">PageDown</span><span class="p">(</span><span class="m">109</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Insert</span><span class="p">(</span><span class="m">110</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Delete</span><span class="p">(</span><span class="m">111</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Mute</span><span class="p">(</span><span class="m">113</span><span class="p">),</span>
+<span class="w">    </span><span class="n">VolumeDown</span><span class="p">(</span><span class="m">114</span><span class="p">),</span>
+<span class="w">    </span><span class="n">VolumeUp</span><span class="p">(</span><span class="m">115</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Power</span><span class="p">(</span><span class="m">116</span><span class="p">),</span>
+<span class="w">    </span><span class="n">KeypadEqual</span><span class="p">(</span><span class="m">117</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Pause</span><span class="p">(</span><span class="m">119</span><span class="p">),</span>
+<span class="w">    </span><span class="n">KeypadComma</span><span class="p">(</span><span class="m">121</span><span class="p">),</span>
+<span class="w">    </span><span class="n">LeftSuper</span><span class="p">(</span><span class="m">125</span><span class="p">),</span>
+<span class="w">    </span><span class="n">RightSuper</span><span class="p">(</span><span class="m">126</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Compose</span><span class="p">(</span><span class="m">127</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Stop</span><span class="p">(</span><span class="m">128</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Again</span><span class="p">(</span><span class="m">129</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Props</span><span class="p">(</span><span class="m">130</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Undo</span><span class="p">(</span><span class="m">131</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Front</span><span class="p">(</span><span class="m">132</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Copy</span><span class="p">(</span><span class="m">133</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Open</span><span class="p">(</span><span class="m">134</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Paste</span><span class="p">(</span><span class="m">135</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Find</span><span class="p">(</span><span class="m">136</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Cut</span><span class="p">(</span><span class="m">137</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Help</span><span class="p">(</span><span class="m">138</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Menu</span><span class="p">(</span><span class="m">139</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Calc</span><span class="p">(</span><span class="m">140</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Setup</span><span class="p">(</span><span class="m">141</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Sleep</span><span class="p">(</span><span class="m">142</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Wakeup</span><span class="p">(</span><span class="m">143</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Mail</span><span class="p">(</span><span class="m">155</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Bookmarks</span><span class="p">(</span><span class="m">156</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Computer</span><span class="p">(</span><span class="m">157</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Back</span><span class="p">(</span><span class="m">158</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Forward</span><span class="p">(</span><span class="m">159</span><span class="p">),</span>
+<span class="w">    </span><span class="n">NextSong</span><span class="p">(</span><span class="m">163</span><span class="p">),</span>
+<span class="w">    </span><span class="n">PlayPause</span><span class="p">(</span><span class="m">164</span><span class="p">),</span>
+<span class="w">    </span><span class="n">PreviousSong</span><span class="p">(</span><span class="m">165</span><span class="p">),</span>
+<span class="w">    </span><span class="n">StopCd</span><span class="p">(</span><span class="m">166</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Record</span><span class="p">(</span><span class="m">167</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Rewind</span><span class="p">(</span><span class="m">168</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Phone</span><span class="p">(</span><span class="m">169</span><span class="p">),</span>
+<span class="w">    </span><span class="n">Refresh</span><span class="p">(</span><span class="m">173</span><span class="p">),</span>
+<span class="w">    </span><span class="n">F13</span><span class="p">(</span><span class="m">183</span><span class="p">),</span>
+<span class="w">    </span><span class="n">F14</span><span class="p">(</span><span class="m">184</span><span class="p">),</span>
+<span class="w">    </span><span class="n">F15</span><span class="p">(</span><span class="m">185</span><span class="p">),</span>
+<span class="w">    </span><span class="n">F16</span><span class="p">(</span><span class="m">186</span><span class="p">),</span>
+<span class="w">    </span><span class="n">F17</span><span class="p">(</span><span class="m">187</span><span class="p">),</span>
+<span class="w">    </span><span class="n">F18</span><span class="p">(</span><span class="m">188</span><span class="p">),</span>
+<span class="w">    </span><span class="n">F19</span><span class="p">(</span><span class="m">189</span><span class="p">),</span>
+<span class="w">    </span><span class="n">F20</span><span class="p">(</span><span class="m">190</span><span class="p">),</span>
+<span class="w">    </span><span class="n">F21</span><span class="p">(</span><span class="m">191</span><span class="p">),</span>
+<span class="w">    </span><span class="n">F22</span><span class="p">(</span><span class="m">192</span><span class="p">),</span>
+<span class="w">    </span><span class="n">F23</span><span class="p">(</span><span class="m">193</span><span class="p">),</span>
+<span class="w">    </span><span class="n">F24</span><span class="p">(</span><span class="m">194</span><span class="p">),</span>
+<span class="w">    </span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// ...</span>
 <span class="p">}</span>
-</code></pre></div>
-</td></tr></table>
-                
-              
-              
-                
+</code></pre></div></td></tr></table></div>
 
 
-              
-            </article>
-          </div>
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
         </div>
         
       </main>
       
-        
-<footer class="md-footer">
-  
-    <nav class="md-footer__inner md-grid" aria-label="Footer">
-      
-        <a href="../high-level-api/" class="md-footer__link md-footer__link--prev" rel="prev">
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
-          </div>
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Previous
-              </span>
-              High Level API
-            </div>
-          </div>
-        </a>
-      
-      
-        <a href="../../contributing/" class="md-footer__link md-footer__link--next" rel="next">
-          <div class="md-footer__title">
-            <div class="md-ellipsis">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              Contributing and future plans
-            </div>
-          </div>
-          <div class="md-footer__button md-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
-          </div>
-        </a>
-      
-    </nav>
+        <footer class="md-footer">
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">
-      <div class="md-footer-copyright">
-        
-          <div class="md-footer-copyright__highlight">
-            Copyright 2020-2021 Animeshz
-          </div>
-        
-        Made with
-        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
-          Material for MkDocs
-        </a>
-        
-      </div>
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright 2020-2021 Animeshz
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
       
-  <div class="md-footer-social">
+        <div class="md-social">
+  
+    
+    
+    
     
       
       
-        
-        
-      
-      <a href="https://github.com/Animeshz/keyboard-mouse-kt" target="_blank" rel="noopener" title="github.com" class="md-footer-social__link">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
-      </a>
+    
+    <a href="https://github.com/Animeshz/keyboard-mouse-kt" target="_blank" rel="noopener" title="github.com" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+    
     
       
       
-        
-        
-      
-      <a href="https://discord.gg/bBN9vZgcCk" target="_blank" rel="noopener" title="discord.gg" class="md-footer-social__link">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path d="M297.216 243.2c0 15.616-11.52 28.416-26.112 28.416-14.336 0-26.112-12.8-26.112-28.416s11.52-28.416 26.112-28.416c14.592 0 26.112 12.8 26.112 28.416zm-119.552-28.416c-14.592 0-26.112 12.8-26.112 28.416s11.776 28.416 26.112 28.416c14.592 0 26.112-12.8 26.112-28.416.256-15.616-11.52-28.416-26.112-28.416zM448 52.736V512c-64.494-56.994-43.868-38.128-118.784-107.776l13.568 47.36H52.48C23.552 451.584 0 428.032 0 398.848V52.736C0 23.552 23.552 0 52.48 0h343.04C424.448 0 448 23.552 448 52.736zm-72.96 242.688c0-82.432-36.864-149.248-36.864-149.248-36.864-27.648-71.936-26.88-71.936-26.88l-3.584 4.096c43.52 13.312 63.744 32.512 63.744 32.512-60.811-33.329-132.244-33.335-191.232-7.424-9.472 4.352-15.104 7.424-15.104 7.424s21.248-20.224 67.328-33.536l-2.56-3.072s-35.072-.768-71.936 26.88c0 0-36.864 66.816-36.864 149.248 0 0 21.504 37.12 78.08 38.912 0 0 9.472-11.52 17.152-21.248-32.512-9.728-44.8-30.208-44.8-30.208 3.766 2.636 9.976 6.053 10.496 6.4 43.21 24.198 104.588 32.126 159.744 8.96 8.96-3.328 18.944-8.192 29.44-15.104 0 0-12.8 20.992-46.336 30.464 7.68 9.728 16.896 20.736 16.896 20.736 56.576-1.792 78.336-38.912 78.336-38.912z"/></svg>
-      </a>
     
-  </div>
-
+    <a href="https://discord.gg/bBN9vZgcCk" target="_blank" rel="noopener" title="discord.gg" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M524.531 69.836a1.5 1.5 0 0 0-.764-.7A485.065 485.065 0 0 0 404.081 32.03a1.816 1.816 0 0 0-1.923.91 337.461 337.461 0 0 0-14.9 30.6 447.848 447.848 0 0 0-134.426 0 309.541 309.541 0 0 0-15.135-30.6 1.89 1.89 0 0 0-1.924-.91 483.689 483.689 0 0 0-119.688 37.107 1.712 1.712 0 0 0-.788.676C39.068 183.651 18.186 294.69 28.43 404.354a2.016 2.016 0 0 0 .765 1.375 487.666 487.666 0 0 0 146.825 74.189 1.9 1.9 0 0 0 2.063-.676A348.2 348.2 0 0 0 208.12 430.4a1.86 1.86 0 0 0-1.019-2.588 321.173 321.173 0 0 1-45.868-21.853 1.885 1.885 0 0 1-.185-3.126 251.047 251.047 0 0 0 9.109-7.137 1.819 1.819 0 0 1 1.9-.256c96.229 43.917 200.41 43.917 295.5 0a1.812 1.812 0 0 1 1.924.233 234.533 234.533 0 0 0 9.132 7.16 1.884 1.884 0 0 1-.162 3.126 301.407 301.407 0 0 1-45.89 21.83 1.875 1.875 0 0 0-1 2.611 391.055 391.055 0 0 0 30.014 48.815 1.864 1.864 0 0 0 2.063.7A486.048 486.048 0 0 0 610.7 405.729a1.882 1.882 0 0 0 .765-1.352c12.264-126.783-20.532-236.912-86.934-334.541ZM222.491 337.58c-28.972 0-52.844-26.587-52.844-59.239s23.409-59.241 52.844-59.241c29.665 0 53.306 26.82 52.843 59.239 0 32.654-23.41 59.241-52.843 59.241Zm195.38 0c-28.971 0-52.843-26.587-52.843-59.239s23.409-59.241 52.843-59.241c29.667 0 53.307 26.82 52.844 59.239 0 32.654-23.177 59.241-52.844 59.241Z"/></svg>
+    </a>
+  
+</div>
+      
     </div>
   </div>
 </footer>
@@ -756,10 +822,12 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "../..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../../assets/javascripts/workers/search.fe42c31b.min.js", "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.4ea5477f.min.js"></script>
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7c377c4.min.js"></script>
       
     
   </body>
